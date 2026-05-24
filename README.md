@@ -1,4 +1,4 @@
-# Youz API — Obito Structure
+# Youz API — Rest Api Gratis Untuk semua
 
 Versi ini memakai struktur seperti Obito API:
 
