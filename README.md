@@ -23,7 +23,6 @@
 
 ## 📦 Instalasi & Menjalankan Lokal
 
-```bash
 # Clone repositori
 git clone https://github.com/username/youz-api.git
 cd youz-api
@@ -52,7 +51,6 @@ Atau buka langsung file `database/users.json` untuk melihat/ubah manual.
 
 Buat file `.js` di `routes/plugins/` dengan format:
 
-```js
 // routes/plugins/myendpoint.js
 module.exports = {
   rota: '/api/myplugin/hello',
@@ -70,7 +68,6 @@ module.exports = {
 Panggil dengan:
 ```
 /api/myplugin/hello?nama=Andi&apitoken=KEY_KAMU
-```
 
 > Endpoint otomatis divalidasi `apitoken` oleh `middleware/apikey.js`
 
@@ -85,9 +82,7 @@ Panggil dengan:
 | `GET` | `/api/yt-search` | Cari video YouTube | `q`, `apitoken` |
 
 Contoh:
-```bash
 curl "http://localhost:3000/api/text2qr?text=YouzAPI&apitoken=xxx"
-```
 
 ---
 
