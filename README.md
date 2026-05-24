@@ -1,83 +1,218 @@
 ```markdown
-# Youz API — REST API Gratis Untuk Semua
+# 🚀 Youz API — REST API Gratis Untuk Semua
 
-Youz API adalah layanan REST API gratis yang dirancang dengan struktur modular seperti Obito API. Proyek ini menggunakan Express.js sebagai server utama, EJS untuk tampilan halaman web (login, register, dashboard, profil), serta sistem autentikasi sederhana berbasis `apitoken` dan penyimpanan data user di `database/users.json`.
+![Node.js](https://img.shields.io/badge/Node.js-18.x-green)
+![Express](https://img.shields.io/badge/Express-4.x-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+![Status](https://img.shields.io/badge/Status-Active-success)
 
-## Fitur
+**Youz API** adalah REST API gratis yang siap pakai dengan struktur proyek modern, modular, dan mudah dikembangkan. Dilengkapi autentikasi API key, middleware keamanan, sistem session, serta halaman web (login, register, dashboard, dokumentasi). Cocok untuk belajar, prototyping, atau production skala kecil.
 
-- ✅ Autentikasi menggunakan API key (`apitoken`)
-- ✅ Struktur modular: cukup tambah file di `routes/plugins/` untuk membuat endpoint baru
-- ✅ Halaman web interaktif dengan EJS (`views/`)
-- ✅ CSS styling di `public/css/`
-- ✅ Dukungan endpoint bawaan untuk cek status server, QR code, dan pencarian YouTube
+---
 
-## Instalasi & Menjalankan Lokal
+## ✨ Fitur Unggulan
 
-1. Clone repositori ini
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Jalankan server:
-   ```bash
-   npm start
-   ```
-4. Buka browser di:
-   ```
-   http://localhost:3000
-   ```
+- 🔐 **Autentikasi ganda** — Login session (web) + API key (endpoint)
+- 🧩 **Plugin modular** — Tambah endpoint cukup buat file di `routes/plugins/`
+- 🛡️ **Middleware keamanan** — Rate limiter, validasi API key, auth session
+- 📦 **Library pendukung** — Scraper, uploader, fetcher, fungsi umum di `lib/`
+- 🌐 **Halaman web lengkap** — Login, register, dashboard, profil, docs
+- 💾 **Session & logging** — Simpan session user, catat request log
+- 🎨 **Asset terstruktur** — CSS, JS, gambar di folder `public/`
 
-## Cara Menambahkan Endpoint Baru
+---
 
-Buat file JavaScript baru di folder `routes/plugins/` dengan struktur berikut:
+## 📦 Instalasi & Menjalankan Lokal
+
+```bash
+# Clone repositori
+git clone https://github.com/username/youz-api.git
+cd youz-api
+
+# Install dependencies
+npm install
+
+# Jalankan server
+npm start
+```
+
+Server berjalan di **http://localhost:3000**
+
+---
+
+## 🔑 Cara Mendapatkan API Key
+
+1. Buka `http://localhost:3000/register` → buat akun
+2. Login ke dashboard (`/login`)
+3. Salin `apitoken` dari halaman profil
+
+Atau buka langsung file `database/users.json` untuk melihat/ubah manual.
+
+---
+
+## 🛠️ Cara Membuat Endpoint Baru (Plugin)
+
+Buat file `.js` di `routes/plugins/` dengan format:
 
 ```js
-// routes/plugins/nama-endpoint.js
+// routes/plugins/myendpoint.js
 module.exports = {
-  rota: '/api/tools/contoh',
+  rota: '/api/myplugin/hello',
 
   async run(req, res) {
+    const { nama } = req.query;
     return res.json({
       success: true,
-      data: 'Hello Youz API'
+      message: `Halo ${nama || 'pengguna'}!`
     });
   }
 };
 ```
 
-Setiap endpoint secara otomatis akan memerlukan parameter `apitoken` untuk validasi. Contoh pemanggilan:
+Panggil dengan:
+```
+/api/myplugin/hello?nama=Andi&apitoken=KEY_KAMU
+```
+
+> Endpoint otomatis divalidasi `apitoken` oleh `middleware/apikey.js`
+
+---
+
+## 📌 Endpoint Bawaan
+
+| Method | Endpoint | Deskripsi | Parameter |
+|--------|----------|-----------|-----------|
+| `GET` | `/api/server-status` | Cek status server & uptime | `apitoken` |
+| `GET` | `/api/text2qr` | Generate QR code dari teks | `text`, `apitoken` |
+| `GET` | `/api/yt-search` | Cari video YouTube | `q`, `apitoken` |
+
+Contoh:
+```bash
+curl "http://localhost:3000/api/text2qr?text=YouzAPI&apitoken=xxx"
+```
+
+---
+
+## 🗂️ Struktur Proyek (Lengkap)
 
 ```
-/api/tools/contoh?apitoken=APIKEY_ANDA
-```
-
-## Endpoint Bawaan
-
-| Endpoint | Deskripsi | Parameter |
-|----------|-----------|-----------|
-| `/api/server/status` | Cek status server | `apitoken` |
-| `/api/tools/text2qr` | Generate QR code dari teks | `text`, `apitoken` |
-| `/api/search/yt` | Mencari video di YouTube | `q` (query), `apitoken` |
-
-> Catatan: Semua endpoint di atas wajib menyertakan `?apitoken=APIKEY_ANDA`.
-
-## Struktur Proyek
-
-```
-Youz-API/
-├── index.js              # Server utama Express
-├── views/                # Halaman EJS (login, register, dashboard, profil)
-├── routes/
-│   ├── config.js         # Validasi API key & auto-load plugin
-│   └── plugins/          # Semua endpoint API modular
+youz-api/
+│
+├── index.js                 # Entry point server
+├── package.json
+├── README.md
+│
 ├── database/
-│   └── users.json        # Penyimpanan data user sederhana
-├── public/
-│   └── css/              # Asset styling
-└── package.json
+│   └── users.json           # Data user (username, password hash, apitoken)
+│
+├── public/                  # Aset statis
+│   ├── css/style.css
+│   ├── js/main.js
+│   └── img/logo.png
+│
+├── routes/
+│   ├── config.js            # Auto-load plugin & routing utama
+│   └── plugins/             # Semua endpoint API (modular)
+│       ├── server-status.js
+│       ├── text2qr.js
+│       ├── yt-search.js
+│       └── contoh.js
+│
+├── views/                   # Template EJS
+│   ├── partials/
+│   │   ├── header.ejs
+│   │   ├── navbar.ejs
+│   │   └── footer.ejs
+│   ├── login.ejs
+│   ├── register.ejs
+│   ├── dashboard.ejs
+│   ├── profile.ejs
+│   └── docs.ejs
+│
+├── middleware/              # Middleware Express
+│   ├── auth.js              # Validasi session login (web)
+│   ├── apikey.js            # Validasi apitoken (API)
+│   └── limiter.js           # Rate limiting (mencegah spam)
+│
+├── lib/                     # Library pendukung
+│   ├── function.js          # Fungsi umum (format tanggal, random, dll)
+│   ├── scraper.js           # Web scraper untuk berbagai sumber
+│   ├── uploader.js          # Upload file ke layanan pihak ketiga
+│   └── fetcher.js           # HTTP client (axios wrapper)
+│
+├── session/                 # Session store (file-based)
+│   └── session.json
+│
+└── logs/                    # Log request & error
+    └── request.log
 ```
 
-## Lisensi
+---
 
-MIT © Youz API
+## 🔧 Middleware & Keamanan
+
+| Middleware | Fungsi |
+|------------|--------|
+| `auth.js` | Memastikan user sudah login via session (untuk halaman dashboard, profil) |
+| `apikey.js` | Memeriksa `apitoken` pada query string, cocokkan dengan `users.json` |
+| `limiter.js` | Membatasi jumlah request per IP (misal 100 per 15 menit) |
+
+> Semua endpoint API (`/api/*`) otomatis menggunakan `apikey.js` dan `limiter.js`.
+
+---
+
+## 📚 Library Pendukung (`lib/`)
+
+- **function.js** — Kumpulan helper: `formatDate()`, `generateRandomString()`, `validateEmail()`, dll.
+- **scraper.js** — Fungsi scraping dari website (YouTube, Instagram, TikTok, dll)
+- **uploader.js** — Upload gambar/file ke Imgur, Catbox, atau server lokal
+- **fetcher.js** — Wrapper `axios` dengan timeout & retry
+
+Contoh penggunaan di plugin:
+```js
+const { fetchHTML } = require('../../lib/fetcher');
+const { generateRandomString } = require('../../lib/function');
+
+async run(req, res) {
+  const html = await fetchHTML('https://example.com');
+  const token = generateRandomString(32);
+  // ...
+}
+```
+
+---
+
+## 🧪 Session & Logging
+
+- **Session** — Disimpan di `session/session.json` (default express-session file store). Bisa diganti ke Redis/MongoDB nantinya.
+- **Logging** — Setiap request dicatat di `logs/request.log` dengan format:
+  ```
+  [2025-01-27T10:00:00.000Z] GET /api/server-status - 200 - 45ms
+  ```
+
+---
+
+## 🤝 Kontribusi
+
+1. Fork repo ini
+2. Buat branch fitur (`git checkout -b fitur-baru`)
+3. Commit perubahan (`git commit -m 'Tambahkan fitur X'`)
+4. Push ke branch (`git push origin fitur-baru`)
+5. Buka Pull Request
+
+---
+
+## 📄 Lisensi
+
+MIT © **Youz API** — Bebas digunakan, dimodifikasi, dan didistribusikan.
+
+---
+
+## 🙋‍♂️ Dukungan
+
+- [GitHub Issues](https://github.com/username/youz-api/issues)
+- Email: support@youzapi.com (contoh)
+
+---
+**⭐ Jangan lupa beri bintang jika proyek ini bermanfaat!**
 ```
