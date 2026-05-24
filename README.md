@@ -1,207 +1,201 @@
-🚀 Youz API — Modern Free REST API Platform
+Youz API — Rest API Gratis Untuk Semua
 
-<div align="center"><img src="https://i.imgur.com/4M34hi2.png" width="120" />Fast • Modular • Modern • Free
+Youz API adalah project REST API sederhana, ringan, dan mudah dikembangkan.
+Versi ini memakai struktur seperti Obito API agar lebih rapi, modular, dan cocok untuk ditambah banyak endpoint.
 
-REST API platform gratis dengan struktur modular ala Obito API, dibuat untuk developer modern yang ingin membuat API scalable, rapi, dan mudah dikembangkan.
+Fitur Utama
 
-"NodeJS" (https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge&logo=node.js)
-"Express" (https://img.shields.io/badge/Express.js-Backend-black?style=for-the-badge&logo=express)
-"EJS" (https://img.shields.io/badge/EJS-Template-orange?style=for-the-badge)
-"License" (https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+- Server utama memakai Express.js
+- Tampilan halaman memakai EJS
+- Sistem login dan register
+- Dashboard user
+- Profil user
+- API key untuk akses endpoint
+- Auto-load plugin endpoint
+- Struktur folder rapi dan mudah dipahami
+- Cocok untuk deploy ke Vercel atau VPS
+- Mudah ditambah fitur baru
 
-</div>---
-
-✨ Features
-
-- ⚡ High performance Express server
-- 🔐 API Key authentication system
-- 📦 Modular plugin endpoint system
-- 🧩 Auto-load API routes
-- 🎨 Modern EJS dashboard
-- 👤 Login & Register system
-- 📊 User profile & usage panel
-- 🗂 Clean folder structure
-- 🔄 Easy endpoint development
-- 🌐 Ready for Vercel / VPS deployment
-- 🛡 Simple request validation
-- 🚀 Beginner friendly architecture
-
----
-
-📁 Project Structure
+Struktur Project
 
 youz-api/
-│
-├── index.js                # Main Express server
+├── index.js
 ├── package.json
-│
 ├── database/
 │   └── users.json
-│
 ├── public/
-│   ├── css/
-│   ├── js/
-│   └── img/
-│
+│   └── css/
 ├── routes/
-│   ├── config.js           # API validator & plugin loader
-│   │
+│   ├── config.js
 │   └── plugins/
 │       ├── server-status.js
 │       ├── text2qr.js
 │       └── yt-search.js
-│
-├── views/
-│   ├── login.ejs
-│   ├── register.ejs
-│   ├── dashboard.ejs
-│   └── profile.ejs
-│
-└── README.md
+└── views/
+    ├── login.ejs
+    ├── register.ejs
+    ├── dashboard.ejs
+    └── profile.ejs
 
----
+Penjelasan Folder
 
-⚙️ Installation
+"index.js"
 
-Clone Project
+File utama untuk menjalankan server Express, mengatur middleware, route halaman, session, dan konfigurasi utama website.
 
-git clone https://github.com/yourusername/youz-api.git
+"views/"
 
-Masuk ke folder project
+Berisi tampilan halaman EJS seperti:
 
-cd youz-api
+- Login
+- Register
+- Dashboard
+- Profile
 
-Install dependencies
+"routes/config.js"
+
+Berfungsi untuk:
+
+- Validasi API key
+- Auto-load endpoint dari folder plugin
+- Menghubungkan semua endpoint API ke server utama
+
+"routes/plugins/"
+
+Tempat menyimpan semua endpoint API secara modular.
+Setiap file plugin akan otomatis aktif jika formatnya benar.
+
+"database/users.json"
+
+Database sederhana berbasis file JSON untuk menyimpan data user.
+
+"public/css/"
+
+Folder untuk menyimpan asset styling website.
+
+Jalankan Lokal
+
+Install dependency:
 
 npm install
 
-Jalankan server
+Jalankan server:
 
 npm start
 
----
-
-🌐 Open In Browser
+Buka di browser:
 
 http://localhost:3000
 
----
+Sistem API Key
 
-🔑 API Authentication
+Setiap user akan memiliki API key.
+API key digunakan untuk mengakses endpoint API.
 
-Semua endpoint memakai parameter:
+Format penggunaan:
 
-apitoken=YOUR_API_KEY
+?apitoken=KEY_KAMU
 
 Contoh:
 
-/api/server/status?apitoken=YOUR_API_KEY
+/api/server/status?apitoken=KEY_KAMU
 
----
-
-🚀 Built-in Endpoints
-
-Endpoint| Method| Description
-"/api/server/status"| GET| Status server
-"/api/tools/text2qr"| GET| Convert text ke QR
-"/api/search/yt"| GET| Search YouTube
-
----
-
-📌 Example Usage
+Endpoint Bawaan
 
 Server Status
 
-GET /api/server/status?apitoken=YOUR_API_KEY
+/api/server/status?apitoken=KEY_KAMU
 
-Response:
+Berfungsi untuk mengecek status server.
 
-{
-  "success": true,
-  "server": "online",
-  "uptime": 1200
-}
+Text To QR
 
----
+/api/tools/text2qr?text=halo&apitoken=KEY_KAMU
 
-Generate QR Code
-
-GET /api/tools/text2qr?text=Hello&apitoken=YOUR_API_KEY
-
----
+Berfungsi untuk membuat QR code dari teks.
 
 YouTube Search
 
-GET /api/search/yt?q=music&apitoken=YOUR_API_KEY
+/api/search/yt?q=lagu&apitoken=KEY_KAMU
 
----
+Berfungsi untuk mencari video YouTube.
 
-🧩 Create Custom Endpoint
+Cara Tambah Endpoint
 
-Buat file baru di:
+Buat file baru di folder:
 
 routes/plugins/
 
 Contoh:
 
 module.exports = {
-  rota: '/api/tools/hello',
+  rota: '/api/tools/contoh',
 
   async run(req, res) {
-
     return res.json({
       success: true,
       creator: 'Youz API',
-      message: 'Hello World'
+      result: 'Hello Youz API'
     });
-
   }
 };
 
-Endpoint otomatis aktif:
+Setelah itu endpoint otomatis aktif:
 
-/api/tools/hello?apitoken=YOUR_API_KEY
+/api/tools/contoh?apitoken=KEY_KAMU
 
----
+Format Plugin
 
-🛡 API Validation System
+Setiap plugin wajib memiliki:
 
-Youz API menggunakan:
+module.exports = {
+  rota: '/api/category/nama-endpoint',
 
-- API Key validation
-- Auto route loader
-- Plugin sandbox structure
-- Request middleware system
+  async run(req, res) {
+    // kode endpoint
+  }
+};
 
-Semua plugin otomatis diproses oleh:
+Keterangan:
 
-routes/config.js
+- "rota" adalah alamat endpoint
+- "run" adalah fungsi utama endpoint
+- "req" untuk mengambil query/body
+- "res" untuk mengirim response JSON
 
----
+Contoh Response Sukses
 
-🎨 Dashboard System
+{
+  "success": true,
+  "creator": "Youz API",
+  "result": "Data berhasil diproses"
+}
 
-Youz API memiliki dashboard modern:
+Contoh Response Error
 
-- Login
-- Register
-- User Profile
-- API Information
-- API Key Panel
-- Usage Counter
-- Endpoint Documentation
+{
+  "success": false,
+  "message": "Apitoken tidak valid"
+}
 
----
+Rekomendasi Pengembangan
 
-☁️ Deployment
+Beberapa fitur yang cocok ditambahkan:
 
-Vercel
+- Admin panel
+- Limit request harian
+- Statistik penggunaan API
+- Sistem premium user
+- Dokumentasi endpoint otomatis
+- Riwayat request user
+- Search endpoint di dashboard
+- Dark mode
+- MongoDB database
+- Rate limit per user
 
-Tambahkan file:
+Deploy Ke Vercel
 
-vercel.json
-
-Contoh:
+Tambahkan file "vercel.json":
 
 {
   "version": 2,
@@ -219,45 +213,22 @@ Contoh:
   ]
 }
 
----
+Lalu deploy:
 
-🧠 Recommended Stack
+vercel
 
-- Node.js 18+
-- Express.js
-- EJS
-- Axios
-- Moment.js
-- UUID
-- LowDB / MongoDB
-- Cloudflare / Vercel
+Catatan
 
----
+Project ini cocok untuk:
 
-🔥 Future Plans
+- Belajar membuat REST API
+- Membuat API pribadi
+- Membuat dashboard API
+- Menyediakan endpoint tools/search/downloader
+- Dikembangkan menjadi layanan API publik
 
-- AI Endpoint
-- Image Generation
-- User Rate Limit
-- Admin Panel
-- Analytics Dashboard
-- API Documentation UI
-- Usage Graph
-- Premium System
-- Team API Workspace
+Creator
 
----
+Youz API dibuat sebagai REST API gratis untuk semua.
 
-👑 Creator
-
-Youz API
-
-Modern REST API Platform for Everyone.
-
-Built with ❤️ using Node.js & Express.
-
----
-
-📜 License
-
-MIT License © Youz API
+Dibuat dengan Node.js, Express.js, dan EJS.
