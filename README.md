@@ -1,4 +1,3 @@
-```markdown
 # 🚀 Youz API — REST API Gratis Untuk Semua
 
 ![Node.js](https://img.shields.io/badge/Node.js-18.x-green)
@@ -34,7 +33,6 @@ npm install
 
 # Jalankan server
 npm start
-```
 
 Server berjalan di **http://localhost:3000**
 
