@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title><%= title || 'Profil · YOUZ API' %></title>
+<meta property="og:description" content="Modern API platform untuk developer dan bisnis modern.">
+<meta property="og:image" content="https://raw.githubusercontent.com/uploader762/dat3/main/uploads/3fae03-1776528467067.jpg">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/css/main.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+body { overflow: hidden; display: flex; flex-direction: column; }
+
+header {
+  padding: clamp(12px,4vw,16px) clamp(14px,5vw,20px);
+  display: flex; align-items: center; gap: 14px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,11,18,0.85);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  flex-shrink: 0; z-index: 50;
+}
+.back-btn {
+  color: var(--text-muted); font-size: 20px;
+  text-decoration: none; display: flex; align-items: center;
+  transition: color 0.2s;
+}
+.back-btn:hover { color: var(--text); }
+.page-title { font-size: clamp(14px,4vw,15px); font-weight: 600; }
+
+.page {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.page::-webkit-scrollbar { display: none; }
+
+.inner {
+  max-width: 500px; margin: 0 auto;
+  padding: clamp(14px,4vw,20px) clamp(12px,4vw,16px) clamp(24px,6vw,36px);
+  display: flex; flex-direction: column; gap: clamp(10px,3vw,14px);
+}
+
+.profile-hero {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: clamp(16px,4vw,22px); overflow: hidden;
+}
+.hero-banner {
+  height: clamp(60px,16vw,90px);
+  background-size: cover; background-position: center;
+  background-color: var(--bg2); position: relative;
+}
+.hero-banner::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 30%, rgba(8,11,18,0.75));
+}
+.hero-body {
+  padding: 0 clamp(14px,4vw,20px) clamp(16px,4vw,20px);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.hero-avatar-wrap { margin-top: clamp(-26px,-7vw,-32px); margin-bottom: 8px; position: relative; z-index: 2; }
+.hero-avatar {
+  width: clamp(52px,14vw,68px); height: clamp(52px,14vw,68px);
+  border-radius: clamp(13px,4vw,18px);
+  border: 3px solid rgba(139,92,246,0.45);
+  background-size: cover; background-position: center;
+  box-shadow: 0 4px 18px rgba(139,92,246,0.18);
+}
+.hero-name {
+  font-size: clamp(16px,5vw,19px); font-weight: 700;
+  display: flex; align-items: center; gap: 5px; justify-content: center; flex-wrap: wrap;
+}
+.hero-name i { font-size: clamp(12px,4vw,14px); }
+.hero-badges { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; justify-content: center; }
+
+.stat-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(8px,2vw,10px);
+}
+.stat-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: clamp(14px,4vw,18px); padding: clamp(12px,4vw,16px);
+}
+.stat-icon { font-size: clamp(16px,5vw,20px); color: var(--accent); opacity: 0.75; margin-bottom: 6px; display: block; }
+.stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+.stat-val { font-size: clamp(18px,6vw,23px); font-weight: 700; margin-top: 2px; }
+
+.section-label { font-size: 10px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+.key-box {
+  background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.18);
+  border-radius: 14px; padding: clamp(11px,3vw,14px) clamp(12px,4vw,16px);
+  display: flex; align-items: center; gap: 10px;
+}
+.key-val {
+  font-size: clamp(11px,3vw,13px); font-weight: 600; color: var(--accent);
+  font-family: 'SF Mono','Fira Code',monospace;
+  flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.key-copy { color: var(--text-muted); cursor: pointer; font-size: 15px; transition: color 0.2s; flex-shrink: 0; }
+.key-copy:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<header>
+  <a href="/dash" class="back-btn"><i class="bi bi-arrow-left"></i></a>
+  <span class="page-title">profil</span>
+</header>
+
+<div class="page">
+  <div class="inner">
+
+    <% if (success_msg && success_msg.length) { %><div class="flash flash-success"><i class="bi bi-check-circle"></i> <%= success_msg %></div><% } %>
+    <% if (error_msg && error_msg.length) { %><div class="flash flash-error"><i class="bi bi-x-circle"></i> <%= error_msg %></div><% } %>
+
+    <div class="profile-hero">
+      <div class="hero-banner" style="<% if(user.capa){ %>background-image:url('<%= user.capa %>');<% } %>"></div>
+      <div class="hero-body">
+        <div class="hero-avatar-wrap">
+          <div class="hero-avatar" style="background-image:url('<%= user.foto %>');"></div>
+        </div>
+        <div class="hero-name">
+          <%= user.username %>
+          <% if (user.adm) { %><i class="bi bi-patch-check-fill" style="color:var(--accent);"></i><% } %>
+          <% if (user.premium) { %><i class="bi bi-lightning-charge-fill" style="color:#fbbf24;"></i><% } %>
+        </div>
+        <div class="hero-badges">
+          <div class="level-badge"><i class="bi bi-layers"></i> LV <%= user.level || 1 %></div>
+          <% if (user.premium) { %><div class="badge-pill badge-premium"><i class="bi bi-lightning-charge-fill"></i> premium</div><% } %>
+          <% if (user.adm) { %><div class="badge-pill badge-admin"><i class="bi bi-shield-check"></i> admin</div><% } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-box">
+        <i class="bi bi-activity stat-icon"></i>
+        <div class="stat-label">permintaan</div>
+        <div class="stat-val"><%= user.totalRequests || 0 %></div>
+      </div>
+      <div class="stat-box">
+        <i class="bi bi-trophy stat-icon"></i>
+        <div class="stat-label">xp</div>
+        <div class="stat-val"><%= user.xp || 0 %></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label" style="margin-bottom:8px;">kunci API</div>
+      <div class="key-box">
+        <span class="key-val" id="apiKey"><%= user.key %></span>
+        <i class="bi bi-copy key-copy" id="copyKey"></i>
+      </div>
+    </div>
+
+    <a href="/perfil/editar" class="btn btn-ghost btn-full" style="text-decoration:none;">
+      <i class="bi bi-pencil"></i> edit profil
+    </a>
+
+  </div>
+</div>
+
+<script>
+document.getElementById('copyKey').addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('apiKey').textContent).then(() => {
+    const t = document.getElementById('toast');
+    t.className = 'toast success show';
+    t.innerHTML = '<i class="bi bi-check-circle"></i> kunci disalin';
+    setTimeout(() => t.classList.remove('show'), 2000);
+  });
+});
+</script>
+</body>
+</html>
