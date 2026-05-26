@@ -26,14 +26,19 @@ const i = users.findIndex(u => u.key === apitoken);
 if (i === -1) return res.status(401).json({ ok: false, msg: 'Token tidak valid' });
 
 const u = users[i];
-if ((u.totalRequests || 0) <= 0)
+if ((u.totalRequests || 0) < 1)
 return res.status(403).json({ ok: false, msg: 'Request habis. Silakan upgrade paket.' });
 
 u.totalRequests--;
 const xp = (u.xp || 0) + 10;
 const lvl = u.level || 1;
-u.xp = xp >= lvl * 50 ? xp % 50 : xp;
-if (xp >= lvl * 50) u.level = lvl + Math.floor(xp / 50);
+const threshold = lvl * 50;
+if (xp >= threshold) {
+  u.level = lvl + 1;
+  u.xp = xp % threshold;
+} else {
+  u.xp = xp;
+}
 
 users[i] = u;
 if (!salvarUsers(users)) return res.status(500).json({ ok: false, msg: 'Gagal menyimpan data' });
