@@ -64,7 +64,7 @@ function saveUsers(users) {
 fs.writeFileSync(dbP, JSON.stringify(users, null, 2));
 }
 
-function gerarKey(len = 6) {
+function gerarKey(len = 32) {
 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 return Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
@@ -155,24 +155,30 @@ let { username, email, password } = req.body;
 if (!username || !email || !password) return res.json({ success: false, message: 'Preencha todos os campos' });
 
 username = sanitizeHtml(username, { allowedTags: [], allowedAttributes: {} }).trim();
+email = sanitizeHtml(email, { allowedTags: [], allowedAttributes: {} }).trim().toLowerCase();
 if (!username) return res.json({ success: false, message: 'Usuário inválido' });
+if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.json({ success: false, message: 'E-mail tidak valid' });
 if (password.length < 6) return res.json({ success: false, message: 'Senha muito curta (mín. 6)' });
 
 const users = loadUsers();
 if (users.some(u => u.username === username)) return res.json({ success: false, message: 'Usuário já existe' });
-if (users.some(u => u.email === email)) return res.json({ success: false, message: 'E-mail já cadastrado' });
+if (users.some(u => (u.email || '').toLowerCase() === email)) return res.json({ success: false, message: 'E-mail já cadastrado' });
 
 const newUser = {
 id: (users.length ? Math.max(...users.map(u => u.id || 0)) : 0) + 1,
 username, email,
 password: await bcrypt.hash(password, 10),
-key: gerarKey(),
-level: 1, xp: 0, totalRequests: 0,
+key: null,
+level: 1, xp: 0, totalRequests: 100,
 foto: FOTO_PADRAO, 
 capa: 'https://raw.githubusercontent.com/uploader762/dat3/main/uploads/3fae03-1776528467067.jpg',
 adm: false, premium: false,
 createdAt: new Date().toISOString()
 };
+
+let key;
+do { key = gerarKey(); } while (users.some(u => u.key === key));
+newUser.key = key;
 
 users.push(newUser);
 saveUsers(users);
