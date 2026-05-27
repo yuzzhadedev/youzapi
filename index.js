@@ -96,7 +96,7 @@ app.get('/registro', (req, res) => req.session.user ? res.redirect('/perfil') : 
 app.get('/dash', (req, res) => res.redirect('/'));
 
 app.get('/playground', (req, res) => res.render('playground', { title: 'Playground · YOUZ API', user: req.session.user || null }));
-app.get('/monitor', (req, res) => res.render('monitor', { title: 'Monitor · YOUZ API', user: req.session.user || null }));
+app.get(['/monitor', '/monitor.ejs'], (req, res) => res.render('monitor', { title: 'Monitor · YOUZ API', user: req.session.user || null }));
 
 app.get('/perfil', auth, (req, res) => {
 const user = loadUsers().find(u => u.username === req.session.user.username);
