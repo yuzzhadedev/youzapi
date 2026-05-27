@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>API Console V2 — API SIPUTZX</title>
+<title>API Console V2 — YOUZ API</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -240,7 +240,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   margin-top:12px;
 }
 
-.btn-execute{
+.btn-eksekusi{
   background:var(--red);
   color:#fff;
   border:none;
@@ -254,8 +254,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   transition:background .15s;
   flex:1;
 }
-.btn-execute:hover{background:var(--red2);}
-.btn-execute.loading{opacity:.6;cursor:not-allowed;}
+.btn-eksekusi:hover{background:var(--red2);}
+.btn-eksekusi.loading{opacity:.6;cursor:not-allowed;}
 
 .btn-copy-url{
   background:var(--bg2);
@@ -311,7 +311,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 <body>
 
 <nav>
-  <a href="index.html" class="nav-logo"><div class="logo-sq"></div>API SIPUTZX</a>
+  <a href="/" class="nav-logo"><div class="logo-sq"></div>YOUZ API</a>
   <button class="nav-menu-btn" onclick="openMenu()"><span></span><span></span></button>
 </nav>
 
@@ -350,7 +350,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Masukkan pesan..." data-param="q">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/duckai', ['q'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/duckai', ['q'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/duckai', ['q'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-0"></pre>
@@ -372,7 +372,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/bibleai', ['q'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/bibleai', ['q'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/bibleai', ['q'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-1"></pre>
@@ -394,7 +394,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Masukkan prompt..." data-param="q">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/gptoss120b', ['q'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/gptoss120b', ['q'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/gptoss120b', ['q'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-2"></pre>
@@ -416,7 +416,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/glm47flash', ['q'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/glm47flash', ['q'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/glm47flash', ['q'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-3"></pre>
@@ -438,7 +438,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Masukkan prompt..." data-param="q">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/phi2', ['q'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/phi2', ['q'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/phi2', ['q'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-4"></pre>
@@ -460,7 +460,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/qwq32b', ['q'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/qwq32b', ['q'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/qwq32b', ['q'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-5"></pre>
@@ -482,7 +482,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/deepseekr1', ['q'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/deepseekr1', ['q'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/deepseekr1', ['q'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-6"></pre>
@@ -504,7 +504,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Masukkan pesan..." data-param="q">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/metaai', ['q'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/metaai', ['q'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/metaai', ['q'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-7"></pre>
@@ -526,7 +526,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Deskripsi gambar..." data-param="prompt">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/duckaiimage', ['prompt'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/duckaiimage', ['prompt'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/duckaiimage', ['prompt'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-8"></pre>
@@ -548,7 +548,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Masukkan prompt..." data-param="q">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/gemini', ['q'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/gemini', ['q'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/gemini', ['q'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-9"></pre>
@@ -570,7 +570,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="Masukkan kode/pertanyaan..." data-param="q">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/blackbox', ['q'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/ai/blackbox', ['q'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/blackbox', ['q'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-10"></pre>
@@ -603,7 +603,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="https://tiktok.com/..." data-param="url">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/dl/tiktok', ['url'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/dl/tiktok', ['url'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/tiktok', ['url'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-11"></pre>
@@ -625,7 +625,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="https://instagram.com/..." data-param="url">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/dl/instagram', ['url'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/dl/instagram', ['url'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/instagram', ['url'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-12"></pre>
@@ -647,7 +647,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="https://youtu.be/..." data-param="url">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/dl/youtube', ['url'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/dl/youtube', ['url'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/youtube', ['url'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-13"></pre>
@@ -669,7 +669,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="https://open.spotify.com/..." data-param="url">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/dl/spotify', ['url'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/dl/spotify', ['url'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/spotify', ['url'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-14"></pre>
@@ -691,7 +691,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
             <input type="text" class="param-input" placeholder="https://x.com/..." data-param="url">
           </div>
           <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/dl/twitter', ['url'])">▶ EXECUTE</button>
+            <button class="btn-eksekusi" onclick="eksekusiApi(this, '/api/dl/twitter', ['url'])">▶ EXECUTE</button>
             <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/twitter', ['url'])">COPY URL</button>
           </div>
           <pre class="result-box" id="result-15"></pre>
@@ -710,9 +710,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <button class="menu-close" onclick="closeMenu()">✕</button>
   </div>
   <div class="menu-links">
-    <a href="index.html" class="menu-link">HOME</a>
-    <a href="playground.html" class="menu-link" style="color:var(--text);">PLAYGROUND</a>
-    <a href="monitor.html" class="menu-link">MONITOR</a>
+    <a href="/" class="menu-link">HOME</a>
+    <a href="/playground" class="menu-link" style="color:var(--text);">PLAYGROUND</a>
+    <a href="/monitor" class="menu-link">MONITOR</a>
     <div class="menu-divider"></div>
     <div class="menu-secondary">
       <a href="#" class="menu-sec-link">TERMS</a>
@@ -720,12 +720,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     </div>
   </div>
   <div class="menu-bottom">
-    <a href="#" class="btn-join">JOIN COMMUNITY</a>
+    <a href="#" class="btn-join">GABUNG KOMUNITAS</a>
   </div>
 </div>
 
 <script>
-const BASE = 'https://app.siputzx.my.id';
+const BASE = 'https://youzapi.example.com';
 let resultCount = 16;
 
 function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
@@ -758,7 +758,7 @@ function getResultBox(btn){
   return body.querySelector('.result-box');
 }
 
-async function executeApi(btn, path, paramNames){
+async function eksekusiApi(btn, path, paramNames){
   const params = getParams(btn, paramNames);
   const url = buildUrl(path, params);
   const resultBox = getResultBox(btn);
