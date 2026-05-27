@@ -133,7 +133,7 @@ document.getElementById('regBtn').addEventListener('click', async () => {
   try {
     const r = await fetch('/api/registro', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ username, email, password }) });
     const d = await r.json();
-    if (d.success) { showNotif('akun dibuat! mengalihkan...', 'success'); setTimeout(() => window.location.href = '/dash', 700); }
+    if (d.success) { showNotif('akun dibuat! mengalihkan...', 'success'); setTimeout(() => window.location.href = '/perfil', 700); }
     else { showNotif(d.message || 'gagal membuat akun', 'error'); btn.disabled = false; btn.innerHTML = orig; }
   } catch { showNotif('kesalahan koneksi. coba lagi', 'error'); btn.disabled = false; btn.innerHTML = orig; }
 });

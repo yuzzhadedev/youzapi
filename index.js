@@ -89,29 +89,14 @@ if (!req.session.user) return res.redirect('/login');
 next();
 }
 
-app.get('/', (req, res) => res.redirect(req.session.user ? '/dash' : '/login'));
-app.get('/login', (req, res) => req.session.user ? res.redirect('/dash') : res.render('login', { title: 'Login · YOUZ API' }));
-app.get('/registro', (req, res) => req.session.user ? res.redirect('/dash') : res.render('registro', { title: 'Criar conta · Youz API' }));
+app.get('/', (req, res) => res.render('home', { title: 'Home · YOUZ API', user: req.session.user || null }));
+app.get('/login', (req, res) => req.session.user ? res.redirect('/perfil') : res.render('login', { title: 'Login · YOUZ API' }));
+app.get('/registro', (req, res) => req.session.user ? res.redirect('/perfil') : res.render('registro', { title: 'Criar conta · Youz API' }));
 
-app.get('/dash', auth, (req, res) => {
-const users = loadUsers();
-const user = users.find(u => u.username === req.session.user.username);
-if (!user) return res.redirect('/login');
-const xpNesse = (user.level || 1) * 50;
-const xpPorcentagem = Math.min(Math.round(((user.xp || 0) / xpNesse) * 100), 100);
+app.get('/dash', (req, res) => res.redirect('/'));
 
-const ranking = [...users]
-.sort((a, b) => (b.xp || 0) - (a.xp || 0))
-.slice(0, 7)
-.map(u => ({ name: u.username, xp: u.xp || 0, foto: u.foto || FOTO_PADRAO, adm: u.adm || false, premium: u.premium || false }));
-
-res.render('dash', {
-title: 'Dashboard · YOUZ API',
-user: safeUser(user),
-stats: { totalRequests: user.totalRequests || 0, level: user.level || 1, xp: user.xp || 0, xpNesse, xpPorcentagem, key: user.key },
-ranking
-});
-});
+app.get('/playground', (req, res) => res.render('playground', { title: 'Playground · YOUZ API', user: req.session.user || null }));
+app.get('/monitor', (req, res) => res.render('monitor', { title: 'Monitor · YOUZ API', user: req.session.user || null }));
 
 app.get('/perfil', auth, (req, res) => {
 const user = loadUsers().find(u => u.username === req.session.user.username);
