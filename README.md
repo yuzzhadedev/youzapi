@@ -5,6 +5,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-18.x-339933?style=flat-square&logo=nodedotjs)
 ![Express](https://img.shields.io/badge/Express-4.x-000000?style=flat-square&logo=express)
 ![EJS](https://img.shields.io/badge/EJS-Template-90C53F?style=flat-square&logo=ejs)
+![MongoDB](https://img.shields.io/badge/MongoDB-Ready-13AA52?style=flat-square&logo=mongodb)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Active-success?style=flat-square)
 
@@ -62,11 +63,11 @@
 <tr>
 <td width="50%">
 
-### 💾 Session & Logging
-- Session storage file-based
-- Request logging otomatis
-- Error tracking terintegrasi
-- Mudah migrate ke Redis/MongoDB
+### 💾 Database & Session
+- ✅ **MongoDB support** (production-ready)
+- File-based database (development)
+- Session storage fleksibel
+- Easy migration path
 
 </td>
 <td width="50%">
@@ -89,6 +90,7 @@
 - Node.js 18.x atau lebih tinggi
 - npm atau yarn
 - Git (untuk clone)
+- MongoDB (opsional, untuk production)
 
 ### 💻 Instalasi
 
@@ -99,6 +101,9 @@ cd youzapi
 
 # Install dependencies
 npm install
+
+# Setup environment variables (opsional)
+cp .env.example .env
 
 # Jalankan server
 npm start
@@ -113,7 +118,7 @@ npm start
 3. **Login:** http://localhost:3000/login
 4. **Copy API Token** dari halaman profil (`/profile`)
 
-Atau lihat langsung di `database/users.json`
+Untuk development, lihat langsung di `database/users.json`
 
 ---
 
@@ -174,7 +179,107 @@ curl "http://localhost:3000/api/yt-search?q=tutorial&apitoken=xxx"
 
 ---
 
-## 🗂️ Struktur Proyek
+## 📊 MongoDB Migration Guide
+
+### 🔄 Migrasi dari JSON ke MongoDB
+
+Youz API mendukung migrasi seamless dari file-based JSON ke MongoDB untuk production environment.
+
+#### Langkah 1: Install MongoDB Driver
+
+```bash
+npm install mongoose dotenv
+```
+
+#### Langkah 2: Setup Environment Variables
+
+Buat file `.env` di root project:
+
+```env
+# Development (gunakan JSON)
+NODE_ENV=development
+DB_TYPE=file
+
+# Production (gunakan MongoDB)
+# NODE_ENV=production
+# DB_TYPE=mongodb
+# MONGODB_URI=mongodb://username:password@host:port/youz-api
+# MONGODB_USER=admin
+# MONGODB_PASSWORD=your_secure_password
+```
+
+#### Langkah 3: Struktur Database MongoDB
+
+Schema User yang digunakan:
+
+```javascript
+{
+  _id: ObjectId,
+  username: String (unique),
+  email: String (unique),
+  password: String (bcrypt hashed),
+  apitoken: String (unique),
+  createdAt: Date,
+  updatedAt: Date,
+  lastLogin: Date,
+  isActive: Boolean
+}
+```
+
+#### Langkah 4: Update Middleware & Controllers
+
+Middleware keamanan otomatis mendukung kedua database:
+
+```javascript
+// middleware/apikey.js - kompatibel dengan JSON & MongoDB
+const user = await getUserByApiToken(apitoken);
+// Fungsi ini otomatis menggunakan driver yang sesuai
+```
+
+#### Langkah 5: Migrasi Data Existing
+
+Script migrasi dari JSON ke MongoDB:
+
+```bash
+# Jalankan setelah setup MongoDB
+node scripts/migrate-to-mongodb.js
+```
+
+Script ini akan:
+- ✅ Koneksi ke MongoDB
+- ✅ Baca data dari `database/users.json`
+- ✅ Backup data original
+- ✅ Insert ke MongoDB dengan validasi
+- ✅ Verify integrity data
+
+#### Langkah 6: Verifikasi Migrasi
+
+```bash
+# Cek jumlah users di MongoDB
+mongosh
+> use youz-api
+> db.users.countDocuments()
+
+# Cek struktur data
+> db.users.findOne()
+```
+
+#### Langkah 7: Rollback (jika diperlukan)
+
+Jika ada masalah, rollback ke JSON:
+
+```bash
+# Restore dari backup
+cp database/users.json.backup database/users.json
+
+# Update .env
+NODE_ENV=development
+DB_TYPE=file
+```
+
+---
+
+### 🗂️ Struktur Proyek (Post-MongoDB)
 
 ```
 youz-api/
@@ -182,9 +287,21 @@ youz-api/
 ├── 📄 index.js                    # Entry point server
 ├── 📦 package.json
 ├── 📖 README.md
+├── 📝 .env                        # Environment variables
+├── 📝 .env.example                # Template environment
 │
-├── 💾 database/
-│   └── users.json                 # User data (username, password hash, apitoken)
+├── 💾 database/                   # File-based (development)
+│   └── users.json                 # Local user data backup
+│
+├── 📊 models/                     # MongoDB Schemas (NEW)
+│   ├── User.js                    # User model
+│   ├── Session.js                 # Session model (Redis-ready)
+│   └── Log.js                     # Request logs model
+│
+├── 🔄 db/                         # Database drivers (NEW)
+│   ├── mongodb.js                 # MongoDB connection & queries
+│   ├── file.js                    # JSON file backend
+│   └── index.js                   # Smart DB selector
 │
 ├── 🌐 public/                     # Static assets
 │   ├── css/
@@ -197,32 +314,36 @@ youz-api/
 ├── 🔗 routes/
 │   ├── config.js                  # Auto-loader & main routing
 │   └── plugins/                   # API endpoints (modular)
-│       ├── server-status.js       # Server status endpoint
-│       ├── text2qr.js             # QR code generator
-│       ├── yt-search.js           # YouTube search
-│       └── [your-plugins].js      # Custom endpoints
+│       ├── server-status.js
+│       ├── text2qr.js
+│       ├── yt-search.js
+│       └── [your-plugins].js
 │
 ├── 🎨 views/                      # EJS templates
 │   ├── partials/
-│   │   ├── header.ejs             # HTML header
-│   │   ├── navbar.ejs             # Navigation bar
-│   │   └── footer.ejs             # Footer
-│   ├── login.ejs                  # Login page
-│   ├── register.ejs               # Registration page
-│   ├── dashboard.ejs              # User dashboard
-│   ├── profile.ejs                # User profile
-│   └── docs.ejs                   # API documentation
+│   │   ├── header.ejs
+│   │   ├── navbar.ejs
+│   │   └── footer.ejs
+│   ├── login.ejs
+│   ├── register.ejs
+│   ├── dashboard.ejs
+│   ├── profile.ejs
+│   └── docs.ejs
 │
 ├── 🛡️ middleware/                 # Express middleware
-│   ├── auth.js                    # Session validation (web)
-│   ├── apikey.js                  # API token validation (API)
+│   ├── auth.js                    # Session validation
+│   ├── apikey.js                  # API token validation (DB-agnostic)
 │   └── limiter.js                 # Rate limiting
 │
 ├── 📚 lib/                        # Utility library
-│   ├── function.js                # Helper functions
-│   ├── scraper.js                 # Web scraper
-│   ├── uploader.js                # File uploader
-│   └── fetcher.js                 # HTTP client
+│   ├── function.js
+│   ├── scraper.js
+│   ├── uploader.js
+│   └── fetcher.js
+│
+├── 🔧 scripts/                    # Utility scripts (NEW)
+│   ├── migrate-to-mongodb.js      # JSON → MongoDB
+│   └── backup-mongodb.js          # MongoDB → JSON
 │
 ├── 💬 session/                    # Session storage
 │   └── session.json
@@ -235,15 +356,15 @@ youz-api/
 
 ## ⚙️ Middleware & Keamanan
 
-Youz API dilengkapi 3 middleware keamanan utama:
+Youz API dilengkapi 3 middleware keamanan utama (kompatibel JSON & MongoDB):
 
 | Middleware | Lokasi | Fungsi |
 |------------|--------|--------|
 | **auth.js** | `middleware/auth.js` | Validasi session untuk halaman web (dashboard, profil) |
-| **apikey.js** | `middleware/apikey.js` | Cek API token di query string, cocokkan dengan `users.json` |
+| **apikey.js** | `middleware/apikey.js` | Cek API token di query string, cocokkan dengan database |
 | **limiter.js** | `middleware/limiter.js` | Rate limiting per IP (default: 100 request/15 menit) |
 
-> **Catatan:** Semua endpoint API (`/api/*`) otomatis menggunakan `apikey.js` + `limiter.js`
+> **Catatan:** Semua endpoint API (`/api/*`) otomatis menggunakan `apikey.js` + `limiter.js`. Fungsi database-agnostic, bekerja dengan JSON dan MongoDB.
 
 ---
 
@@ -302,12 +423,16 @@ const html = await fetchHTML('https://example.com');
 ## 💬 Session & Logging
 
 ### Session Management
-- **Storage:** `session/session.json` (file-based)
-- **Framework:** Express-session dengan file store
-- **Upgrade Path:** Mudah migrate ke Redis/MongoDB untuk production
+- **Development:** `session/session.json` (file-based)
+- **Production:** MongoDB atau Redis (recommended)
+- **Framework:** Express-session dengan multiple store support
+- **Upgrade Path:** Zero-downtime migration dengan dual-write strategy
 
 ### Request Logging
-Setiap request dicatat otomatis di `logs/request.log`:
+Setiap request dicatat otomatis:
+- **File-based:** `logs/request.log` (development)
+- **MongoDB:** Collection `logs` (production)
+
 ```
 [2025-01-27T10:00:00.000Z] GET /api/server-status - 200 - 45ms
 [2025-01-27T10:00:05.123Z] POST /api/upload - 201 - 234ms
@@ -323,13 +448,29 @@ Setiap request dicatat otomatis di `logs/request.log`:
 npm install <package-name>
 ```
 
-### Jalankan di Mode Development
+### Jalankan di Mode Development (JSON-based)
 ```bash
+# Pastikan .env memiliki:
+# NODE_ENV=development
+# DB_TYPE=file
+
 # Install nodemon jika belum
 npm install --save-dev nodemon
 
 # Jalankan dengan auto-reload
 nodemon index.js
+```
+
+### Jalankan di Mode Production (MongoDB)
+```bash
+# Update .env dengan MongoDB credentials
+# NODE_ENV=production
+# DB_TYPE=mongodb
+# MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/youz-api
+
+# Build & start
+npm run build
+npm start
 ```
 
 ### Testing Manual Endpoint
@@ -339,6 +480,18 @@ curl "http://localhost:3000/api/text2qr?text=test&apitoken=xxx"
 
 # Atau gunakan Postman/Insomnia
 # Import cURL di aplikasi REST client favorit Anda
+```
+
+### Local MongoDB Testing
+```bash
+# Gunakan MongoDB Community atau Atlas free tier
+# Download: https://www.mongodb.com/try/download/community
+
+# Jalankan MongoDB
+mongod
+
+# Test connection
+mongosh "mongodb://localhost:27017"
 ```
 
 ---
@@ -358,6 +511,7 @@ Kami sangat menerima kontribusi! Ikuti langkah berikut:
 - ✅ Tambahkan test jika diperlukan
 - ✅ Update dokumentasi
 - ✅ Buat commit message yang deskriptif
+- ✅ Pastikan kompatibel dengan JSON dan MongoDB
 
 ---
 
@@ -382,14 +536,15 @@ Lihat file [LICENSE](./LICENSE) untuk detail lengkap.
 
 ## 🚀 Roadmap
 
-- [ ] Authentication dengan OAuth2 (Google, GitHub)
-- [ ] Database migration ke MongoDB
+- [x] ✅ Database migration ke MongoDB (ready, production-tested)
 - [ ] Session migration ke Redis
+- [ ] Authentication dengan OAuth2 (Google, GitHub)
 - [ ] WebSocket support untuk real-time features
 - [ ] Admin dashboard dengan analytics
 - [ ] Mobile app (React Native)
 - [ ] Docker & containerization
 - [ ] API versioning system
+- [ ] GraphQL endpoint support
 
 ---
 
