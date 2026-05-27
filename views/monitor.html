@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitor — API SIPUTZX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#c0392b;--red2:#e74c3c;
+  --bg:#111111;--bg2:#181818;--bg3:#1e1e1e;
+  --border:rgba(255,255,255,0.07);
+  --text:#ffffff;--muted:#888888;--dim:#555555;
+  --green:#2ecc71;--yellow:#f39c12;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;text-decoration:none;color:var(--text);}
+.logo-sq{width:20px;height:20px;background:var(--red);flex-shrink:0;}
+.nav-menu-btn{width:44px;height:44px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;transition:background .2s;}
+.nav-menu-btn:hover{background:var(--bg3);}
+.nav-menu-btn span{display:block;width:20px;height:2px;background:var(--text);}
+
+/* PAGE CONTENT */
+.content{position:relative;z-index:1;padding:0 16px 0;max-width:680px;margin:0 auto;}
+
+/* SYSTEM MONITOR HERO CARD */
+.monitor-hero{
+  margin:24px 0 0;
+  border:1px solid var(--border);
+  background:var(--bg2);
+  padding:28px 24px 24px;
+}
+.monitor-hero-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(32px,9vw,48px);
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-bottom:16px;
+  line-height:1;
+}
+.monitor-hero-title span{color:var(--red);}
+.live-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  padding:6px 14px;
+  font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;
+}
+.live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+
+/* STATS GRID */
+.stats-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--border);
+  margin:1px 0 0;
+}
+.stat-card{
+  background:var(--bg2);padding:20px 20px 18px;
+  border:none;
+  transition:background .15s;
+}
+.stat-card:hover{background:var(--bg3);}
+.stat-card-label{
+  font-family:'Space Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+  margin-bottom:10px;
+}
+.stat-card-val{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(28px,8vw,38px);font-weight:900;
+  line-height:1;letter-spacing:-.5px;margin-bottom:4px;
+}
+.stat-card-val.white{color:var(--text);}
+.stat-card-val.yellow{color:var(--yellow);}
+.stat-card-val.red{color:var(--red2);}
+.stat-card-val.green{color:var(--green);}
+.stat-card-sub{font-size:12px;color:var(--dim);font-style:italic;}
+
+/* SECTION WRAPPER */
+.section{
+  margin:1px 0 0;background:var(--bg2);
+  border:1px solid var(--border);border-top:none;
+  padding:20px 20px;
+}
+.section-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+}
+.section-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+}
+.section-tag{
+  font-family:'Space Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:2px;color:var(--dim);
+}
+.section-tag.green{color:var(--green);}
+
+/* NODE STATUS */
+.node-row{
+  display:flex;align-items:center;gap:12px;
+  border:1px solid var(--border);background:var(--bg3);
+  padding:12px 14px;
+}
+.node-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.node-dot.healthy{background:var(--green);box-shadow:0 0 8px rgba(46,204,113,.5);animation:pulse 1.5s infinite;}
+.node-dot.degraded{background:var(--yellow);}
+.node-dot.down{background:var(--red2);}
+.node-name{
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;
+  letter-spacing:1px;flex:1;
+}
+.node-meta{
+  display:flex;align-items:center;gap:16px;
+  font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);
+}
+.node-meta .healthy{color:var(--green);}
+
+/* LIVE TRAFFIC SIGNALS */
+.traffic-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--border);
+}
+.traffic-box{
+  background:var(--bg3);padding:14px 16px;
+}
+.traffic-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.traffic-val{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(22px,7vw,30px);font-weight:900;
+}
+
+/* STATUS CODE ROW */
+.code-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--border);
+}
+.code-box{background:var(--bg3);padding:14px 16px;}
+.code-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.code-val{
+  font-family:'Space Mono',monospace;
+  font-size:clamp(12px,3.5vw,15px);font-weight:700;
+  line-height:1.5;
+}
+
+/* REALTIME REQUESTS */
+.req-item{
+  border:1px solid var(--border);background:var(--bg3);
+  padding:14px 16px;margin-bottom:1px;
+  transition:background .15s;cursor:pointer;
+}
+.req-item:hover{background:#222;}
+.req-item:last-child{margin-bottom:0;}
+.req-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.req-ago{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;}
+.req-status{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  padding:2px 6px;
+}
+.req-status.s200{color:var(--green);}
+.req-status.s4xx{color:var(--yellow);}
+.req-status.s5xx{color:var(--red2);}
+.req-path{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  margin-bottom:8px;word-break:break-all;
+}
+.req-meta{
+  display:flex;flex-wrap:wrap;gap:12px;
+  font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);
+}
+.req-meta span b{color:var(--text);}
+
+/* CHART */
+.chart-wrap{position:relative;width:100%;}
+.chart-canvas{width:100%;display:block;}
+.chart-labels{
+  display:flex;justify-content:space-between;
+  font-family:'Space Mono',monospace;font-size:9px;color:var(--dim);
+  letter-spacing:.5px;margin-top:6px;padding:0 2px;
+}
+
+/* ERROR RATE BAR */
+.rate-row{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;
+}
+.rate-label{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;}
+.rate-label.green{color:var(--green);}
+.rate-label.yellow{color:var(--yellow);}
+.rate-pct{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;}
+.rate-pct.green{color:var(--green);}
+.rate-pct.yellow{color:var(--yellow);}
+.rate-bar-wrap{height:6px;background:var(--bg3);display:flex;gap:2px;margin-bottom:0;}
+.rate-bar-fill{height:100%;transition:width .6s ease;}
+.rate-bar-fill.green{background:var(--green);}
+.rate-bar-fill.yellow{background:var(--yellow);}
+
+/* TOP ENDPOINTS TABLE */
+.ep-table{width:100%;border-collapse:collapse;}
+.ep-table thead tr{border-bottom:1px solid var(--border);}
+.ep-table th{
+  font-family:'Space Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;color:var(--dim);
+  padding:8px 8px;text-align:left;
+}
+.ep-table th:last-child{text-align:right;}
+.ep-table tbody tr{
+  border-bottom:1px solid rgba(255,255,255,.04);
+  cursor:pointer;transition:background .12s;
+}
+.ep-table tbody tr:hover{background:rgba(255,255,255,.03);}
+.ep-table td{
+  font-family:'Space Mono',monospace;font-size:11px;
+  padding:12px 8px;color:var(--muted);
+}
+.ep-table td.num{color:var(--dim);font-size:10px;}
+.ep-table td.path{color:var(--text);font-size:11px;word-break:break-all;}
+.ep-table td.req{font-weight:700;color:var(--text);}
+.ep-table td.sr{font-weight:700;text-align:right;}
+.ep-table td.sr.high{color:var(--green);}
+.ep-table td.sr.mid{color:var(--yellow);}
+.ep-table td.sr.low{color:var(--red2);}
+
+.table-pagination{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 8px;border-top:1px solid var(--border);
+  margin-top:0;
+}
+.page-info{font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1px;}
+.page-btns{display:flex;gap:8px;}
+.page-btn{
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;
+  padding:6px 14px;border:1px solid var(--border);background:var(--bg3);
+  color:var(--muted);cursor:pointer;transition:background .15s,color .15s,border-color .15s;
+}
+.page-btn:hover{background:var(--red);border-color:var(--red);color:#fff;}
+.page-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* ======================== FOOTER (sama persis dengan index.html) ======================== */
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48px 24px 32px;margin-top:0;}
+.footer-brand{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.footer-status{display:inline-flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;color:#2ecc71;margin-bottom:16px;}
+.footer-tagline{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:32px;max-width:300px;}
+.social-row{display:flex;gap:1px;flex-wrap:wrap;margin-bottom:40px;}
+.social-btn{width:48px;height:48px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,border-color .2s;text-decoration:none;color:var(--muted);}
+.social-btn:hover{background:var(--bg3);border-color:var(--red);color:var(--text);}
+.social-btn svg{width:18px;height:18px;}
+.footer-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:40px;}
+.footer-col-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:16px;}
+.footer-col a{display:block;font-size:14px;color:var(--muted);text-decoration:none;margin-bottom:10px;transition:color .15s;}
+.footer-col a:hover{color:var(--text);}
+.footer-col a.has-dot{display:flex;align-items:center;gap:8px;}
+.footer-col a.has-dot::after{content:'■';font-size:8px;color:#2ecc71;}
+.footer-bottom{border-top:1px solid var(--border);padding-top:24px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;}
+.footer-copy{font-family:'Space Mono',monospace;font-size:11px;color:var(--dim);}
+.footer-links{display:flex;gap:16px;align-items:center;}
+.footer-links a{font-size:12px;color:var(--dim);text-decoration:none;transition:color .15s;}
+.footer-links a:hover{color:var(--text);}
+
+/* MENU OVERLAY */
+.menu-overlay{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.menu-overlay.open{transform:translateX(0);}
+.menu-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;border-bottom:1px solid var(--border);}
+.menu-logo{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;color:var(--muted);}
+.menu-close{width:44px;height:44px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text);transition:background .2s;}
+.menu-close:hover{background:var(--red);}
+.menu-links{flex:1;display:flex;flex-direction:column;justify-content:center;padding:32px 32px;gap:4px;}
+.menu-link{font-family:'Barlow Condensed',sans-serif;font-size:clamp(48px,14vw,72px);font-weight:900;text-transform:uppercase;color:var(--dim);text-decoration:none;line-height:1;transition:color .15s;display:block;}
+.menu-link:hover,.menu-link.active{color:var(--text);}
+.menu-divider{height:1px;background:var(--border);margin:16px 0;}
+.menu-secondary{display:flex;flex-direction:column;gap:4px;}
+.menu-sec-link{font-family:'Barlow Condensed',sans-serif;font-size:clamp(24px,7vw,36px);font-weight:700;text-transform:uppercase;color:var(--dim);text-decoration:none;line-height:1.2;transition:color .15s;}
+.menu-sec-link:hover{color:var(--text);}
+.menu-bottom{padding:24px 32px;border-top:1px solid var(--border);}
+.btn-join{display:block;width:100%;background:var(--red);color:#fff;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:18px;transition:background .2s;}
+.btn-join:hover{background:var(--red2);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-sq"></div>
+    API SIPUTZX
+  </a>
+  <button class="nav-menu-btn" onclick="openMenu()" aria-label="Menu">
+    <span></span><span></span>
+  </button>
+</nav>
+
+<div class="content">
+
+  <!-- HERO -->
+  <div class="monitor-hero">
+    <div class="monitor-hero-title">SYSTEM <span>MONITOR</span></div>
+    <div class="live-badge"><span class="live-dot"></span> LIVE</div>
+  </div>
+
+  <!-- STATS GRID -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card-label">TOTAL REQUESTS</div>
+      <div class="stat-card-val white" id="totalReq">2.970.689</div>
+      <div class="stat-card-sub">Realtime</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">TOTAL ERRORS</div>
+      <div class="stat-card-val yellow" id="totalErr">300.467</div>
+      <div class="stat-card-sub">5xx dominant</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">TOTAL ATTACKS</div>
+      <div class="stat-card-val red" id="totalAtk">1.029.672</div>
+      <div class="stat-card-sub">Guard layer</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">SUCCESS RATE</div>
+      <div class="stat-card-val yellow" id="successRate">88.9%</div>
+      <div class="stat-card-sub">Response quality</div>
+    </div>
+  </div>
+
+  <!-- NODE STATUS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">NODE STATUS</span>
+      <span class="section-tag green">1/1 HEALTHY</span>
+    </div>
+    <div class="node-row">
+      <div class="node-dot healthy"></div>
+      <span class="node-name">LOCAL-NODE</span>
+      <div class="node-meta">
+        <span id="nodeLatency">7ms</span>
+        <span>conn <span id="nodeConn">0</span></span>
+        <span class="healthy">healthy</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVE TRAFFIC SIGNALS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">LIVE TRAFFIC SIGNALS</span>
+      <span class="section-tag green">LIVE</span>
+    </div>
+    <div class="traffic-grid">
+      <div class="traffic-box">
+        <div class="traffic-label">UPTIME</div>
+        <div class="traffic-val" id="uptime">23h</div>
+      </div>
+      <div class="traffic-box">
+        <div class="traffic-label">ACTIVE CONNS</div>
+        <div class="traffic-val" id="activeConn">0</div>
+      </div>
+      <div class="traffic-box" style="margin-top:1px;">
+        <div class="traffic-label">RECENT AVG LATENCY</div>
+        <div class="traffic-val" id="avgLatency">1319.1ms</div>
+      </div>
+      <div class="traffic-box" style="margin-top:1px;">
+        <div class="traffic-label">FAILOVER RATE</div>
+        <div class="traffic-val" id="failover">2.7%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS CODE BREAKDOWN -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">STATUS BREAKDOWN</span>
+      <span class="section-tag">LIVE</span>
+    </div>
+    <div class="code-grid">
+      <div class="code-box">
+        <div class="code-label">2XX / 4XX / 5XX</div>
+        <div class="code-val">
+          <span style="color:var(--green);">1645681</span> /
+          <span style="color:var(--yellow);">978342</span> /
+          <span style="color:var(--red2);">179304</span>
+        </div>
+      </div>
+      <div class="code-box">
+        <div class="code-label">AVG NODE FAIL</div>
+        <div class="code-val" style="font-size:clamp(18px,5vw,24px);color:var(--yellow);font-family:'Barlow Condensed',sans-serif;font-weight:900;">17.01%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REQUEST HISTORY CHART -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">REQUEST HISTORY</span>
+      <span class="section-tag">DAILY</span>
+    </div>
+    <div class="chart-wrap">
+      <canvas class="chart-canvas" id="reqChart" height="160"></canvas>
+    </div>
+    <div class="chart-labels" id="reqLabels"></div>
+  </div>
+
+  <!-- ATTACK HISTORY CHART -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">ATTACK HISTORY</span>
+      <span class="section-tag">DAILY</span>
+    </div>
+    <div class="chart-wrap">
+      <canvas class="chart-canvas" id="atkChart" height="160"></canvas>
+    </div>
+    <div class="chart-labels" id="atkLabels"></div>
+  </div>
+
+  <!-- ERROR RATE OVERVIEW -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">ERROR RATE OVERVIEW</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="rate-row">
+        <span class="rate-label green">SUCCESS</span>
+        <span class="rate-pct green">88.9%</span>
+      </div>
+      <div class="rate-row">
+        <span class="rate-label yellow">ERRORS</span>
+        <span class="rate-pct yellow">11.1%</span>
+      </div>
+      <div class="rate-bar-wrap">
+        <div class="rate-bar-fill green" style="width:88.9%;"></div>
+        <div class="rate-bar-fill yellow" style="width:11.1%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAST 5 REALTIME REQUESTS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">LAST 5 REALTIME REQUESTS</span>
+      <span class="section-tag">IP MASKED</span>
+    </div>
+    <div id="realtimeList"></div>
+  </div>
+
+  <!-- TOP ENDPOINTS -->
+  <div class="section" style="padding-bottom:0;">
+    <div class="section-head" style="padding-bottom:0;">
+      <span class="section-title">TOP ENDPOINTS</span>
+      <span class="section-tag">CLICK ROW FOR LIVE DETAIL</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="ep-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ENDPOINT</th>
+            <th>REQ</th>
+            <th>SR%</th>
+          </tr>
+        </thead>
+        <tbody id="epTableBody"></tbody>
+      </table>
+    </div>
+    <div class="table-pagination">
+      <span class="page-info" id="pageInfo">PAGE 1/83</span>
+      <div class="page-btns">
+        <button class="page-btn" id="prevBtn" onclick="changePage(-1)" disabled>PREV 5</button>
+        <button class="page-btn" id="nextBtn" onclick="changePage(1)">NEXT 5</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- FOOTER — SAMA PERSIS DENGAN INDEX.HTML -->
+<footer>
+  <div class="footer-brand">API SIPUTZX</div>
+  <div class="footer-status">
+    <span class="live-dot" style="width:7px;height:7px;"></span>
+    ONLINE
+  </div>
+  <p class="footer-tagline">Membangun ekosistem developer yang lebih cepat, terbuka, dan inklusif.</p>
+
+  <div class="social-row">
+    <a href="#" class="social-btn" aria-label="GitHub">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+    </a>
+    <a href="#" class="social-btn" aria-label="Telegram">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+    </a>
+    <a href="#" class="social-btn" aria-label="Discord">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
+    </a>
+    <a href="#" class="social-btn" aria-label="WhatsApp">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+    <a href="#" class="social-btn" aria-label="Forum">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+    </a>
+  </div>
+
+  <div class="footer-cols">
+    <div class="footer-col">
+      <div class="footer-col-title">EXPLORE</div>
+      <a href="index.html">Home</a>
+      <a href="playground.html">Playground</a>
+      <a href="monitor.html">Monitor</a>
+      <a href="#" class="has-dot">STATUS</a>
+      <a href="#">GITHUB</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">COMMUNITY</div>
+      <a href="#">Telegram</a>
+      <a href="#">Discord</a>
+      <a href="#">WhatsApp Group</a>
+      <a href="#">WhatsApp Channel</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 API SIPUTZX.</span>
+    <div class="footer-links">
+      <span style="display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:10px;color:#2ecc71;letter-spacing:1px;">
+        <span class="live-dot" style="width:6px;height:6px;"></span>ALL SYSTEMS OPERATIONAL
+      </span>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<!-- MENU OVERLAY -->
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-top">
+    <div class="menu-logo"><div class="logo-sq"></div> MENU</div>
+    <button class="menu-close" onclick="closeMenu()">✕</button>
+  </div>
+  <div class="menu-links">
+    <a href="index.html" class="menu-link">HOME</a>
+    <a href="playground.html" class="menu-link">PLAYGROUND</a>
+    <a href="monitor.html" class="menu-link active">MONITOR</a>
+    <div class="menu-divider"></div>
+    <div class="menu-secondary">
+      <a href="#" class="menu-sec-link">TERMS</a>
+      <a href="#" class="menu-sec-link">PRIVACY</a>
+    </div>
+  </div>
+  <div class="menu-bottom">
+    <a href="#" class="btn-join">JOIN COMMUNITY</a>
+  </div>
+</div>
+
+<script>
+/* ---- MENU ---- */
+function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
+function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');}
+
+/* ---- CHART HELPER (pure canvas, no deps) ---- */
+function drawBarChart(canvasId, data, color, maxOverride){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.offsetWidth;
+  const H = 160;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const max = maxOverride || Math.max(...data.map(d=>d.val)) * 1.15;
+  const padL=40, padR=8, padT=10, padB=28;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const barW = (chartW / data.length) * 0.6;
+  const gap = (chartW / data.length) * 0.4;
+
+  // Grid lines + Y labels
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  ctx.font = `700 9px 'Space Mono', monospace`;
+  ctx.fillStyle = '#555';
+  ctx.textAlign = 'right';
+  for(let i=0;i<=4;i++){
+    const y = padT + chartH - (i/4)*chartH;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W-padR, y); ctx.stroke();
+    const label = formatK((max*(i/4)));
+    ctx.fillText(label, padL-4, y+3);
+  }
+
+  // Bars
+  data.forEach((d, i) => {
+    const barH = (d.val / max) * chartH;
+    const x = padL + i * (chartW / data.length) + gap/2;
+    const y = padT + chartH - barH;
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, barW, barH);
+  });
+
+  // X labels
+  ctx.fillStyle = '#555';
+  ctx.textAlign = 'center';
+  ctx.font = `700 9px 'Space Mono', monospace`;
+  data.forEach((d, i) => {
+    const x = padL + i * (chartW / data.length) + (chartW/data.length)/2;
+    ctx.fillText(d.label, x, H - 6);
+  });
+}
+
+function formatK(n){
+  if(n>=1000) return (n/1000).toFixed(0)+'K';
+  return Math.round(n).toString();
+}
+
+/* ---- DATA ---- */
+const reqData = [
+  {label:'21/5',val:27200},{label:'22/5',val:25100},{label:'23/5',val:24300},
+  {label:'24/5',val:28600},{label:'25/5',val:30100},{label:'26/5',val:26400},{label:'27/5',val:6200}
+];
+const atkData = [
+  {label:'21/5',val:860},{label:'22/5',val:1580},{label:'23/5',val:290},
+  {label:'24/5',val:1310},{label:'25/5',val:840},{label:'26/5',val:1630},{label:'27/5',val:60}
+];
+
+/* ---- REALTIME REQUESTS ---- */
+const realtimeSeed = [
+  {ago:'2s ago', status:200, path:'GET /api/s/pinterest', ip:'47.237.22.x', latency:'1988ms', ua:'python-requests/2.22.0'},
+  {ago:'18s ago', status:200, path:'GET /api/games/tebakkata', ip:'45.251.7.x', latency:'64ms', ua:'Mozilla/5.0'},
+  {ago:'18s ago', status:200, path:'GET /api/s/pinterest', ip:'114.5.146.x', latency:'1921ms', ua:'axios/1.15.0'},
+  {ago:'20s ago', status:200, path:'GET /api/s/pinterest', ip:'47.237.22.x', latency:'4166ms', ua:'python-requests/2.22.0'},
+  {ago:'34s ago', status:200, path:'GET /api/berita/cnbcindonesia', ip:'114.122.20.x', latency:'363ms', ua:'Dart/3.11 (dart:io)'},
+];
+
+function renderRealtime(list){
+  const el = document.getElementById('realtimeList');
+  el.innerHTML = list.map(r => {
+    const sc = r.status >= 500 ? 's5xx' : r.status >= 400 ? 's4xx' : 's200';
+    return `<div class="req-item">
+      <div class="req-top">
+        <span class="req-ago">${r.ago}</span>
+        <span class="req-status ${sc}">${r.status}</span>
+      </div>
+      <div class="req-path">${r.path}</div>
+      <div class="req-meta">
+        <span>IP: <b>${r.ip}</b></span>
+        <span>Latency: <b>${r.latency}</b></span>
+        <span>UA: <b>${r.ua}</b></span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---- TOP ENDPOINTS ---- */
+const allEndpoints = [
+  {path:'/api/berita/cnbcindonesia',req:'4.794',sr:99.9},{path:'/api/m/brat',req:'3.528',sr:99.9},
+  {path:'/api/s/pinterest',req:'2.175',sr:100},{path:'/api/d/facebook',req:'1.250',sr:67.6},
+  {path:'/api/ai/duckai',req:'1.181',sr:78.9},{path:'/api/ai/gemini',req:'1.034',sr:71.2},
+  {path:'/api/games/tebakkata',req:'987',sr:99.5},{path:'/api/d/instagram',req:'876',sr:82.3},
+  {path:'/api/s/google',req:'754',sr:98.1},{path:'/api/d/tiktok',req:'712',sr:88.4},
+  {path:'/api/berita/detik',req:'698',sr:97.8},{path:'/api/ai/deepseekr1',req:'645',sr:91.2},
+  {path:'/api/anime/info',req:'601',sr:99.1},{path:'/api/d/twitter',req:'589',sr:75.4},
+  {path:'/api/tools/qr',req:'544',sr:100},{path:'/api/m/capcut',req:'510',sr:88.9},
+];
+
+let currentPage = 1;
+const perPage = 5;
+const totalPages = Math.ceil(allEndpoints.length / perPage);
+
+function renderTable(page){
+  const start = (page-1)*perPage;
+  const rows = allEndpoints.slice(start, start+perPage);
+  const tbody = document.getElementById('epTableBody');
+  tbody.innerHTML = rows.map((ep, i) => {
+    const rank = start+i+1;
+    const srClass = ep.sr >= 95 ? 'high' : ep.sr >= 75 ? 'mid' : 'low';
+    return `<tr onclick="alert('Live detail: ${ep.path}')">
+      <td class="num">${rank}</td>
+      <td class="path">${ep.path}</td>
+      <td class="req">${ep.req}</td>
+      <td class="sr ${srClass}">${ep.sr}%</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('pageInfo').textContent = `PAGE ${page}/${totalPages}`;
+  document.getElementById('prevBtn').disabled = page <= 1;
+  document.getElementById('nextBtn').disabled = page >= totalPages;
+}
+
+function changePage(dir){
+  currentPage = Math.max(1, Math.min(totalPages, currentPage + dir));
+  renderTable(currentPage);
+}
+
+/* ---- LIVE COUNTER SIMULATION ---- */
+let totalReqCount = 2970689;
+let totalErrCount = 300467;
+let totalAtkCount = 1029672;
+
+function fmt(n){ return n.toLocaleString('id-ID'); }
+
+function tickCounters(){
+  totalReqCount += Math.floor(Math.random()*8)+1;
+  totalErrCount += Math.random() > 0.85 ? 1 : 0;
+  totalAtkCount += Math.random() > 0.92 ? 1 : 0;
+  document.getElementById('totalReq').textContent = fmt(totalReqCount);
+  document.getElementById('totalErr').textContent = fmt(totalErrCount);
+  document.getElementById('totalAtk').textContent = fmt(totalAtkCount);
+  const rate = ((totalReqCount - totalErrCount) / totalReqCount * 100).toFixed(1);
+  document.getElementById('successRate').textContent = rate + '%';
+
+  // rotate realtime list
+  const paths = ['/api/s/pinterest','/api/m/brat','/api/ai/duckai','/api/berita/cnbcindonesia','/api/d/tiktok','/api/games/tebakkata','/api/d/instagram'];
+  const uas = ['python-requests/2.22.0','Mozilla/5.0','axios/1.15.0','Dart/3.11 (dart:io)','okhttp/4.9.0'];
+  const ips = ['47.237.22.x','114.5.146.x','45.251.7.x','114.122.20.x','103.41.7.x'];
+  realtimeSeed.pop();
+  realtimeSeed.unshift({
+    ago: 'just now',
+    status: Math.random() > 0.1 ? 200 : (Math.random() > 0.5 ? 404 : 500),
+    path: 'GET ' + paths[Math.floor(Math.random()*paths.length)],
+    ip: ips[Math.floor(Math.random()*ips.length)],
+    latency: (Math.floor(Math.random()*2000)+50) + 'ms',
+    ua: uas[Math.floor(Math.random()*uas.length)]
+  });
+  renderRealtime(realtimeSeed);
+}
+
+/* ---- INIT ---- */
+function init(){
+  drawBarChart('reqChart', reqData, '#c0392b');
+  drawBarChart('atkChart', atkData, '#922b21');
+  renderRealtime(realtimeSeed);
+  renderTable(1);
+  setInterval(tickCounters, 3000);
+}
+
+window.addEventListener('load', init);
+window.addEventListener('resize', ()=>{
+  drawBarChart('reqChart', reqData, '#c0392b');
+  drawBarChart('atkChart', atkData, '#922b21');
+});
+</script>
+</body>
+</html>

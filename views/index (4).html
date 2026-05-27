@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API SIPUTZX — No Login. No Key. Just Pure API.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --red:#c0392b;
+  --red2:#e74c3c;
+  --bg:#111111;
+  --bg2:#181818;
+  --bg3:#1e1e1e;
+  --border:rgba(255,255,255,0.07);
+  --text:#ffffff;
+  --muted:#888888;
+  --dim:#555555;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* GRID BG */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* NAV */
+nav{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(17,17,17,0.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  height:56px;
+}
+
+.nav-logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-decoration:none;
+  color:var(--text);
+}
+
+.logo-sq{
+  width:20px;
+  height:20px;
+  background:var(--red);
+  flex-shrink:0;
+}
+
+.nav-menu-btn{
+  width:44px;height:44px;
+  border:1px solid var(--border);
+  background:var(--bg2);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:5px;
+  transition:background .2s;
+}
+.nav-menu-btn:hover{background:var(--bg3);}
+.nav-menu-btn span{display:block;width:20px;height:2px;background:var(--text);}
+
+/* HERO */
+.hero{
+  position:relative;
+  z-index:1;
+  padding:80px 24px 60px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+
+.status-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--border);
+  background:var(--bg2);
+  padding:6px 14px;
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2px;
+  color:var(--muted);
+  margin-bottom:40px;
+}
+.status-dot{width:8px;height:8px;background:#2ecc71;border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.hero-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(64px,18vw,110px);
+  font-weight:900;
+  line-height:.9;
+  letter-spacing:-1px;
+  text-transform:uppercase;
+  margin-bottom:32px;
+  animation:fadeUp .7s ease both;
+}
+
+.hero-title .accent{color:var(--red);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+
+.hero-desc{
+  font-size:16px;
+  color:var(--muted);
+  line-height:1.6;
+  max-width:380px;
+  margin-bottom:48px;
+  animation:fadeUp .8s .1s ease both;
+}
+.hero-desc strong{color:var(--text);}
+
+.btn-cta{
+  display:inline-block;
+  background:var(--red);
+  color:#fff;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  text-decoration:none;
+  padding:18px 48px;
+  border:none;
+  cursor:pointer;
+  transition:background .2s,transform .15s;
+  animation:fadeUp .9s .2s ease both;
+}
+.btn-cta:hover{background:var(--red2);transform:translateY(-2px);}
+.btn-cta:active{transform:translateY(0);}
+
+/* STATS GRID */
+.stats{
+  position:relative;z-index:1;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--border);
+}
+
+.stat-box{
+  padding:40px 24px;
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  text-align:center;
+}
+.stat-box:nth-child(even){border-right:none;}
+
+.stat-val{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(36px,10vw,60px);
+  font-weight:900;
+  line-height:1;
+  margin-bottom:6px;
+}
+.stat-label{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--dim);
+}
+
+/* SECTION WHY */
+.section{
+  position:relative;z-index:1;
+  padding:80px 24px;
+  border-top:1px solid var(--border);
+}
+
+.section-bar{
+  width:48px;height:3px;
+  background:var(--red);
+  margin-bottom:24px;
+}
+
+.section-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(40px,10vw,64px);
+  font-weight:900;
+  line-height:.95;
+  text-transform:uppercase;
+  margin-bottom:24px;
+}
+
+.section-desc{
+  font-size:15px;
+  color:var(--muted);
+  line-height:1.7;
+  margin-bottom:12px;
+  max-width:460px;
+}
+
+/* FEATURE CARDS */
+.feat-cards{
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+  background:var(--border);
+  margin-top:48px;
+}
+
+.feat-card{
+  background:var(--bg);
+  padding:28px 24px;
+  border:none;
+}
+
+.feat-icon{
+  font-size:28px;
+  color:var(--red);
+  margin-bottom:16px;
+  display:block;
+}
+
+.feat-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  margin-bottom:16px;
+  border-bottom:1px solid var(--border);
+  padding-bottom:14px;
+}
+
+.feat-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.feat-list li{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.feat-list li::before{
+  content:'';
+  width:6px;height:6px;
+  background:var(--red);
+  flex-shrink:0;
+}
+
+/* ENDPOINT CATALOG */
+.catalog-section{
+  position:relative;z-index:1;
+  padding:80px 0 40px;
+  border-top:1px solid var(--border);
+}
+
+.catalog-heading{
+  text-align:center;
+  padding:0 24px;
+  margin-bottom:40px;
+}
+.catalog-heading h2{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(36px,10vw,56px);
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+.catalog-heading h2 span{
+  background:var(--red);
+  color:#fff;
+  padding:0 10px;
+}
+
+.cat-scroll{
+  display:flex;
+  gap:1px;
+  background:var(--border);
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.cat-scroll::-webkit-scrollbar{display:none;}
+
+.cat-card{
+  flex:0 0 220px;
+  background:var(--bg2);
+  padding:28px 24px;
+  border:none;
+  cursor:pointer;
+  transition:background .15s;
+  text-decoration:none;
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.cat-card:hover{background:var(--bg3);}
+
+.cat-icon-wrap{
+  width:44px;height:44px;
+  border:1px solid var(--border);
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+.cat-icon-wrap svg{width:22px;height:22px;color:var(--muted);}
+
+.cat-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.cat-sub{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+/* Q&A */
+.qa-section{
+  position:relative;z-index:1;
+  padding:80px 24px;
+  border-top:1px solid var(--border);
+}
+
+.qa-heading{
+  text-align:center;
+  margin-bottom:48px;
+}
+.qa-heading h2{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(48px,14vw,80px);
+  font-weight:900;
+}
+.qa-heading h2 .amp{color:var(--red);}
+
+.qa-item{
+  border:1px solid var(--border);
+  margin-bottom:-1px;
+}
+
+.qa-q{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:20px 20px;
+  cursor:pointer;
+  background:var(--bg);
+  transition:background .15s;
+  user-select:none;
+}
+.qa-q:hover{background:var(--bg2);}
+.qa-q.open{background:rgba(192,57,43,0.08);border-left:3px solid var(--red);}
+
+.qa-q-text{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+}
+.qa-chevron{
+  width:28px;height:28px;
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:transform .2s;
+}
+.qa-q.open .qa-chevron{transform:rotate(180deg);border-color:var(--red);}
+.qa-chevron svg{width:14px;height:14px;color:var(--muted);}
+
+.qa-a{
+  display:none;
+  padding:0 20px 20px;
+  font-size:14px;
+  color:var(--muted);
+  line-height:1.7;
+  background:var(--bg);
+}
+.qa-a.open{display:block;}
+
+/* SPONSORS */
+.sponsors{
+  position:relative;z-index:1;
+  padding:60px 24px;
+  border-top:1px solid var(--border);
+}
+
+.sponsors-label{
+  text-align:center;
+  font-size:11px;
+  letter-spacing:3px;
+  color:var(--dim);
+  font-weight:600;
+  margin-bottom:32px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.sponsors-label::before,.sponsors-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.sponsors-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border);
+}
+.sponsor-box{
+  background:var(--bg2);
+  padding:32px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100px;
+}
+.sponsor-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:20px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--muted);
+  text-align:center;
+  line-height:1.3;
+}
+
+/* FOOTER */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);
+  padding:48px 24px 32px;
+}
+
+.footer-brand{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:28px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:8px;
+}
+.footer-status{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1px;
+  color:#2ecc71;
+  margin-bottom:16px;
+}
+.footer-tagline{
+  font-size:14px;
+  color:var(--muted);
+  line-height:1.6;
+  margin-bottom:32px;
+  max-width:300px;
+}
+
+.social-row{
+  display:flex;
+  gap:1px;
+  flex-wrap:wrap;
+  margin-bottom:40px;
+}
+.social-btn{
+  width:48px;height:48px;
+  border:1px solid var(--border);
+  background:var(--bg2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:background .2s,border-color .2s;
+  text-decoration:none;
+  color:var(--muted);
+}
+.social-btn:hover{background:var(--bg3);border-color:var(--red);color:var(--text);}
+.social-btn svg{width:18px;height:18px;}
+
+.footer-cols{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:32px;
+  margin-bottom:40px;
+}
+.footer-col-title{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--dim);
+  margin-bottom:16px;
+}
+.footer-col a{
+  display:block;
+  font-size:14px;
+  color:var(--muted);
+  text-decoration:none;
+  margin-bottom:10px;
+  transition:color .15s;
+}
+.footer-col a:hover{color:var(--text);}
+.footer-col a.has-dot{display:flex;align-items:center;gap:8px;}
+.footer-col a.has-dot::after{content:'■';font-size:8px;color:#2ecc71;}
+
+.footer-bottom{
+  border-top:1px solid var(--border);
+  padding-top:24px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+}
+.footer-copy{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:var(--dim);
+}
+.footer-links{
+  display:flex;
+  gap:16px;
+}
+.footer-links a{
+  font-size:12px;
+  color:var(--dim);
+  text-decoration:none;
+  transition:color .15s;
+}
+.footer-links a:hover{color:var(--text);}
+
+/* MOBILE MENU OVERLAY */
+.menu-overlay{
+  position:fixed;
+  inset:0;
+  background:var(--bg);
+  z-index:200;
+  display:flex;
+  flex-direction:column;
+  transform:translateX(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.menu-overlay.open{transform:translateX(0);}
+
+.menu-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  height:56px;
+  border-bottom:1px solid var(--border);
+}
+.menu-logo{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;font-weight:700;letter-spacing:1px;color:var(--muted);
+}
+.menu-close{
+  width:44px;height:44px;
+  border:1px solid var(--border);
+  background:var(--bg2);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  color:var(--text);
+  transition:background .2s;
+}
+.menu-close:hover{background:var(--red);}
+
+.menu-links{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:32px 32px;
+  gap:4px;
+}
+
+.menu-link{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(48px,14vw,72px);
+  font-weight:900;
+  text-transform:uppercase;
+  color:var(--dim);
+  text-decoration:none;
+  line-height:1;
+  transition:color .15s;
+  display:block;
+}
+.menu-link:hover{color:var(--text);}
+
+.menu-divider{height:1px;background:var(--border);margin:16px 0;}
+
+.menu-secondary{display:flex;flex-direction:column;gap:4px;}
+.menu-sec-link{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(24px,7vw,36px);
+  font-weight:700;
+  text-transform:uppercase;
+  color:var(--dim);
+  text-decoration:none;
+  line-height:1.2;
+  transition:color .15s;
+}
+.menu-sec-link:hover{color:var(--text);}
+
+.menu-bottom{
+  padding:24px 32px;
+  border-top:1px solid var(--border);
+}
+.btn-join{
+  display:block;
+  width:100%;
+  background:var(--red);
+  color:#fff;
+  text-align:center;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  text-decoration:none;
+  padding:18px;
+  transition:background .2s;
+}
+.btn-join:hover{background:var(--red2);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-sq"></div>
+    API SIPUTZX
+  </a>
+  <button class="nav-menu-btn" onclick="openMenu()" aria-label="Menu">
+    <span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="status-pill">
+    <span class="status-dot"></span>
+    SYSTEM OPERATIONAL: V.2.0.0
+  </div>
+  <h1 class="hero-title">
+    NO LOGIN.<br>
+    NO KEY.<br>
+    <span class="accent">JUST PURE API.</span>
+  </h1>
+  <p class="hero-desc">
+    Platform REST API open-public pertama yang menghapus batasan. <strong>Gratis selamanya</strong>, tanpa registrasi, fokus pada kecepatan eksekusi kode Anda.
+  </p>
+  <a href="playground.html" class="btn-cta">GO TO PLAYGROUND</a>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-box">
+    <div class="stat-val">RP 0</div>
+    <div class="stat-label">COST</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-val">∞</div>
+    <div class="stat-label">LIMIT</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-val">NO</div>
+    <div class="stat-label">AUTH</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-val">99%</div>
+    <div class="stat-label">UPTIME</div>
+  </div>
+</div>
+
+<!-- WHY SECTION -->
+<section class="section">
+  <div class="section-bar"></div>
+  <h2 class="section-title">KENAPA HARUS<br>API SIPUTZX?</h2>
+  <p class="section-desc">Di era digital, birokrasi API menghambat inovasi. Kunci API, limitasi harian, dan paywall adalah musuh kreativitas.</p>
+  <p class="section-desc">Kami menghadirkan solusi radikal: Infrastruktur publik yang tangguh, anonim, dan sepenuhnya terbuka untuk siapa saja.</p>
+
+  <div class="feat-cards">
+    <div class="feat-card">
+      <span class="feat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      </span>
+      <div class="feat-title">ANONYMOUS &amp; SECURE</div>
+      <ul class="feat-list">
+        <li>NO LOGS</li>
+        <li>NO TRACKING</li>
+        <li>NO DATA COLLECTION</li>
+      </ul>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </span>
+      <div class="feat-title">GLOBAL NETWORK</div>
+      <ul class="feat-list">
+        <li>LATENCY &lt; 100MS</li>
+        <li>99.9% UPTIME</li>
+        <li>EDGE CACHING</li>
+      </ul>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+      </span>
+      <div class="feat-title">DEVELOPER FIRST</div>
+      <ul class="feat-list">
+        <li>CLEAN JSON RESPONSES</li>
+        <li>OPEN DOCUMENTATION</li>
+        <li>INSTANT ACCESS</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ENDPOINT CATALOG -->
+<section class="catalog-section">
+  <div class="catalog-heading">
+    <h2>ENDPOINT <span>CATALOG</span></h2>
+  </div>
+  <div class="cat-scroll">
+    <a href="playground.html" class="cat-card">
+      <div class="cat-icon-wrap">AI</div>
+      <div class="cat-title">ARTIFICIAL INTELLIGENCE</div>
+      <div class="cat-sub">DuckAI, Blackbox, Claude.</div>
+    </a>
+    <a href="playground.html" class="cat-card">
+      <div class="cat-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      </div>
+      <div class="cat-title">MEDIA DOWNLOADER</div>
+      <div class="cat-sub">TikTok, IG, YouTube, Spotify, Twitter.</div>
+    </a>
+    <a href="playground.html" class="cat-card">
+      <div class="cat-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </div>
+      <div class="cat-title">SEARCH ENGINE</div>
+      <div class="cat-sub">Google, YouTube, Wikipedia.</div>
+    </a>
+    <a href="playground.html" class="cat-card">
+      <div class="cat-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      </div>
+      <div class="cat-title">STALK &amp; INFO</div>
+      <div class="cat-sub">Instagram, GitHub, Steam.</div>
+    </a>
+    <a href="playground.html" class="cat-card">
+      <div class="cat-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <div class="cat-title">ENTERTAINMENT</div>
+      <div class="cat-sub">Anime, Manga, Quotes, Jokes.</div>
+    </a>
+    <a href="playground.html" class="cat-card">
+      <div class="cat-icon-wrap">GM</div>
+      <div class="cat-title">GAMES</div>
+      <div class="cat-sub">MLBB, FF, Valorant stats.</div>
+    </a>
+  </div>
+</section>
+
+<!-- Q&A -->
+<section class="qa-section">
+  <div class="qa-heading">
+    <h2>Q<span class="amp">&amp;</span>A</h2>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q" onclick="toggleQA(this)">
+      <span class="qa-q-text">BENAR-BENAR GRATIS?</span>
+      <div class="qa-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+    </div>
+    <div class="qa-a">Ya, 100% gratis tanpa biaya tersembunyi, tanpa batasan harian, dan tanpa syarat apapun. Kami dibiayai oleh sponsor yang percaya pada ekosistem terbuka.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q" onclick="toggleQA(this)">
+      <span class="qa-q-text">BUTUH API KEY?</span>
+      <div class="qa-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+    </div>
+    <div class="qa-a">Tidak. Cukup panggil endpoint langsung. Tidak perlu registrasi, tidak perlu API key, tidak perlu autentikasi apapun.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q" onclick="toggleQA(this)">
+      <span class="qa-q-text">CARA PAKAI?</span>
+      <div class="qa-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+    </div>
+    <div class="qa-a">Buka Playground, pilih endpoint, masukkan parameter, dan langsung execute. Atau panggil langsung via URL: <code>https://app.siputzx.my.id/api/ai/duckai?q=halo</code></div>
+  </div>
+</section>
+
+<!-- SPONSORS -->
+<section class="sponsors">
+  <div class="sponsors-label">DISPONSORI OLEH</div>
+  <div class="sponsors-grid">
+    <div class="sponsor-box">
+      <div class="sponsor-name">ATLANTIC<br>SERVER</div>
+    </div>
+    <div class="sponsor-box">
+      <div class="sponsor-name" style="color:var(--red);">Bi<span style="color:var(--muted);">Host</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">API SIPUTZX</div>
+  <div class="footer-status">
+    <span class="status-dot"></span>
+    ONLINE
+  </div>
+  <p class="footer-tagline">Membangun ekosistem developer yang lebih cepat, terbuka, dan inklusif.</p>
+
+  <div class="social-row">
+    <a href="#" class="social-btn" aria-label="GitHub">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+    </a>
+    <a href="#" class="social-btn" aria-label="Telegram">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+    </a>
+    <a href="#" class="social-btn" aria-label="Discord">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
+    </a>
+    <a href="#" class="social-btn" aria-label="WhatsApp">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+    <a href="#" class="social-btn" aria-label="Forum">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+    </a>
+  </div>
+
+  <div class="footer-cols">
+    <div class="footer-col">
+      <div class="footer-col-title">EXPLORE</div>
+      <a href="index.html">Home</a>
+      <a href="playground.html">Playground</a>
+      <a href="monitor.html">Monitor</a>
+      <a href="#" class="has-dot">STATUS</a>
+      <a href="#">GITHUB</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">COMMUNITY</div>
+      <a href="#">Telegram</a>
+      <a href="#">Discord</a>
+      <a href="#">WhatsApp Group</a>
+      <a href="#">WhatsApp Channel</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 API SIPUTZX.</span>
+    <div class="footer-links">
+      <span style="display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:10px;color:#2ecc71;letter-spacing:1px;">
+        <span class="status-dot" style="width:6px;height:6px;"></span>ALL SYSTEMS OPERATIONAL
+      </span>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<!-- MENU OVERLAY -->
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-top">
+    <div class="menu-logo"><div class="logo-sq"></div> MENU</div>
+    <button class="menu-close" onclick="closeMenu()">✕</button>
+  </div>
+  <div class="menu-links">
+    <a href="index.html" class="menu-link" onclick="closeMenu()">HOME</a>
+    <a href="playground.html" class="menu-link" onclick="closeMenu()">PLAYGROUND</a>
+    <a href="monitor.html" class="menu-link" onclick="closeMenu()">MONITOR</a>
+    <div class="menu-divider"></div>
+    <div class="menu-secondary">
+      <a href="#" class="menu-sec-link">TERMS</a>
+      <a href="#" class="menu-sec-link">PRIVACY</a>
+    </div>
+  </div>
+  <div class="menu-bottom">
+    <a href="#" class="btn-join">JOIN COMMUNITY</a>
+  </div>
+</div>
+
+<script>
+function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
+function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');}
+function toggleQA(el){
+  const a=el.nextElementSibling;
+  const wasOpen=el.classList.contains('open');
+  document.querySelectorAll('.qa-q.open').forEach(q=>{q.classList.remove('open');q.nextElementSibling.classList.remove('open');});
+  if(!wasOpen){el.classList.add('open');a.classList.add('open');}
+}
+</script>
+</body>
+</html>
