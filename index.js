@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
 const session = require('express-session');
 const flash = require('connect-flash');
 const helmet = require('helmet');
@@ -13,10 +12,10 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const dbP = path.join(__dirname, 'database/users.json');
 const FOTO_PADRAO = 'https://raw.githubusercontent.com/uploader762/dat3/main/uploads/3fae03-1776528467067.jpg';
 
 const { plugins } = require('./routes/config');
+const { getUsers: loadUsers, saveUsers, connectMongo } = require('./lib/user-store');
 plugins(app);
 
 app.set('view engine', 'ejs');
@@ -47,22 +46,6 @@ next();
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 app.use('/api/', limiter);
 
-if (!fs.existsSync(path.join(__dirname, 'database'))) {
-fs.mkdirSync(path.join(__dirname, 'database'), { recursive: true });
-}
-if (!fs.existsSync(dbP)) {
-fs.writeFileSync(dbP, JSON.stringify([], null, 2));
-}
-
-function loadUsers() {
-try {
-return JSON.parse(fs.readFileSync(dbP, 'utf8')) || [];
-} catch { return []; }
-}
-
-function saveUsers(users) {
-fs.writeFileSync(dbP, JSON.stringify(users, null, 2));
-}
 
 function gerarKey(len = 32) {
 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -96,10 +79,10 @@ app.get('/registro', (req, res) => req.session.user ? res.redirect('/perfil') : 
 app.get('/dash', (req, res) => res.redirect('/'));
 
 app.get('/playground', (req, res) => res.render('playground', { title: 'Playground · YOUZ API', user: req.session.user || null }));
-app.get(['/monitor', '/monitor.ejs'], (req, res) => res.render('monitor', { title: 'Monitor · YOUZ API', user: req.session.user || null }));
+app.get('/monitor', (req, res) => res.render('monitor', { title: 'Monitor · YOUZ API', user: req.session.user || null }));
 
-app.get('/perfil', auth, (req, res) => {
-const user = loadUsers().find(u => u.username === req.session.user.username);
+app.get('/perfil', auth, async (req, res) => {
+const user = (await loadUsers()).find(u => u.username === req.session.user.username);
 if (!user) return res.redirect('/login');
 res.render('perfil', {
 title: 'Profil · YOUZ API',
@@ -109,8 +92,8 @@ error_msg: req.flash('error')
 });
 });
 
-app.get('/perfil/editar', auth, (req, res) => {
-const user = loadUsers().find(u => u.username === req.session.user.username);
+app.get('/perfil/editar', auth, async (req, res) => {
+const user = (await loadUsers()).find(u => u.username === req.session.user.username);
 if (!user) return res.redirect('/login');
 res.render('editar-perfil', {
 title: 'Edit Profil · YOUZ API',
@@ -126,7 +109,7 @@ app.post('/api/login', async (req, res) => {
 const { username, password } = req.body;
 if (!username || !password) return res.json({ success: false, message: 'Preencha todos os campos' });
 
-const users = loadUsers();
+const users = await loadUsers();
 const user = users.find(u => u.username === username);
 if (!user || !(await bcrypt.compare(password, user.password))) {
 return res.json({ success: false, message: 'Credenciais inválidas' });
@@ -145,7 +128,7 @@ if (!username) return res.json({ success: false, message: 'Usuário inválido' }
 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.json({ success: false, message: 'E-mail tidak valid' });
 if (password.length < 6) return res.json({ success: false, message: 'Senha muito curta (mín. 6)' });
 
-const users = loadUsers();
+const users = await loadUsers();
 if (users.some(u => u.username === username)) return res.json({ success: false, message: 'Usuário já existe' });
 if (users.some(u => (u.email || '').toLowerCase() === email)) return res.json({ success: false, message: 'E-mail já cadastrado' });
 
@@ -166,14 +149,14 @@ do { key = gerarKey(); } while (users.some(u => u.key === key));
 newUser.key = key;
 
 users.push(newUser);
-saveUsers(users);
+await saveUsers(users);
 req.session.user = safeUser(newUser);
 res.json({ success: true });
 });
 
-app.post('/api/perfil/editar', auth, (req, res) => {
+app.post('/api/perfil/editar', auth, async (req, res) => {
 const { username, foto, capa, key } = req.body;
-const users = loadUsers();
+const users = await loadUsers();
 const idx = users.findIndex(u => u.username === req.session.user.username);
   if (idx === -1) return res.json({ success: false, message: 'Usuário não encontrado' });
 
@@ -188,7 +171,7 @@ if (foto && foto.startsWith('https://')) user.foto = foto.trim();
 if (capa && capa.startsWith('https://')) user.capa = capa.trim();
 if (key && (user.premium || user.adm)) user.key = key.trim();
 
-saveUsers(users);
+await saveUsers(users);
 req.session.user = safeUser(user);
 req.flash('success', 'Perfil atualizado!');
 res.json({ success: true });
@@ -199,5 +182,7 @@ app.use((err, req, res, next) => {
 console.error(err.stack);
 res.status(500).render('500', { title: '500 · Youz API' });
 });
+
+connectMongo().catch((err) => console.warn('[DB] MongoDB tidak aktif:', err.message));
 
 app.listen(PORT, '0.0.0.0', () => console.log(`🚀 http://localhost:${PORT}`));

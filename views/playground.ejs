@@ -712,7 +712,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   <div class="menu-links">
     <a href="/" class="menu-link">HOME</a>
     <a href="/playground" class="menu-link" style="color:var(--text);">PLAYGROUND</a>
-    <a href="/monitor.ejs" class="menu-link">MONITOR</a>
+    <a href="/monitor" class="menu-link">MONITOR</a>
     <div class="menu-divider"></div>
     <div class="menu-secondary">
       <a href="#" class="menu-sec-link">TERMS</a>
@@ -725,7 +725,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 </div>
 
 <script>
-const BASE = 'https://youzapi.example.com';
+const BASE = '';
 let resultCount = 16;
 
 function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
@@ -792,6 +792,26 @@ function copyUrl(btn, path, paramNames){
     setTimeout(()=>{btn.textContent = orig;btn.style.color='';}, 1500);
   });
 }
+
+
+async function sinkronEndpointPlugin(){
+  try{
+    const res = await fetch('/api/plugins/list');
+    const data = await res.json();
+    const available = new Set((data.endpoints || []).map(e => e.rota));
+    document.querySelectorAll('.ep-item').forEach((item)=>{
+      const path = item.querySelector('.ep-path')?.textContent?.trim();
+      if (!path) return;
+      const btn = item.querySelector('.btn-eksekusi');
+      if (!available.has(path)) {
+        item.style.opacity = '0.45';
+        if (btn){ btn.disabled = true; btn.textContent = 'TIDAK TERSEDIA'; }
+      }
+    });
+  } catch(e){ console.warn('Gagal sinkron endpoint plugin:', e.message); }
+}
+
+sinkronEndpointPlugin();
 
 function filterEndpoints(val){
   const q = val.toLowerCase();
