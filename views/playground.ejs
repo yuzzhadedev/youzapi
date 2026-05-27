@@ -311,7 +311,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 <body>
 
 <nav>
-  <a href="index.html" class="nav-logo"><div class="logo-sq"></div>API SIPUTZX</a>
+  <a href="/" class="nav-logo"><div class="logo-sq"></div>API SIPUTZX</a>
   <button class="nav-menu-btn" onclick="openMenu()"><span></span><span></span></button>
 </nav>
 
@@ -325,6 +325,39 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   <div class="search-box">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
     <input type="text" class="search-input" id="searchInput" placeholder="FILTER ENDPOINTS..." oninput="filterEndpoints(this.value)">
+  </div>
+
+
+
+  <!-- PLUGIN GROUPS -->
+  <div class="endpoint-group" data-group="search">
+    <div class="group-header"><span class="group-title">SEARCH</span><span class="group-count">1 ENDPOINT</span></div>
+    <div class="ep-list">
+      <div class="ep-item" data-name="yt search youtube /api/s/youtube">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Cari video YouTube.</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button></div><pre class="result-box"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="endpoint-group" data-group="tools">
+    <div class="group-header"><span class="group-title">TOOLS</span><span class="group-count">1 ENDPOINT</span></div>
+    <div class="ep-list">
+      <div class="ep-item" data-name="qr2text /api/tools/qr2text">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button></div><pre class="result-box"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="endpoint-group" data-group="server">
+    <div class="group-header"><span class="group-title">SERVER</span><span class="group-count">1 ENDPOINT</span></div>
+    <div class="ep-list">
+      <div class="ep-item" data-name="status /api/server/status">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Status server YOUZ API.</p><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button></div><pre class="result-box"></pre></div>
+      </div>
+    </div>
   </div>
 
   <!-- AI GROUP -->
@@ -710,9 +743,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <button class="menu-close" onclick="closeMenu()">✕</button>
   </div>
   <div class="menu-links">
-    <a href="index.html" class="menu-link">HOME</a>
-    <a href="playground.html" class="menu-link" style="color:var(--text);">PLAYGROUND</a>
-    <a href="monitor.html" class="menu-link">MONITOR</a>
+    <a href="/" class="menu-link">HOME</a>
+    <a href="/playground" class="menu-link" style="color:var(--text);">PLAYGROUND</a>
+    <a href="/monitor" class="menu-link">MONITOR</a>
     <div class="menu-divider"></div>
     <div class="menu-secondary">
       <a href="#" class="menu-sec-link">TERMS</a>
@@ -725,7 +758,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 </div>
 
 <script>
-const BASE = 'https://app.siputzx.my.id';
+const BASE = '';
 let resultCount = 16;
 
 function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
@@ -792,6 +825,22 @@ function copyUrl(btn, path, paramNames){
     setTimeout(()=>{btn.textContent = orig;btn.style.color='';}, 1500);
   });
 }
+
+async function sinkronEndpointPlugin(){
+  try{
+    const res = await fetch('/api/plugins/list');
+    const data = await res.json();
+    const available = new Set((data.endpoints || []).map(e => e.rota));
+    document.querySelectorAll('.ep-item').forEach((item)=>{
+      const path = item.querySelector('.ep-path')?.textContent?.trim();
+      if (!path) return;
+      const btn = item.querySelector('.btn-execute');
+      if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';}}
+    });
+  }catch(e){}
+}
+
+sinkronEndpointPlugin();
 
 function filterEndpoints(val){
   const q = val.toLowerCase();
