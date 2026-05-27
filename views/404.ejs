@@ -7,22 +7,144 @@
 <meta property="og:description" content="Modern API platform untuk developer dan bisnis modern.">
 <meta property="og:image" content="https://raw.githubusercontent.com/uploader762/dat3/main/uploads/3fae03-1776528467067.jpg">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="/css/main.css">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-body { align-items: center; justify-content: center; }
-.err-wrap { text-align: center; position: relative; z-index: 1; padding: 20px; }
-.err-code { font-size: 96px; font-weight: 800; letter-spacing: -4px; background: linear-gradient(135deg, var(--accent), #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
-.err-msg { font-size: 16px; color: var(--text-muted); margin: 12px 0 28px; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#c0392b;--red2:#e74c3c;
+  --bg:#111111;--bg2:#181818;
+  --border:rgba(255,255,255,0.07);
+  --text:#f1f5f9;--muted:#888888;--dim:#444444;
+}
+
+body{
+  font-family:'Barlow Condensed',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100dvh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  padding:20px;
+}
+
+/* GRID */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0;
+}
+
+/* BIG NUMBER BG */
+.err-bg-num{
+  position:fixed;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(200px,60vw,400px);
+  font-weight:900;
+  color:rgba(255,255,255,0.02);
+  letter-spacing:-10px;
+  line-height:1;
+  user-select:none;
+  pointer-events:none;
+  z-index:0;
+  top:50%;transform:translateY(-50%);
+}
+
+.err-wrap{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;
+  align-items:center;text-align:center;
+  gap:0;
+  animation:fadeUp .5s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* TOP TAG */
+.err-tag{
+  background:var(--red);
+  padding:6px 16px;
+  font-family:'Space Mono',monospace;
+  font-size:10px;font-weight:700;letter-spacing:2px;color:#fff;
+  margin-bottom:0;
+  align-self:stretch;
+  text-align:left;
+  display:flex;align-items:center;justify-content:space-between;
+}
+
+.err-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-top:none;
+  padding:32px 40px 36px;
+  min-width:280px;
+  display:flex;flex-direction:column;align-items:center;gap:20px;
+}
+
+.err-code{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(80px,22vw,120px);
+  font-weight:900;
+  line-height:.85;
+  color:var(--red);
+  letter-spacing:-2px;
+  text-shadow:0 0 80px rgba(192,57,43,.3);
+}
+
+.err-line{
+  width:48px;height:3px;background:var(--border);
+}
+
+.err-msg{
+  font-family:'Space Mono',monospace;
+  font-size:11px;font-weight:700;
+  color:var(--muted);letter-spacing:2px;text-transform:uppercase;
+  text-align:center;
+}
+
+.err-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--red);color:#fff;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  text-decoration:none;
+  padding:13px 28px;border:none;cursor:pointer;
+  transition:background .2s,transform .1s;
+  margin-top:4px;
+}
+.err-btn:hover{background:var(--red2);}
+.err-btn:active{transform:scale(.97);}
+
+.err-bottom{
+  background:var(--bg2);
+  border:1px solid var(--border);border-top:none;
+  padding:10px 40px;
+  font-family:'Space Mono',monospace;
+  font-size:9px;color:var(--dim);letter-spacing:1px;
+  align-self:stretch;text-align:center;
+}
 </style>
 </head>
 <body>
+
+<div class="err-bg-num">404</div>
+
 <div class="err-wrap">
-  <div class="err-code">404</div>
-  <div class="err-msg">halaman tidak ditemukan</div>
-  <a href="/dash" class="btn btn-primary" style="display:inline-flex;text-decoration:none;">
-    <i class="bi bi-arrow-left"></i> kembali ke beranda
-  </a>
+  <div class="err-tag">
+    <span>ERROR</span>
+    <span>HTTP 404</span>
+  </div>
+
+  <div class="err-card">
+    <div class="err-code">404</div>
+    <div class="err-line"></div>
+    <div class="err-msg">HALAMAN TIDAK DITEMUKAN</div>
+    <a href="/dash" class="err-btn">
+      <i class="bi bi-arrow-left"></i> KEMBALI KE BERANDA
+    </a>
+  </div>
+
+  <div class="err-bottom">// YOUZ API &nbsp;·&nbsp; PAGE NOT FOUND</div>
 </div>
+
 </body>
 </html>

@@ -3,58 +3,95 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title><%= title || 'EDIT PROFIL · YOUZ API' %></title>
+<title><%= title || 'Edit Profil · YOUZ API' %></title>
 <meta property="og:description" content="Modern API platform untuk developer dan bisnis modern.">
 <meta property="og:image" content="https://raw.githubusercontent.com/uploader762/dat3/main/uploads/3fae03-1776528467067.jpg">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="/css/main.css">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-body { overflow: hidden; display: flex; flex-direction: column; }
-
-header {
-  padding: clamp(12px,4vw,16px) clamp(14px,5vw,20px);
-  display: flex; align-items: center; gap: 14px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(8,11,18,0.85);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  flex-shrink: 0; z-index: 50;
-}
-.back-btn {
-  color: var(--text-muted); font-size: 20px;
-  text-decoration: none; display: flex; align-items: center; transition: color 0.2s;
-}
-.back-btn:hover { color: var(--text); }
-.page-title { font-size: clamp(14px,4vw,15px); font-weight: 600; }
-
-.page {
-  flex: 1; overflow-y: auto; overflow-x: hidden;
-  scrollbar-width: none; -webkit-overflow-scrolling: touch;
-}
-.page::-webkit-scrollbar { display: none; }
-
-.inner {
-  max-width: 500px; margin: 0 auto;
-  padding: clamp(14px,4vw,20px) clamp(12px,4vw,16px) clamp(24px,6vw,36px);
-  display: flex; flex-direction: column; gap: clamp(12px,3vw,16px);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#c0392b;--red2:#e74c3c;
+  --bg:#111111;--bg2:#181818;--bg3:#1e1e1e;
+  --border:rgba(255,255,255,0.07);--border-red:rgba(192,57,43,0.3);
+  --text:#f1f5f9;--muted:#888888;--dim:#444444;
+  --success:#2ecc71;--error:#e74c3c;
 }
 
-.preview-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: clamp(14px,4vw,20px); padding: clamp(14px,4vw,18px);
-  display: flex; align-items: center; gap: 14px;
-}
-.preview-av {
-  width: clamp(48px,13vw,60px); height: clamp(48px,13vw,60px);
-  border-radius: clamp(12px,4vw,16px);
-  border: 2px solid rgba(139,92,246,0.35);
-  background-size: cover; background-position: center; flex-shrink: 0;
-  transition: border-color 0.2s;
-}
-.preview-name { font-size: clamp(14px,4vw,16px); font-weight: 600; }
-.preview-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;display:flex;flex-direction:column;height:100dvh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
 
-.fields { display: flex; flex-direction: column; gap: clamp(12px,3vw,14px); }
+header{display:flex;align-items:center;height:52px;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--bg2);position:relative;z-index:50;}
+.back-btn{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-right:1px solid var(--border);color:var(--muted);font-size:18px;text-decoration:none;transition:background .15s,color .15s;flex-shrink:0;}
+.back-btn:hover{background:var(--bg3);color:var(--text);}
+.header-left{display:flex;align-items:center;padding:0 16px;border-right:3px solid var(--red);height:100%;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+
+.page{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;position:relative;z-index:1;}
+.page::-webkit-scrollbar{display:none;}
+
+.inner{max-width:500px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:1px;background:var(--border);}
+
+/* PREVIEW */
+.preview-card{
+  background:var(--bg2);padding:18px 20px;
+  display:flex;align-items:center;gap:14px;
+}
+.preview-av{
+  width:52px;height:52px;
+  background-size:cover;background-position:center;
+  border:2px solid var(--border-red);
+  flex-shrink:0;
+  transition:border-color .2s;
+}
+.preview-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
+.preview-sub{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-top:3px;letter-spacing:1px;}
+
+/* FIELD GROUPS */
+.field-group{background:var(--bg2);padding:18px 20px;display:flex;flex-direction:column;gap:14px;}
+.field-group-title{
+  font-family:'Space Mono',monospace;
+  font-size:9px;font-weight:700;color:var(--dim);
+  letter-spacing:2px;text-transform:uppercase;
+  padding-bottom:10px;border-bottom:1px solid var(--border);
+}
+
+.field{display:flex;flex-direction:column;gap:6px;}
+.field-label{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.field input{
+  font-family:'Barlow',sans-serif;background:var(--bg3);
+  border:1px solid var(--border);border-bottom:2px solid var(--dim);
+  padding:12px 14px;font-size:15px;color:var(--text);outline:none;
+  transition:border-color .2s,background .2s;width:100%;
+}
+.field input:focus{border-color:var(--border);border-bottom-color:var(--red);background:#1a1a1a;}
+.field input::placeholder{color:var(--dim);font-size:13px;}
+.field-hint{font-family:'Space Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.5px;}
+
+/* SAVE BTN */
+.save-section{background:var(--bg2);padding:16px 20px;}
+.btn-save{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:14px;
+  background:var(--red);border:none;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:16px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:#fff;cursor:pointer;
+  transition:background .2s,transform .1s;
+}
+.btn-save:hover{background:var(--red2);}
+.btn-save:active{transform:scale(.98);}
+.btn-save:disabled{opacity:.55;cursor:not-allowed;}
+
+/* TOAST */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--bg2);border:1px solid var(--border);padding:10px 20px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;z-index:200;transition:transform .25s;pointer-events:none;white-space:nowrap;}
+.toast.success{border-left:3px solid var(--success);color:var(--success);}
+.toast.error{border-left:3px solid var(--error);color:var(--error);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+.loading-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -62,65 +99,82 @@ header {
 <div class="toast" id="toast"></div>
 
 <header>
-  <a href="/profil" class="back-btn"><i class="bi bi-arrow-left"></i></a>
-  <span class="page-title">edit profil</span>
+  <a href="/perfil" class="back-btn"><i class="bi bi-arrow-left"></i></a>
+  <div class="header-left">
+    <span class="page-title">EDIT PROFIL</span>
+  </div>
 </header>
 
 <div class="page">
   <div class="inner">
 
+    <!-- PREVIEW -->
     <div class="preview-card">
       <div class="preview-av" id="previewAv" style="background-image:url('<%= user.foto %>');"></div>
       <div>
-        <div class="preview-name"><%= user.username %></div>
-        <div class="preview-sub">pratinjau</div>
+        <div class="preview-name" id="previewName"><%= user.username %></div>
+        <div class="preview-sub">// PRATINJAU PROFIL</div>
       </div>
     </div>
 
-    <div class="fields">
+    <!-- IDENTITY -->
+    <div class="field-group">
+      <div class="field-group-title">// IDENTITAS</div>
+
       <div class="field">
-        <span class="field-label">nama pengguna</span>
-        <input type="text" id="username" value="<%= user.username %>" maxlength="20">
+        <span class="field-label">username</span>
+        <input type="text" id="username" value="<%= user.username %>" maxlength="20" oninput="document.getElementById('previewName').textContent=this.value||'<%= user.username %>'">
+        <span class="field-hint">3–20 karakter, tanpa spasi</span>
       </div>
+
       <div class="field">
-        <span class="field-label">URL foto</span>
-        <input type="url" id="foto" value="<%= user.foto %>" placeholder="https://...">
+        <span class="field-label">url foto profil</span>
+        <input type="url" id="foto" value="<%= user.foto %>" placeholder="https://..." oninput="updateAvPreview(this.value)">
       </div>
+
       <div class="field">
-        <span class="field-label">URL sampul</span>
+        <span class="field-label">url foto sampul</span>
         <input type="url" id="capa" value="<%= user.capa || '' %>" placeholder="https://...">
       </div>
-      <% if (user.premium || user.adm) { %>
-      <div class="field">
-        <span class="field-label">kunci API personalizada</span>
-        <input type="text" id="key" value="<%= user.key %>">
-      </div>
-      <% } %>
     </div>
 
-    <button class="btn btn-primary btn-full" id="saveBtn">
-      <i class="bi bi-check-lg"></i> simpan perubahan
-    </button>
+    <% if (user.premium || user.adm) { %>
+    <!-- API KEY (premium/admin only) -->
+    <div class="field-group">
+      <div class="field-group-title">// API KEY — PREMIUM</div>
+      <div class="field">
+        <span class="field-label">custom api key</span>
+        <input type="text" id="key" value="<%= user.key %>">
+      </div>
+    </div>
+    <% } %>
+
+    <!-- SAVE -->
+    <div class="save-section">
+      <button class="btn-save" id="saveBtn">
+        <i class="bi bi-check-lg"></i> SIMPAN PERUBAHAN
+      </button>
+    </div>
 
   </div>
 </div>
 
 <script>
+function updateAvPreview(url) {
+  if (url) document.getElementById('previewAv').style.backgroundImage = `url('${url}')`;
+}
+
 function showToast(msg, tipo) {
   const t = document.getElementById('toast');
   t.className = 'toast ' + tipo + ' show';
-  t.innerHTML = `<i class="bi bi-${tipo === 'success' ? 'check-circle' : 'x-circle'}"></i> ${msg}`;
+  t.innerHTML = `<i class="bi bi-${tipo === 'success' ? 'check' : 'x-circle'}"></i> ${msg}`;
   setTimeout(() => t.classList.remove('show'), 2500);
 }
-
-document.getElementById('foto').addEventListener('input', e => {
-  if (e.target.value) document.getElementById('previewAv').style.backgroundImage = `url('${e.target.value}')`;
-});
 
 document.getElementById('saveBtn').addEventListener('click', async () => {
   const btn = document.getElementById('saveBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="bi bi-hourglass-split"></i> menyimpan...';
+  btn.innerHTML = '<span class="loading-spinner"></span> MENYIMPAN...';
 
   const payload = {
     username: document.getElementById('username').value.trim(),
@@ -138,17 +192,17 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     });
     const d = await r.json();
     if (d.success) {
-      showToast('profil atualizado!', 'success');
-      setTimeout(() => window.location.href = '/profil', 1000);
+      showToast('PROFIL DIPERBARUI', 'success');
+      setTimeout(() => window.location.href = '/perfil', 1000);
     } else {
-      showToast(d.message || 'gagal menyimpan', 'error');
+      showToast(d.message || 'GAGAL MENYIMPAN', 'error');
       btn.disabled = false;
-      btn.innerHTML = '<i class="bi bi-check-lg"></i> simpan perubahan';
+      btn.innerHTML = '<i class="bi bi-check-lg"></i> SIMPAN PERUBAHAN';
     }
   } catch {
-    showToast('kesalahan koneksi', 'error');
+    showToast('KESALAHAN KONEKSI', 'error');
     btn.disabled = false;
-    btn.innerHTML = '<i class="bi bi-check-lg"></i> simpan perubahan';
+    btn.innerHTML = '<i class="bi bi-check-lg"></i> SIMPAN PERUBAHAN';
   }
 });
 </script>
