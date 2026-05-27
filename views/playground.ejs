@@ -3,63 +3,858 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Playground — YOUZ API</title>
+<title>API Console V2 — API SIPUTZX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body{font-family:Arial,sans-serif;background:#111;color:#fff;margin:0} .wrap{max-width:900px;margin:0 auto;padding:20px}
-.card{border:1px solid #333;background:#1a1a1a;margin:12px 0;padding:14px} input{width:100%;padding:10px;background:#222;border:1px solid #444;color:#fff}
-button{margin-top:8px;padding:10px 14px;background:#c0392b;color:#fff;border:0;cursor:pointer} pre{background:#0f0f0f;padding:10px;white-space:pre-wrap}
-a{color:#fff}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#c0392b;--red2:#e74c3c;
+  --bg:#111111;--bg2:#181818;--bg3:#1e1e1e;
+  --border:rgba(255,255,255,0.07);
+  --text:#ffffff;--muted:#888888;--dim:#555555;
+  --blue:#2980b9;--blue2:#3498db;
+}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;text-decoration:none;color:var(--text);}
+.logo-sq{width:20px;height:20px;background:var(--red);flex-shrink:0;}
+.nav-menu-btn{width:44px;height:44px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;}
+.nav-menu-btn span{display:block;width:20px;height:2px;background:var(--text);}
+
+.page-hero{
+  position:relative;z-index:1;
+  text-align:center;
+  padding:60px 24px 48px;
+  border-bottom:1px solid var(--border);
+}
+.page-hero h1{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(40px,12vw,72px);
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:10px;
+}
+.page-hero h1 .red{color:var(--red);}
+.page-hero h1 .version{
+  font-size:clamp(18px,5vw,28px);
+  color:var(--dim);
+  vertical-align:middle;
+  margin-left:8px;
+}
+.page-hero-sub{
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--dim);
+}
+
+.console-wrap{
+  position:relative;z-index:1;
+  padding:24px 16px 80px;
+  max-width:700px;
+  margin:0 auto;
+}
+
+.search-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border:1px solid var(--border);
+  background:var(--bg2);
+  padding:14px 16px;
+  margin-bottom:32px;
+}
+.search-box svg{width:18px;height:18px;color:var(--dim);flex-shrink:0;}
+.search-input{
+  flex:1;
+  background:none;
+  border:none;
+  outline:none;
+  font-family:'Space Mono',monospace;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.search-input::placeholder{color:var(--dim);}
+
+.endpoint-group{
+  margin-bottom:32px;
+}
+
+.group-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+  padding-bottom:8px;
+  border-left:3px solid var(--red);
+  padding-left:12px;
+}
+.group-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:20px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.group-count{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1px;
+  color:var(--dim);
+}
+
+.ep-list{
+  display:flex;
+  flex-direction:column;
+  gap:-1px;
+  background:var(--border);
+}
+
+.ep-item{
+  background:var(--bg);
+  border:none;
+}
+
+.ep-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 14px;
+  cursor:pointer;
+  transition:background .15s;
+  user-select:none;
+}
+.ep-header:hover{background:var(--bg2);}
+.ep-header.open{background:var(--bg3);}
+
+.ep-method{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+  padding:3px 8px;
+  background:var(--blue);
+  color:#fff;
+  flex-shrink:0;
+  min-width:44px;
+  text-align:center;
+}
+.ep-path{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  flex:1;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.ep-name{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:var(--dim);
+  flex-shrink:0;
+  display:none;
+}
+@media(min-width:480px){.ep-name{display:block;}}
+
+.ep-chevron{
+  width:24px;height:24px;
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:transform .2s;
+}
+.ep-header.open .ep-chevron{transform:rotate(180deg);border-color:var(--red);}
+.ep-chevron svg{width:12px;height:12px;color:var(--muted);}
+
+.ep-body{
+  display:none;
+  padding:0 14px 20px;
+  background:var(--bg);
+  border-top:1px solid var(--border);
+}
+.ep-body.open{display:block;}
+
+.ep-desc{
+  font-size:13px;
+  color:var(--muted);
+  margin:14px 0 16px;
+  line-height:1.6;
+}
+
+.param-label{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2px;
+  color:var(--dim);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.param-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:8px;
+  flex-wrap:wrap;
+}
+
+.param-name{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:var(--red2);
+  padding:6px 8px;
+  background:rgba(192,57,43,0.08);
+  border:1px solid rgba(192,57,43,0.2);
+  white-space:nowrap;
+}
+
+.param-input{
+  flex:1;
+  min-width:0;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  padding:6px 10px;
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:var(--text);
+  outline:none;
+  transition:border-color .15s;
+}
+.param-input:focus{border-color:var(--red);}
+
+.ep-actions{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+
+.btn-execute{
+  background:var(--red);
+  color:#fff;
+  border:none;
+  padding:10px 20px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:background .15s;
+  flex:1;
+}
+.btn-execute:hover{background:var(--red2);}
+.btn-execute.loading{opacity:.6;cursor:not-allowed;}
+
+.btn-copy-url{
+  background:var(--bg2);
+  color:var(--muted);
+  border:1px solid var(--border);
+  padding:10px 14px;
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  cursor:pointer;
+  transition:background .15s,color .15s;
+  white-space:nowrap;
+}
+.btn-copy-url:hover{background:var(--bg3);color:var(--text);}
+
+.result-box{
+  margin-top:14px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-left:3px solid var(--red);
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:#a8ff78;
+  padding:14px;
+  white-space:pre-wrap;
+  word-break:break-all;
+  max-height:300px;
+  overflow-y:auto;
+  line-height:1.7;
+  display:none;
+}
+.result-box.show{display:block;}
+.result-box.error{color:#ff7675;border-left-color:var(--red2);}
+
+/* MENU OVERLAY */
+.menu-overlay{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.menu-overlay.open{transform:translateX(0);}
+.menu-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;border-bottom:1px solid var(--border);}
+.menu-logo{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;color:var(--muted);}
+.menu-close{width:44px;height:44px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text);}
+.menu-close:hover{background:var(--red);}
+.menu-links{flex:1;display:flex;flex-direction:column;justify-content:center;padding:32px;gap:4px;}
+.menu-link{font-family:'Barlow Condensed',sans-serif;font-size:clamp(48px,14vw,72px);font-weight:900;text-transform:uppercase;color:var(--dim);text-decoration:none;line-height:1;transition:color .15s;}
+.menu-link:hover{color:var(--text);}
+.menu-divider{height:1px;background:var(--border);margin:16px 0;}
+.menu-secondary{display:flex;flex-direction:column;gap:4px;}
+.menu-sec-link{font-family:'Barlow Condensed',sans-serif;font-size:clamp(24px,7vw,36px);font-weight:700;text-transform:uppercase;color:var(--dim);text-decoration:none;line-height:1.2;transition:color .15s;}
+.menu-sec-link:hover{color:var(--text);}
+.menu-bottom{padding:24px 32px;border-top:1px solid var(--border);}
+.btn-join{display:block;width:100%;background:var(--red);color:#fff;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:18px;transition:background .2s;}
+.btn-join:hover{background:var(--red2);}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>YOUZ API Playground</h1>
-  <p><a href="/">Home</a> · <a href="/monitor">Monitor</a></p>
 
-  <h2>SEARCH</h2>
-  <div class="card" data-path="/api/s/youtube">
-    <b>YT SEARCH</b><br><small>/api/s/youtube</small>
-    <input data-param="query" placeholder="contoh: musik lofi" />
-    <button onclick="eksekusiApi(this, '/api/s/youtube', ['query'])">EXECUTE</button>
-    <pre></pre>
+<nav>
+  <a href="/" class="nav-logo"><div class="logo-sq"></div>API SIPUTZX</a>
+  <button class="nav-menu-btn" onclick="openMenu()"><span></span><span></span></button>
+</nav>
+
+<div class="page-hero">
+  <h1>API <span class="red">CONSOLE</span><span class="version">V2</span></h1>
+  <p class="page-hero-sub">DIRECT ENDPOINT EXECUTION ENVIRONMENT</p>
+</div>
+
+<div class="console-wrap">
+
+  <div class="search-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" class="search-input" id="searchInput" placeholder="FILTER ENDPOINTS..." oninput="filterEndpoints(this.value)">
   </div>
 
-  <h2>TOOLS</h2>
-  <div class="card" data-path="/api/tools/qr2text">
-    <b>qr2text</b><br><small>/api/tools/qr2text</small>
-    <input data-param="url" placeholder="URL gambar QR" />
-    <button onclick="eksekusiApi(this, '/api/tools/qr2text', ['url'])">EXECUTE</button>
-    <pre></pre>
+
+
+  <!-- PLUGIN GROUPS -->
+  <div class="endpoint-group" data-group="search">
+    <div class="group-header"><span class="group-title">SEARCH</span><span class="group-count">1 ENDPOINT</span></div>
+    <div class="ep-list">
+      <div class="ep-item" data-name="yt search youtube /api/s/youtube">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Cari video YouTube.</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button></div><pre class="result-box"></pre></div>
+      </div>
+    </div>
   </div>
 
-  <h2>SERVER</h2>
-  <div class="card" data-path="/api/server/status">
-    <b>status</b><br><small>/api/server/status</small>
-    <button onclick="eksekusiApi(this, '/api/server/status', [])">EXECUTE</button>
-    <pre></pre>
+  <div class="endpoint-group" data-group="tools">
+    <div class="group-header"><span class="group-title">TOOLS</span><span class="group-count">1 ENDPOINT</span></div>
+    <div class="ep-list">
+      <div class="ep-item" data-name="qr2text /api/tools/qr2text">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button></div><pre class="result-box"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="endpoint-group" data-group="server">
+    <div class="group-header"><span class="group-title">SERVER</span><span class="group-count">1 ENDPOINT</span></div>
+    <div class="ep-list">
+      <div class="ep-item" data-name="status /api/server/status">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Status server YOUZ API.</p><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button></div><pre class="result-box"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI GROUP -->
+  <div class="endpoint-group" data-group="ai">
+    <div class="group-header">
+      <span class="group-title">AI</span>
+      <span class="group-count">11 ENDPOINTS</span>
+    </div>
+    <div class="ep-list">
+
+      <div class="ep-item" data-name="duckai duckai chat ai">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/duckai</span>
+          <span class="ep-name">DUCKAI CHAT</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Chat dengan DuckAI — AI gratis tanpa autentikasi. Mendukung berbagai model bahasa.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">q</span>
+            <input type="text" class="param-input" placeholder="Masukkan pesan..." data-param="q">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/duckai', ['q'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/duckai', ['q'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-0"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="bibleai bible ai chat">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/bibleai</span>
+          <span class="ep-name">BIBLE AI</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Tanya jawab berbasis Al-Kitab menggunakan AI.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">q</span>
+            <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/bibleai', ['q'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/bibleai', ['q'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-1"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="gpt gptoss gpt120b 120b ai">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/gptoss120b</span>
+          <span class="ep-name">GPT OSS 120B</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">GPT Open Source 120B parameter model. Sangat cocok untuk tugas kompleks.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">q</span>
+            <input type="text" class="param-input" placeholder="Masukkan prompt..." data-param="q">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/gptoss120b', ['q'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/gptoss120b', ['q'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-2"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="glm glm47flash flash ai">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/glm47flash</span>
+          <span class="ep-name">GLM 4.7 FLASH</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">GLM-4-Flash model — cepat, ringan, gratis dari ZhipuAI.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">q</span>
+            <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/glm47flash', ['q'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/glm47flash', ['q'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-3"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="phi phi2 ai microsoft">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/phi2</span>
+          <span class="ep-name">PHI-2</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Microsoft Phi-2 — model kecil namun powerful untuk reasoning.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">q</span>
+            <input type="text" class="param-input" placeholder="Masukkan prompt..." data-param="q">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/phi2', ['q'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/phi2', ['q'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-4"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="qwq qwq32b 32b ai">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/qwq32b</span>
+          <span class="ep-name">QWQ 32B</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">QwQ-32B dari Alibaba — model reasoning open-source terbaik saat ini.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">q</span>
+            <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/qwq32b', ['q'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/qwq32b', ['q'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-5"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="deepseek deepseekr1 r1 ai">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/deepseekr1</span>
+          <span class="ep-name">DEEPSEEK R1</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">DeepSeek R1 — model reasoning canggih dengan chain-of-thought.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">q</span>
+            <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/deepseekr1', ['q'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/deepseekr1', ['q'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-6"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="meta metaai meta ai">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/metaai</span>
+          <span class="ep-name">META AI</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Meta AI — asisten AI dari Meta (Facebook) berbasis Llama.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">q</span>
+            <input type="text" class="param-input" placeholder="Masukkan pesan..." data-param="q">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/metaai', ['q'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/metaai', ['q'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-7"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="duckai image generate gambar ai">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/duckaiimage</span>
+          <span class="ep-name">DUCKAI IMAGE GENERATOR</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Generate gambar dari teks menggunakan DuckAI Image Generator.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">prompt</span>
+            <input type="text" class="param-input" placeholder="Deskripsi gambar..." data-param="prompt">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/duckaiimage', ['prompt'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/duckaiimage', ['prompt'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-8"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="gemini google ai beta">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/gemini</span>
+          <span class="ep-name">GEMINI [BETA]</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Google Gemini AI — model multimodal dari Google DeepMind. [BETA]</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">q</span>
+            <input type="text" class="param-input" placeholder="Masukkan prompt..." data-param="q">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/gemini', ['q'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/gemini', ['q'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-9"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="blackbox blackboxai code ai">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/ai/blackbox</span>
+          <span class="ep-name">BLACKBOX AI</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Blackbox AI — AI coding assistant untuk developer.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">q</span>
+            <input type="text" class="param-input" placeholder="Masukkan kode/pertanyaan..." data-param="q">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/ai/blackbox', ['q'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/blackbox', ['q'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-10"></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MEDIA DOWNLOADER GROUP -->
+  <div class="endpoint-group" data-group="downloader">
+    <div class="group-header">
+      <span class="group-title">MEDIA DOWNLOADER</span>
+      <span class="group-count">5 ENDPOINTS</span>
+    </div>
+    <div class="ep-list">
+
+      <div class="ep-item" data-name="tiktok download video">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/dl/tiktok</span>
+          <span class="ep-name">TIKTOK DOWNLOADER</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Download video TikTok tanpa watermark.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">url</span>
+            <input type="text" class="param-input" placeholder="https://tiktok.com/..." data-param="url">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/dl/tiktok', ['url'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/tiktok', ['url'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-11"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="instagram ig reel download">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/dl/instagram</span>
+          <span class="ep-name">INSTAGRAM DOWNLOADER</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Download foto & video dari Instagram Reels, Post, Stories.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">url</span>
+            <input type="text" class="param-input" placeholder="https://instagram.com/..." data-param="url">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/dl/instagram', ['url'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/instagram', ['url'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-12"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="youtube yt video download mp3">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/dl/youtube</span>
+          <span class="ep-name">YOUTUBE DOWNLOADER</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Download video YouTube dalam berbagai resolusi.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">url</span>
+            <input type="text" class="param-input" placeholder="https://youtu.be/..." data-param="url">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/dl/youtube', ['url'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/youtube', ['url'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-13"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="spotify music download mp3">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/dl/spotify</span>
+          <span class="ep-name">SPOTIFY DOWNLOADER</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Download lagu Spotify ke format MP3.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">url</span>
+            <input type="text" class="param-input" placeholder="https://open.spotify.com/..." data-param="url">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/dl/spotify', ['url'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/spotify', ['url'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-14"></pre>
+        </div>
+      </div>
+
+      <div class="ep-item" data-name="twitter x video download">
+        <div class="ep-header" onclick="toggleEp(this)">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/api/dl/twitter</span>
+          <span class="ep-name">TWITTER/X DOWNLOADER</span>
+          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
+        </div>
+        <div class="ep-body">
+          <p class="ep-desc">Download video/GIF dari Twitter/X.</p>
+          <div class="param-label">PARAMETERS</div>
+          <div class="param-row">
+            <span class="param-name">url</span>
+            <input type="text" class="param-input" placeholder="https://x.com/..." data-param="url">
+          </div>
+          <div class="ep-actions">
+            <button class="btn-execute" onclick="executeApi(this, '/api/dl/twitter', ['url'])">▶ EXECUTE</button>
+            <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/twitter', ['url'])">COPY URL</button>
+          </div>
+          <pre class="result-box" id="result-15"></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- MENU OVERLAY -->
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-top">
+    <div class="menu-logo"><div class="logo-sq"></div>MENU</div>
+    <button class="menu-close" onclick="closeMenu()">✕</button>
+  </div>
+  <div class="menu-links">
+    <a href="/" class="menu-link">HOME</a>
+    <a href="/playground" class="menu-link" style="color:var(--text);">PLAYGROUND</a>
+    <a href="/monitor" class="menu-link">MONITOR</a>
+    <div class="menu-divider"></div>
+    <div class="menu-secondary">
+      <a href="#" class="menu-sec-link">TERMS</a>
+      <a href="#" class="menu-sec-link">PRIVACY</a>
+    </div>
+  </div>
+  <div class="menu-bottom">
+    <a href="#" class="btn-join">JOIN COMMUNITY</a>
   </div>
 </div>
+
 <script>
-function params(el,names){const o={}; names.forEach(n=>{const i=el.parentElement.querySelector(`[data-param="${n}"]`); if(i&&i.value.trim())o[n]=i.value.trim()}); return o}
-function qs(o){const q=new URLSearchParams(o).toString(); return q?`?${q}`:''}
-async function eksekusiApi(btn,path,names){
-  const box=btn.parentElement.querySelector('pre');
-  const url=path+qs(params(btn,names));
-  box.textContent='Loading...';
-  try{const r=await fetch(url); const d=await r.json(); box.textContent=JSON.stringify(d,null,2)}catch(e){box.textContent=e.message}
+const BASE = '';
+let resultCount = 16;
+
+function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
+function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');}
+
+function toggleEp(el){
+  const body = el.nextElementSibling;
+  const wasOpen = el.classList.contains('open');
+  document.querySelectorAll('.ep-header.open').forEach(h=>{h.classList.remove('open');h.nextElementSibling.classList.remove('open');});
+  if(!wasOpen){el.classList.add('open');body.classList.add('open');}
 }
 
-async function sinkronPlugin(){
-  try{
-    const r=await fetch('/api/plugins/list');
-    const d=await r.json();
-    const set=new Set((d.endpoints||[]).map(x=>x.rota));
-    document.querySelectorAll('.card[data-path]').forEach(c=>{
-      const p=c.dataset.path; if(!set.has(p)){ c.style.opacity='.45'; c.querySelector('button').disabled=true; c.querySelector('button').textContent='TIDAK TERSEDIA'; }
-    });
-  }catch{}
+function getParams(btn, paramNames){
+  const body = btn.closest('.ep-body');
+  const params = {};
+  paramNames.forEach(name=>{
+    const inp = body.querySelector(`[data-param="${name}"]`);
+    if(inp && inp.value.trim()) params[name] = inp.value.trim();
+  });
+  return params;
 }
-sinkronPlugin();
+
+function buildUrl(path, params){
+  const qs = Object.entries(params).map(([k,v])=>`${k}=${encodeURIComponent(v)}`).join('&');
+  return `${BASE}${path}${qs ? '?'+qs : ''}`;
+}
+
+function getResultBox(btn){
+  const body = btn.closest('.ep-body');
+  return body.querySelector('.result-box');
+}
+
+async function executeApi(btn, path, paramNames){
+  const params = getParams(btn, paramNames);
+  const url = buildUrl(path, params);
+  const resultBox = getResultBox(btn);
+
+  btn.classList.add('loading');
+  btn.textContent = '⏳ LOADING...';
+  resultBox.className = 'result-box show';
+  resultBox.textContent = '// Fetching...';
+
+  try{
+    const res = await fetch(url);
+    const data = await res.json();
+    resultBox.textContent = JSON.stringify(data, null, 2);
+    resultBox.className = 'result-box show';
+  }catch(e){
+    resultBox.textContent = `// Error: ${e.message}\n// URL: ${url}`;
+    resultBox.className = 'result-box show error';
+  }
+
+  btn.classList.remove('loading');
+  btn.textContent = '▶ EXECUTE';
+}
+
+function copyUrl(btn, path, paramNames){
+  const params = getParams(btn, paramNames);
+  const url = buildUrl(path, params);
+  navigator.clipboard.writeText(url).then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = 'COPIED!';
+    btn.style.color = '#2ecc71';
+    setTimeout(()=>{btn.textContent = orig;btn.style.color='';}, 1500);
+  });
+}
+
+async function sinkronEndpointPlugin(){
+  try{
+    const res = await fetch('/api/plugins/list');
+    const data = await res.json();
+    const available = new Set((data.endpoints || []).map(e => e.rota));
+    document.querySelectorAll('.ep-item').forEach((item)=>{
+      const path = item.querySelector('.ep-path')?.textContent?.trim();
+      if (!path) return;
+      const btn = item.querySelector('.btn-execute');
+      if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';}}
+    });
+  }catch(e){}
+}
+
+sinkronEndpointPlugin();
+
+function filterEndpoints(val){
+  const q = val.toLowerCase();
+  document.querySelectorAll('.ep-item').forEach(item=>{
+    const text = item.getAttribute('data-name') || '';
+    const path = item.querySelector('.ep-path')?.textContent || '';
+    const match = (text + path).toLowerCase().includes(q);
+    item.style.display = match ? '' : 'none';
+  });
+  document.querySelectorAll('.endpoint-group').forEach(grp=>{
+    const visible = [...grp.querySelectorAll('.ep-item')].some(i=>i.style.display!=='none');
+    grp.style.display = visible ? '' : 'none';
+  });
+}
 </script>
 </body>
 </html>
