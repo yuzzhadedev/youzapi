@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "id": 1,
+    "username": "Admin",
+    "email": "mutustorereal@gmail.com",
+    "password": "yuzz1239",
+    "key": "ADMIN_YOUZAPI_aP1K9mQz7Ls4Xn2Vb8Hd3Tr6Cy5Wu0Ef",
+    "level": 1,
+    "xp": 0,
+    "totalRequests": 999999,
+    "foto": "https://raw.githubusercontent.com/uploader762/dat3/main/uploads/3fae03-1776528467067.jpg",
+    "capa": "https://raw.githubusercontent.com/uploader762/dat3/main/uploads/3fae03-1776528467067.jpg",
+    "adm": true,
+    "premium": true,
+    "createdAt": "2026-05-28T00:00:00.000Z"
+  }
+]
