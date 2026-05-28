@@ -352,7 +352,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
 <nav>
   <a href="/" class="nav-logo"><div class="logo-sq"></div>API SIPUTZX</a>
-  <button class="nav-menu-btn" onclick="openMenu()"><span></span><span></span></button>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="<%= user ? '/perfil' : '/login' %>" class="badge-btn" style="text-decoration:none;"><%= user ? 'Account' : 'Login' %></a>
+    <button class="nav-menu-btn" onclick="openMenu()"><span></span><span></span></button>
+  </div>
 </nav>
 
 <div class="page-hero">
@@ -439,6 +442,17 @@ function openMenu(){document.getElementById('menuOverlay').classList.add('open')
 function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');}
 function getApiToken(){
   return (document.getElementById('apiToken')?.value || '').trim();
+}
+
+async function syncApiKeyFromAccount(){
+  try{
+    const res=await fetch('/api/account/me');
+    const data=await res.json();
+    if(data?.success && data?.data?.key){
+      const tokenEl=document.getElementById('apiToken');
+      if(tokenEl) tokenEl.value=data.data.key;
+    }
+  }catch(e){}
 }
 
 
@@ -559,6 +573,7 @@ function initLoader(){
   });
 }
 
+syncApiKeyFromAccount();
 initApiKeyVisibility();
 initLoader();
 sinkronEndpointPlugin();

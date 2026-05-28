@@ -10,6 +10,8 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const http = require('http');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const FOTO_PADRAO = 'https://raw.githubusercontent.com/uploader762/dat3/main/uploads/3fae03-1776528467067.jpg';
@@ -124,6 +126,12 @@ error_msg: req.flash('error')
 
 app.get('/logout', (req, res) => req.session.destroy(() => res.redirect('/login')));
 
+app.get('/api/account/me', auth, async (req, res) => {
+  const user = (await loadUsers()).find(u => u.username === req.session.user.username);
+  if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+  return res.json({ success: true, data: { username: user.username, key: user.key, adm: !!user.adm, premium: !!user.premium } });
+});
+
 app.post('/api/login', async (req, res) => {
 const { username, password } = req.body;
 if (!username || !password) return res.json({ success: false, message: 'Preencha todos os campos' });
@@ -210,4 +218,8 @@ connectMongo().catch((err) => {
   console.warn('[DB] MongoDB tidak aktif:', err.message);
 });
 
-app.listen(PORT, '0.0.0.0', () => console.log(`🚀 http://localhost:${PORT}`));
+const server = http.createServer(app);
+const { attachMonitorWebSocket } = require('./routes/monitor-ws');
+attachMonitorWebSocket(server);
+
+server.listen(PORT, '0.0.0.0', () => console.log(`🚀 http://localhost:${PORT}`));

@@ -557,3 +557,24 @@ Lihat file [LICENSE](./LICENSE) untuk detail lengkap.
 **Made with ❤️ by [yuzzhadedev](https://github.com/yuzzhadedev)**
 
 </div>
+
+
+## MongoDB Quick Setup
+
+1. Install MongoDB locally or use MongoDB Atlas.
+2. Copy environment template:
+   - `cp .env.example .env`
+3. Update `.env`:
+   - `DB_TYPE=mongodb`
+   - `MONGODB_URI=mongodb://localhost:27017/youzapi` (or Atlas URI)
+   - `MONGODB_DB=youzapi`
+   - `SESSION_SECRET=<strong-random-secret>`
+4. Start app: `npm start`
+5. Verify connection from startup logs (`[DB]` messages).
+
+### MongoDB Atlas Link
+- Create cluster in Atlas.
+- Add DB user + allow network access (IP allowlist).
+- Use generated URI in `MONGODB_URI`.
+- Recommended URI format:
+  - `mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/youzapi?retryWrites=true&w=majority`

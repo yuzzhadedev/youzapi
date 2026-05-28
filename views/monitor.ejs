@@ -292,9 +292,12 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
     <div class="logo-sq"></div>
     YOUZ API
   </a>
-  <button class="nav-menu-btn" onclick="openMenu()" aria-label="Menu">
-    <span></span><span></span>
-  </button>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="<%= user ? '/perfil' : '/login' %>" class="page-btn" style="text-decoration:none;padding:11px 14px;"><%= user ? 'ACCOUNT' : 'LOGIN' %></a>
+    <button class="nav-menu-btn" onclick="openMenu()" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+  </div>
 </nav>
 
 <div class="content">
@@ -744,6 +747,28 @@ window.addEventListener('resize', ()=>{
   drawBarChart('reqChart', reqData, '#c0392b');
   drawBarChart('atkChart', atkData, '#922b21');
 });
+
+(function initRealtimeWs(){
+  try {
+    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+    const ws = new WebSocket(`${proto}://${location.host}/ws/monitor`);
+    ws.onmessage = (ev) => {
+      const payload = JSON.parse(ev.data || '{}');
+      if (payload.type !== 'monitor') return;
+      const up = Number(payload.uptime || 0);
+      const h = Math.floor(up/3600), m=Math.floor((up%3600)/60), s=Math.floor(up%60);
+      const uptimeEl = document.getElementById('uptime');
+      if (uptimeEl) uptimeEl.textContent = `${h}h ${m}m ${s}s`;
+      const connEl = document.getElementById('activeConn');
+      if (connEl) connEl.textContent = '1';
+    };
+    ws.onclose = () => {
+      const connEl = document.getElementById('activeConn');
+      if (connEl) connEl.textContent = '0';
+    };
+  } catch (e) {}
+})();
+
 </script>
 </body>
 </html>
