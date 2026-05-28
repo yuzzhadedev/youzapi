@@ -54,8 +54,13 @@ function plugins(app) {
       try {
         const p = require(path.join(dir, f));
         if (!p.rota || !p.run) return console.warn(`${f}: kurang 'rota' atau 'run'`);
-        pluginRegistry.push({ file: f, rota: p.rota, method: 'GET' });
-        app.get(p.rota, checkApiKey, p.run);
+        const status = (p.status || 'ready').toLowerCase();
+        pluginRegistry.push({ file: f, rota: p.rota, method: 'GET', status });
+        app.get(p.rota, checkApiKey, (req, res, next) => {
+          if (status === 'maintenance') return apiResponse(res, 503, false, 'Endpoint is under maintenance.');
+          if (status === 'closed') return apiResponse(res, 403, false, 'Endpoint is closed.');
+          return p.run(req, res, next);
+        });
         console.log(`${f} - GET ${p.rota}`);
       } catch (e) {
         console.error(`${f}:`, e.message);

@@ -1,6 +1,7 @@
 const yts = require('yt-search');
 
 module.exports = {
+  status: 'ready',
   rota: '/api/s/youtube',
   async run(req, res) {
     const { query } = req.query || {};

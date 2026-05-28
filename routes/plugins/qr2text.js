@@ -1,4 +1,5 @@
 module.exports = {
+  status: 'closed',
   rota: '/api/tools/qr2text',
 
   async run(req, res) {

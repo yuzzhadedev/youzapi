@@ -1,4 +1,5 @@
 module.exports = {
+  status: 'maintenance',
   rota: '/api/tools/text2qr',
 
   async run(req, res) {
