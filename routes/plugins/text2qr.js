@@ -3,7 +3,7 @@ module.exports = {
   rota: '/api/tools/text2qr',
 
   async run(req, res) {
-    const { text } = req.query;
+    const { text } = req.paramsInput || req.query;
     if (!text) {
       return res.status(400).json({
         success: false,

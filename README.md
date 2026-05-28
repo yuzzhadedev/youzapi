@@ -102,7 +102,8 @@ cd youzapi
 # Install dependencies
 npm install
 
-# Setup environment variables (opsional)
+# Setup environment variables lokal
+# .env tidak di-commit; salin template aman dari .env.example
 cp .env.example .env
 
 # Jalankan server
@@ -110,6 +111,16 @@ npm start
 ```
 
 **Server berjalan di:** `http://localhost:3000`
+
+### ⚙️ Konfigurasi `.env`
+
+File `.env` **tidak di-commit** karena berisi konfigurasi lokal/secret seperti `SESSION_SECRET` dan `MONGODB_URI`. Gunakan `.env.example` sebagai template aman:
+
+```bash
+cp .env.example .env
+```
+
+Default template memakai `DB_TYPE=json`, jadi aplikasi berjalan dengan `database/users.json` tanpa koneksi MongoDB. Jika ingin memakai MongoDB di production/hosting, ubah `.env` lokal menjadi `DB_TYPE=mongodb` lalu isi `MONGODB_URI` dan `MONGODB_DB`.
 
 ### 🔑 Dapatkan API Key
 
@@ -193,19 +204,29 @@ npm install mongoose dotenv
 
 #### Langkah 2: Setup Environment Variables
 
-Buat file `.env` di root project:
+Buat file `.env` di root project dari template:
+
+```bash
+cp .env.example .env
+```
+
+Contoh nilai development aman:
 
 ```env
-# Development (gunakan JSON)
+PORT=3000
 NODE_ENV=development
-DB_TYPE=file
+SESSION_SECRET=change-this-in-production
+DB_TYPE=json
+```
 
-# Production (gunakan MongoDB)
-# NODE_ENV=production
-# DB_TYPE=mongodb
-# MONGODB_URI=mongodb://username:password@host:port/youz-api
-# MONGODB_USER=admin
-# MONGODB_PASSWORD=your_secure_password
+Contoh nilai production MongoDB di `.env` lokal/hosting:
+
+```env
+NODE_ENV=production
+SESSION_SECRET=isi-dengan-secret-panjang-dan-acak
+DB_TYPE=mongodb
+MONGODB_URI=mongodb://username:password@host:port/youz-api
+MONGODB_DB=youzapi
 ```
 
 #### Langkah 3: Struktur Database MongoDB
