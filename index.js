@@ -142,9 +142,11 @@ app.get('/api/account/me', auth, async (req, res) => {
   if (idx === -1) return res.status(404).json({ success: false, message: 'User not found' });
 
   const user = users[idx];
+  const canUseKey = user.premium || user.adm;
   const hadKey = Boolean(user.key && String(user.key).trim());
-  ensureApiKey(user, users);
-  if (!hadKey) await saveUsers(users);
+  if (canUseKey) ensureApiKey(user, users);
+  else user.key = null;
+  if (canUseKey && !hadKey) await saveUsers(users);
 
   req.session.user = safeUser(user);
   return res.json({ success: true, data: { username: user.username, key: user.key, adm: !!user.adm, premium: !!user.premium } });
@@ -159,9 +161,11 @@ const user = users.find(u => u.username === username);
 if (!user || !(await bcrypt.compare(password, user.password))) {
 return res.json({ success: false, message: 'Credenciais inválidas' });
 }
+const canUseKey = user.premium || user.adm;
 const hadKey = Boolean(user.key && String(user.key).trim());
-ensureApiKey(user, users);
-if (!hadKey) await saveUsers(users);
+if (canUseKey) ensureApiKey(user, users);
+else user.key = null;
+if (canUseKey && !hadKey) await saveUsers(users);
 req.session.user = safeUser(user);
 res.json({ success: true });
 });

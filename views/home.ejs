@@ -303,14 +303,10 @@ nav{
   padding:0 10px;
 }
 
-.cat-scroll{
-  display:flex;
-  gap:1px;
-  background:var(--border);
-  overflow-x:auto;
-  scrollbar-width:none;
-}
-.cat-scroll::-webkit-scrollbar{display:none;}
+.catalog-marquee{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--border);}
+.catalog-track{display:flex;align-items:stretch;gap:1px;width:max-content;animation:marquee 45s linear infinite;}
+.catalog-marquee:hover .catalog-track{animation-play-state:paused;}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 .cat-card{
   flex:0 0 220px;
@@ -759,9 +755,10 @@ footer{
 <!-- ENDPOINT CATALOG -->
 <section class="catalog-section">
   <div class="catalog-heading">
-    <h2>ENDPOINT <span>CATALOG</span></h2>
+    <h2>ENDPOINT <span>KATALOG</span></h2>
   </div>
-  <div class="cat-scroll">
+  <div class="catalog-marquee" id="catalogMarquee">
+    <div class="catalog-track" id="catalogTrack">
     <a href="/playground" class="cat-card">
       <div class="cat-icon-wrap">AI</div>
       <div class="cat-title">ARTIFICIAL INTELLIGENCE</div>
@@ -801,6 +798,8 @@ footer{
       <div class="cat-sub">MLBB, FF, Valorant stats.</div>
     </a>
   </div>
+    </div>
+  </div>
 </section>
 
 <!-- Q&A -->
@@ -822,7 +821,7 @@ footer{
       <span class="qa-q-text">BUTUH API KEY?</span>
       <div class="qa-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
     </div>
-    <div class="qa-a">Tidak. Cukup panggil endpoint langsung. Tidak perlu registrasi, tidak perlu API key, tidak perlu autentikasi apapun.</div>
+    <div class="qa-a">Plan Free tidak perlu API key (limit 100 request per IP per hari). API key khusus akun Premium/Admin untuk akses lebih stabil.</div>
   </div>
 
   <div class="qa-item">
@@ -928,12 +927,29 @@ footer{
 <script>
 function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
 function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');}
+
+function formatCatalogLabel(routePath){
+  return routePath.replace(/^\//,'').replace(/\//g,' / ').replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim().toUpperCase();
+}
+async function syncCatalog(){
+  try{
+    const res=await fetch('/api/plugins/list');
+    const json=await res.json();
+    const endpoints=json?.data?.endpoints||[];
+    if(!endpoints.length) return;
+    const cards=endpoints.map((ep)=>`<a href="/playground" class="cat-card"><div class="cat-icon-wrap">API</div><div class="cat-title">${formatCatalogLabel(ep.rota)}</div><div class="cat-sub">STATUS: ${(ep.status||'ready').toUpperCase()}</div></a>`).join('');
+    const track=document.getElementById('catalogTrack');
+    if(track) track.innerHTML = cards + cards;
+  }catch(e){console.error('catalog sync failed',e);}
+}
+
 function toggleQA(el){
   const a=el.nextElementSibling;
   const wasOpen=el.classList.contains('open');
   document.querySelectorAll('.qa-q.open').forEach(q=>{q.classList.remove('open');q.nextElementSibling.classList.remove('open');});
   if(!wasOpen){el.classList.add('open');a.classList.add('open');}
 }
+syncCatalog();
 </script>
 </body>
 </html>
