@@ -72,6 +72,16 @@ const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 return Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
 
+
+
+function ensureApiKey(user, users) {
+  if (user.key && String(user.key).trim()) return user.key;
+  let key;
+  do { key = gerarKey(); } while (users.some((u) => u !== user && u.key === key));
+  user.key = key;
+  return key;
+}
+
 function safeUser(u) {
 return {
 id: u.id,
@@ -127,8 +137,16 @@ error_msg: req.flash('error')
 app.get('/logout', (req, res) => req.session.destroy(() => res.redirect('/login')));
 
 app.get('/api/account/me', auth, async (req, res) => {
-  const user = (await loadUsers()).find(u => u.username === req.session.user.username);
-  if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+  const users = await loadUsers();
+  const idx = users.findIndex(u => u.username === req.session.user.username);
+  if (idx === -1) return res.status(404).json({ success: false, message: 'User not found' });
+
+  const user = users[idx];
+  const hadKey = Boolean(user.key && String(user.key).trim());
+  ensureApiKey(user, users);
+  if (!hadKey) await saveUsers(users);
+
+  req.session.user = safeUser(user);
   return res.json({ success: true, data: { username: user.username, key: user.key, adm: !!user.adm, premium: !!user.premium } });
 });
 
@@ -141,6 +159,8 @@ const user = users.find(u => u.username === username);
 if (!user || !(await bcrypt.compare(password, user.password))) {
 return res.json({ success: false, message: 'Credenciais inválidas' });
 }
+ensureApiKey(user, users);
+await saveUsers(users);
 req.session.user = safeUser(user);
 res.json({ success: true });
 });
