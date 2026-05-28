@@ -13,6 +13,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const FOTO_PADRAO = 'https://raw.githubusercontent.com/uploader762/dat3/main/uploads/3fae03-1776528467067.jpg';
+const DB_TYPE = (process.env.DB_TYPE || '').toLowerCase();
 
 const { plugins } = require('./routes/config');
 const { getUsers: loadUsers, saveUsers, connectMongo } = require('./lib/user-store');
@@ -26,10 +27,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+let sessionStore;
+if (DB_TYPE === 'mongodb' || process.env.MONGODB_URI) {
+  try {
+    if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI belum di-set');
+    const MongoStore = require('connect-mongo');
+    sessionStore = MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      dbName: process.env.MONGODB_DB || 'youzapi',
+      collectionName: 'sessions'
+    });
+  } catch (err) {
+    if (DB_TYPE === 'mongodb') throw err;
+    console.warn('[DB] Session MongoDB tidak aktif:', err.message);
+  }
+}
+
 app.use(session({
 secret: process.env.SESSION_SECRET || 'youz-api-change-this-secret',// bota algo mais seguro
 resave: false,
 saveUninitialized: false,
+store: sessionStore,
 cookie: {
 secure: process.env.NODE_ENV === 'production',
 httpOnly: true,
@@ -79,6 +97,7 @@ app.get('/registro', (req, res) => req.session.user ? res.redirect('/perfil') : 
 app.get('/dash', (req, res) => res.redirect('/'));
 
 app.get('/playground', (req, res) => res.render('playground', { title: 'Playground · YOUZ API', user: req.session.user || null }));
+app.get('/Playground', (req, res) => res.redirect('/playground'));
 app.get('/monitor', (req, res) => res.render('monitor', { title: 'Monitor · YOUZ API', user: req.session.user || null }));
 
 app.get('/perfil', auth, async (req, res) => {
@@ -183,6 +202,12 @@ console.error(err.stack);
 res.status(500).render('500', { title: '500 · Youz API' });
 });
 
-connectMongo().catch((err) => console.warn('[DB] MongoDB tidak aktif:', err.message));
+connectMongo().catch((err) => {
+  if (DB_TYPE === 'mongodb') {
+    console.error('[DB] MongoDB wajib aktif:', err.message);
+    process.exit(1);
+  }
+  console.warn('[DB] MongoDB tidak aktif:', err.message);
+});
 
 app.listen(PORT, '0.0.0.0', () => console.log(`🚀 http://localhost:${PORT}`));

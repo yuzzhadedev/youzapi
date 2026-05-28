@@ -18,6 +18,25 @@
 body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
 
+.pg-loader{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(17,17,17,0.98);backdrop-filter:blur(10px);transition:opacity .35s ease,visibility .35s ease;}
+.pg-loader.hide{opacity:0;visibility:hidden;}
+.pg-loader-inner{width:min(520px,92vw);padding:28px 18px;border:1px solid var(--border);background:rgba(24,24,24,0.7);text-align:center;}
+.pg-loader-mark{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;}
+.pg-loader-ring{width:26px;height:26px;border-radius:999px;border:2px solid rgba(255,255,255,0.12);border-top-color:var(--red);animation:pgspin .85s linear infinite;}
+.pg-loader-sq{width:16px;height:16px;background:var(--red);animation:pgpulse .9s ease-in-out infinite;}
+.pg-loader-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.pg-loader-sub{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+@keyframes pgspin{to{transform:rotate(360deg)}}
+@keyframes pgpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.72);opacity:.65}}
+
+.settings-box{display:flex;flex-direction:column;gap:10px;border:1px solid var(--border);background:var(--bg2);padding:14px 16px;margin-bottom:14px;}
+.settings-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.settings-field{flex:1;min-width:180px;}
+.settings-label{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;}
+.settings-input{width:100%;background:var(--bg);border:1px solid var(--border);padding:12px 12px;font-family:'Space Mono',monospace;font-size:11px;color:var(--text);outline:none;}
+.settings-input::placeholder{color:var(--dim);}
+.settings-color{height:41px;padding:0;border-radius:0;}
+
 nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;}
 .nav-logo{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;text-decoration:none;color:var(--text);}
 .logo-sq{width:20px;height:20px;background:var(--red);flex-shrink:0;}
@@ -310,6 +329,17 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 </head>
 <body>
 
+<div class="pg-loader" id="pgLoader">
+  <div class="pg-loader-inner">
+    <div class="pg-loader-mark">
+      <div class="pg-loader-ring"></div>
+      <div class="pg-loader-sq"></div>
+    </div>
+    <div class="pg-loader-title" id="pgLoaderText">Loading Playground</div>
+    <div class="pg-loader-sub">PREPARING CONSOLE</div>
+  </div>
+</div>
+
 <nav>
   <a href="/" class="nav-logo"><div class="logo-sq"></div>API SIPUTZX</a>
   <button class="nav-menu-btn" onclick="openMenu()"><span></span><span></span></button>
@@ -321,6 +351,23 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 </div>
 
 <div class="console-wrap">
+
+  <div class="settings-box">
+    <div class="settings-row">
+      <div class="settings-field">
+        <div class="settings-label">API TOKEN</div>
+        <input id="apiToken" class="settings-input" type="text" placeholder="tempel apitoken di sini">
+      </div>
+      <div class="settings-field">
+        <div class="settings-label">LOADING TEXT</div>
+        <input id="loadingText" class="settings-input" type="text" placeholder="Loading Playground">
+      </div>
+      <div class="settings-field" style="max-width:200px;">
+        <div class="settings-label">ACCENT</div>
+        <input id="accentColor" class="settings-input settings-color" type="color" value="#c0392b">
+      </div>
+    </div>
+  </div>
 
   <div class="search-box">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
@@ -360,380 +407,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     </div>
   </div>
 
-  <!-- AI GROUP -->
-  <div class="endpoint-group" data-group="ai">
-    <div class="group-header">
-      <span class="group-title">AI</span>
-      <span class="group-count">11 ENDPOINTS</span>
-    </div>
-    <div class="ep-list">
-
-      <div class="ep-item" data-name="duckai duckai chat ai">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/duckai</span>
-          <span class="ep-name">DUCKAI CHAT</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Chat dengan DuckAI — AI gratis tanpa autentikasi. Mendukung berbagai model bahasa.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">q</span>
-            <input type="text" class="param-input" placeholder="Masukkan pesan..." data-param="q">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/duckai', ['q'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/duckai', ['q'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-0"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="bibleai bible ai chat">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/bibleai</span>
-          <span class="ep-name">BIBLE AI</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Tanya jawab berbasis Al-Kitab menggunakan AI.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">q</span>
-            <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/bibleai', ['q'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/bibleai', ['q'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-1"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="gpt gptoss gpt120b 120b ai">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/gptoss120b</span>
-          <span class="ep-name">GPT OSS 120B</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">GPT Open Source 120B parameter model. Sangat cocok untuk tugas kompleks.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">q</span>
-            <input type="text" class="param-input" placeholder="Masukkan prompt..." data-param="q">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/gptoss120b', ['q'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/gptoss120b', ['q'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-2"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="glm glm47flash flash ai">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/glm47flash</span>
-          <span class="ep-name">GLM 4.7 FLASH</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">GLM-4-Flash model — cepat, ringan, gratis dari ZhipuAI.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">q</span>
-            <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/glm47flash', ['q'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/glm47flash', ['q'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-3"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="phi phi2 ai microsoft">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/phi2</span>
-          <span class="ep-name">PHI-2</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Microsoft Phi-2 — model kecil namun powerful untuk reasoning.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">q</span>
-            <input type="text" class="param-input" placeholder="Masukkan prompt..." data-param="q">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/phi2', ['q'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/phi2', ['q'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-4"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="qwq qwq32b 32b ai">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/qwq32b</span>
-          <span class="ep-name">QWQ 32B</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">QwQ-32B dari Alibaba — model reasoning open-source terbaik saat ini.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">q</span>
-            <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/qwq32b', ['q'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/qwq32b', ['q'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-5"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="deepseek deepseekr1 r1 ai">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/deepseekr1</span>
-          <span class="ep-name">DEEPSEEK R1</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">DeepSeek R1 — model reasoning canggih dengan chain-of-thought.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">q</span>
-            <input type="text" class="param-input" placeholder="Masukkan pertanyaan..." data-param="q">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/deepseekr1', ['q'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/deepseekr1', ['q'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-6"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="meta metaai meta ai">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/metaai</span>
-          <span class="ep-name">META AI</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Meta AI — asisten AI dari Meta (Facebook) berbasis Llama.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">q</span>
-            <input type="text" class="param-input" placeholder="Masukkan pesan..." data-param="q">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/metaai', ['q'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/metaai', ['q'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-7"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="duckai image generate gambar ai">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/duckaiimage</span>
-          <span class="ep-name">DUCKAI IMAGE GENERATOR</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Generate gambar dari teks menggunakan DuckAI Image Generator.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">prompt</span>
-            <input type="text" class="param-input" placeholder="Deskripsi gambar..." data-param="prompt">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/duckaiimage', ['prompt'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/duckaiimage', ['prompt'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-8"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="gemini google ai beta">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/gemini</span>
-          <span class="ep-name">GEMINI [BETA]</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Google Gemini AI — model multimodal dari Google DeepMind. [BETA]</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">q</span>
-            <input type="text" class="param-input" placeholder="Masukkan prompt..." data-param="q">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/gemini', ['q'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/gemini', ['q'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-9"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="blackbox blackboxai code ai">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/ai/blackbox</span>
-          <span class="ep-name">BLACKBOX AI</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Blackbox AI — AI coding assistant untuk developer.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">q</span>
-            <input type="text" class="param-input" placeholder="Masukkan kode/pertanyaan..." data-param="q">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/ai/blackbox', ['q'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/ai/blackbox', ['q'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-10"></pre>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- MEDIA DOWNLOADER GROUP -->
-  <div class="endpoint-group" data-group="downloader">
-    <div class="group-header">
-      <span class="group-title">MEDIA DOWNLOADER</span>
-      <span class="group-count">5 ENDPOINTS</span>
-    </div>
-    <div class="ep-list">
-
-      <div class="ep-item" data-name="tiktok download video">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/dl/tiktok</span>
-          <span class="ep-name">TIKTOK DOWNLOADER</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Download video TikTok tanpa watermark.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">url</span>
-            <input type="text" class="param-input" placeholder="https://tiktok.com/..." data-param="url">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/dl/tiktok', ['url'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/tiktok', ['url'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-11"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="instagram ig reel download">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/dl/instagram</span>
-          <span class="ep-name">INSTAGRAM DOWNLOADER</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Download foto & video dari Instagram Reels, Post, Stories.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">url</span>
-            <input type="text" class="param-input" placeholder="https://instagram.com/..." data-param="url">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/dl/instagram', ['url'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/instagram', ['url'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-12"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="youtube yt video download mp3">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/dl/youtube</span>
-          <span class="ep-name">YOUTUBE DOWNLOADER</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Download video YouTube dalam berbagai resolusi.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">url</span>
-            <input type="text" class="param-input" placeholder="https://youtu.be/..." data-param="url">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/dl/youtube', ['url'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/youtube', ['url'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-13"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="spotify music download mp3">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/dl/spotify</span>
-          <span class="ep-name">SPOTIFY DOWNLOADER</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Download lagu Spotify ke format MP3.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">url</span>
-            <input type="text" class="param-input" placeholder="https://open.spotify.com/..." data-param="url">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/dl/spotify', ['url'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/spotify', ['url'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-14"></pre>
-        </div>
-      </div>
-
-      <div class="ep-item" data-name="twitter x video download">
-        <div class="ep-header" onclick="toggleEp(this)">
-          <span class="ep-method">GET</span>
-          <span class="ep-path">/api/dl/twitter</span>
-          <span class="ep-name">TWITTER/X DOWNLOADER</span>
-          <div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
-        </div>
-        <div class="ep-body">
-          <p class="ep-desc">Download video/GIF dari Twitter/X.</p>
-          <div class="param-label">PARAMETERS</div>
-          <div class="param-row">
-            <span class="param-name">url</span>
-            <input type="text" class="param-input" placeholder="https://x.com/..." data-param="url">
-          </div>
-          <div class="ep-actions">
-            <button class="btn-execute" onclick="executeApi(this, '/api/dl/twitter', ['url'])">▶ EXECUTE</button>
-            <button class="btn-copy-url" onclick="copyUrl(this, '/api/dl/twitter', ['url'])">COPY URL</button>
-          </div>
-          <pre class="result-box" id="result-15"></pre>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
 </div>
 
 <!-- MENU OVERLAY -->
@@ -759,10 +432,30 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
 <script>
 const BASE = '';
-let resultCount = 16;
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
 function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');}
+
+function setCookie(name, value, maxAge = COOKIE_MAX_AGE){
+  document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value || '')}; Max-Age=${maxAge}; Path=/; SameSite=Lax`;
+}
+
+function getCookie(name){
+  const parts = (`; ${document.cookie || ''}`).split(`; ${encodeURIComponent(name)}=`);
+  if (parts.length < 2) return '';
+  return decodeURIComponent(parts.pop().split(';').shift() || '');
+}
+
+function applyAccent(color){
+  if (!color) return;
+  document.documentElement.style.setProperty('--red', color);
+  document.documentElement.style.setProperty('--red2', color);
+}
+
+function getApiToken(){
+  return (document.getElementById('apiToken')?.value || '').trim();
+}
 
 function toggleEp(el){
   const body = el.nextElementSibling;
@@ -782,7 +475,10 @@ function getParams(btn, paramNames){
 }
 
 function buildUrl(path, params){
-  const qs = Object.entries(params).map(([k,v])=>`${k}=${encodeURIComponent(v)}`).join('&');
+  const merged = { ...(params || {}) };
+  const token = getApiToken();
+  if (token && merged.apitoken == null) merged.apitoken = token;
+  const qs = Object.entries(merged).map(([k,v])=>`${k}=${encodeURIComponent(v)}`).join('&');
   return `${BASE}${path}${qs ? '?'+qs : ''}`;
 }
 
@@ -840,6 +536,44 @@ async function sinkronEndpointPlugin(){
   }catch(e){}
 }
 
+function initSettings(){
+  const tokenEl = document.getElementById('apiToken');
+  const loadingTextEl = document.getElementById('loadingText');
+  const accentEl = document.getElementById('accentColor');
+  const loaderTextEl = document.getElementById('pgLoaderText');
+
+  const savedToken = getCookie('pg_apitoken');
+  const savedLoadingText = getCookie('pg_loading_text') || 'Loading Playground';
+  const savedAccent = getCookie('pg_accent') || '#c0392b';
+
+  if (tokenEl) tokenEl.value = savedToken;
+  if (loadingTextEl) loadingTextEl.value = savedLoadingText;
+  if (accentEl) accentEl.value = savedAccent;
+  if (loaderTextEl) loaderTextEl.textContent = savedLoadingText;
+  applyAccent(savedAccent);
+
+  tokenEl?.addEventListener('input', () => setCookie('pg_apitoken', tokenEl.value));
+  loadingTextEl?.addEventListener('input', () => {
+    setCookie('pg_loading_text', loadingTextEl.value);
+    if (loaderTextEl) loaderTextEl.textContent = loadingTextEl.value || 'Loading Playground';
+  });
+  accentEl?.addEventListener('input', () => {
+    setCookie('pg_accent', accentEl.value);
+    applyAccent(accentEl.value);
+  });
+}
+
+function initLoader(){
+  const loader = document.getElementById('pgLoader');
+  if (!loader) return;
+  window.addEventListener('load', () => {
+    loader.classList.add('hide');
+    setTimeout(() => loader.remove(), 600);
+  });
+}
+
+initSettings();
+initLoader();
 sinkronEndpointPlugin();
 
 function filterEndpoints(val){
