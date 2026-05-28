@@ -320,9 +320,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 .method-tab,.result-tab{border:1px solid var(--border);background:var(--bg3);color:var(--muted);padding:6px 10px;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;text-transform:uppercase;}
 .method-tab.active,.result-tab.active{color:var(--red2);border-color:var(--red);}
 .auto-hint{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--dim);text-transform:uppercase;align-self:center;}
-.btn-execute{display:none;}
-.btn-copy-url{flex:1;}
-.ep-actions{margin-top:12px;}
+.result-tabs{margin-top:12px;}
 
 .result-box.show{display:block;}
 .result-box.error{color:#ff7675;border-left-color:var(--red2);}
@@ -396,7 +394,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="yt search youtube /api/s/youtube">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><span class="ep-badge" data-status-for="/api/s/youtube">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/s/youtube" data-params="query"><p class="ep-desc">Cari video YouTube.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><span class="auto-hint">AUTO FETCH</span></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/s/youtube" data-params="query"><p class="ep-desc">Cari video YouTube.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div><span class="auto-hint">AUTO FETCH</span></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -407,11 +405,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
       
       <div class="ep-item" data-name="text2qr /api/tools/text2qr">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/tools/text2qr</span><span class="ep-name">TEXT2QR</span><span class="ep-badge" data-status-for="/api/tools/text2qr">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/tools/text2qr" data-params="text"><p class="ep-desc">Generate QR image from plain text.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><span class="auto-hint">AUTO FETCH</span></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/text2qr', ['text'])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/tools/text2qr" data-params="text"><p class="ep-desc">Generate QR image from plain text.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div><span class="auto-hint">AUTO FETCH</span></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/text2qr', ['text'])">COPY URL</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
       </div>
 <div class="ep-item" data-name="qr2text /api/tools/qr2text">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><span class="ep-badge" data-status-for="/api/tools/qr2text">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/tools/qr2text" data-params="url"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><span class="auto-hint">AUTO FETCH</span></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/tools/qr2text" data-params="url"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div><span class="auto-hint">AUTO FETCH</span></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -421,7 +419,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="status /api/server/status">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><span class="ep-badge" data-status-for="/api/server/status">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/server/status" data-params=""><p class="ep-desc">Status server YOUZ API.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><span class="auto-hint">AUTO FETCH</span></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/server/status" data-params=""><p class="ep-desc">Status server YOUZ API.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div><span class="auto-hint">AUTO FETCH</span></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -587,10 +585,14 @@ function renderCachedResult(body){
   resultBox.textContent = getActiveTab(body) === 'curl' ? cache.curl : cache.preview;
 }
 
-async function executeBody(body){
+async function executeBody(body, triggerBtn = null){
   const item = body.closest('.ep-item');
   const status = item?.getAttribute('data-status') || 'ready';
   const resultBox = body.querySelector('.result-box');
+  if(triggerBtn){
+    triggerBtn.classList.add('loading');
+    triggerBtn.textContent = '⏳ LOADING...';
+  }
   if (status === 'maintenance' || status === 'closed') {
     body._playgroundResult = {
       error: true,
@@ -598,6 +600,10 @@ async function executeBody(body){
       curl: '// Curl unavailable because endpoint is not ready'
     };
     renderCachedResult(body);
+    if(triggerBtn){
+      triggerBtn.classList.remove('loading');
+      triggerBtn.textContent = '▶ EXECUTE';
+    }
     return;
   }
 
@@ -609,6 +615,10 @@ async function executeBody(body){
       curl: buildCurl(getSelectedMethod(body), body.dataset.path, getParamsFromBody(body), getApiToken())
     };
     renderCachedResult(body);
+    if(triggerBtn){
+      triggerBtn.classList.remove('loading');
+      triggerBtn.textContent = '▶ EXECUTE';
+    }
     return;
   }
 
@@ -646,6 +656,10 @@ async function executeBody(body){
   }
 
   renderCachedResult(body);
+  if(triggerBtn){
+    triggerBtn.classList.remove('loading');
+    triggerBtn.textContent = '▶ EXECUTE';
+  }
 }
 
 function scheduleAutoFetch(body, wait = 450){
@@ -655,7 +669,7 @@ function scheduleAutoFetch(body, wait = 450){
 }
 
 async function executeApi(btn, path, paramNames){
-  await executeBody(btn.closest('.ep-body'));
+  await executeBody(btn.closest('.ep-body'), btn);
 }
 
 function copyUrl(btn, path, paramNames){
