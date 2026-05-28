@@ -159,8 +159,9 @@ const user = users.find(u => u.username === username);
 if (!user || !(await bcrypt.compare(password, user.password))) {
 return res.json({ success: false, message: 'Credenciais inválidas' });
 }
+const hadKey = Boolean(user.key && String(user.key).trim());
 ensureApiKey(user, users);
-await saveUsers(users);
+if (!hadKey) await saveUsers(users);
 req.session.user = safeUser(user);
 res.json({ success: true });
 });

@@ -1,5 +1,3 @@
-const { plugins: pluginConfig } = require('./config');
-
 function buildPayload(){
   return {
     type: 'monitor',
@@ -12,8 +10,9 @@ function buildPayload(){
 
 function attachMonitorWebSocket(server){
   let WebSocketServer;
+  let WebSocket;
   try {
-    ({ WebSocketServer } = require('ws'));
+    ({ WebSocketServer, WebSocket } = require('ws'));
   } catch {
     console.warn('[WS] package "ws" not installed, realtime monitor disabled.');
     return;
@@ -22,7 +21,7 @@ function attachMonitorWebSocket(server){
   wss.on('connection', (ws)=>{
     ws.send(JSON.stringify(buildPayload()));
     const timer=setInterval(()=>{
-      if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(buildPayload()));
+      if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(buildPayload()));
     },2000);
     ws.on('close',()=>clearInterval(timer));
   });
