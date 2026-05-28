@@ -315,6 +315,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   line-height:1.7;
   display:none;
 }
+.result-tabs{display:flex;gap:8px;margin-top:10px;}
+.result-tab{border:1px solid var(--border);background:var(--bg3);color:var(--muted);padding:6px 10px;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;}
+.result-tab.active{color:var(--red2);border-color:var(--red);}
 .result-box.show{display:block;}
 .result-box.error{color:#ff7675;border-left-color:var(--red2);}
 
@@ -387,17 +390,22 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="yt search youtube /api/s/youtube">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><span class="ep-badge" data-status-for="/api/s/youtube">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Cari video YouTube.</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body"><p class="ep-desc">Cari video YouTube.</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
 
   <div class="endpoint-group" data-group="tools">
-    <div class="group-header"><span class="group-title">TOOLS</span><span class="group-count">1 ENDPOINT</span></div>
+    <div class="group-header"><span class="group-title">TOOLS</span><span class="group-count">2 ENDPOINTS</span></div>
     <div class="ep-list">
-      <div class="ep-item" data-name="qr2text /api/tools/qr2text">
+      
+      <div class="ep-item" data-name="text2qr /api/tools/text2qr">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/text2qr</span><span class="ep-name">TEXT2QR</span><span class="ep-badge" data-status-for="/api/tools/text2qr">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Generate QR image from plain text.</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/text2qr', ['text'])">COPY URL</button></div><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
+      </div>
+<div class="ep-item" data-name="qr2text /api/tools/qr2text">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><span class="ep-badge" data-status-for="/api/tools/qr2text">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -407,12 +415,20 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="status /api/server/status">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><span class="ep-badge" data-status-for="/api/server/status">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Status server YOUZ API.</p><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body"><p class="ep-desc">Status server YOUZ API.</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
 
 </div>
+
+<footer style="position:relative;z-index:1;border-top:1px solid var(--border);padding:40px 24px;margin-top:40px;">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;">YOUZ API</div>
+  <p style="color:var(--muted);margin:8px 0 16px;">Membangun ekosistem developer yang lebih cepat, terbuka, dan inklusif.</p>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;color:var(--dim);font-size:12px;">
+    <a href="/" style="color:inherit;text-decoration:none;">Home</a><a href="/playground" style="color:inherit;text-decoration:none;">Playground</a><a href="/monitor" style="color:inherit;text-decoration:none;">Monitor</a>
+  </div>
+</footer>
 
 <!-- MENU OVERLAY -->
 <div class="menu-overlay" id="menuOverlay">
@@ -542,7 +558,9 @@ async function executeApi(btn, path, paramNames){
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const res = await fetch(url, { headers });
     const data = await res.json();
-    resultBox.textContent = JSON.stringify(data, null, 2);
+    const curl = `curl -X GET "${url}"${token ? ` -H "Authorization: Bearer ${token}"` : ""}`;
+    const activeTab = btn.closest('.ep-body').querySelector('.result-tab.active')?.dataset?.tab || "preview";
+    resultBox.textContent = activeTab === "curl" ? curl : JSON.stringify(data, null, 2);
     resultBox.className = 'result-box show';
   }catch(e){
     resultBox.textContent = `// Error: ${e.message}\n// URL: ${url}`;
@@ -596,6 +614,7 @@ function initLoader(){
 syncApiKeyFromAccount();
 initApiKeyVisibility();
 initLoader();
+document.addEventListener('click',(e)=>{if(!e.target.classList.contains('result-tab'))return;const body=e.target.closest('.ep-body');body.querySelectorAll('.result-tab').forEach(t=>t.classList.remove('active'));e.target.classList.add('active');});
 sinkronEndpointPlugin();
 
 function filterEndpoints(val){

@@ -937,9 +937,17 @@ async function syncCatalog(){
     const json=await res.json();
     const endpoints=json?.data?.endpoints||[];
     if(!endpoints.length) return;
-    const cards=endpoints.map((ep)=>`<a href="/playground" class="cat-card"><div class="cat-icon-wrap">API</div><div class="cat-title">${formatCatalogLabel(ep.rota)}</div><div class="cat-sub">STATUS: ${(ep.status||'ready').toUpperCase()}</div></a>`).join('');
+
+    const byPrefix=(prefix)=>endpoints.filter(ep=>ep.rota.startsWith(prefix)).map(ep=>ep.rota.split('/').pop()).slice(0,3);
+    const groups=[
+      {title:'SEARCH', icon:'SRC', items: byPrefix('/api/s/')},
+      {title:'TOOLS', icon:'TLS', items: byPrefix('/api/tools/')},
+      {title:'SERVER', icon:'SRV', items: byPrefix('/api/server/')}
+    ];
+
+    const cards=groups.map(g=>`<a href="/playground" class="cat-card"><div class="cat-icon-wrap">${g.icon}</div><div class="cat-title">${g.title}</div><div class="cat-sub">${(g.items.length?g.items:['no endpoint']).join(', ')}</div></a>`).join('');
     const track=document.getElementById('catalogTrack');
-    if(track) track.innerHTML = cards + cards;
+    if(track) track.innerHTML = cards + cards + cards;
   }catch(e){console.error('catalog sync failed',e);}
 }
 
