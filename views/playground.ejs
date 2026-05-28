@@ -477,12 +477,19 @@ function initApiKeyVisibility(){
 
 function applyEndpointStatuses(endpoints){
   const m=new Map((endpoints||[]).map(e=>[e.rota,(e.status||'ready').toLowerCase()]));
+  document.querySelectorAll('.ep-item').forEach((item)=>{
+    const path = item.querySelector('.ep-path')?.textContent?.trim();
+    if(!path) return;
+    const st = m.get(path) || 'ready';
+    item.setAttribute('data-status', st);
+  });
   document.querySelectorAll('.ep-badge[data-status-for]').forEach((el)=>{
     const st=m.get(el.getAttribute('data-status-for'))||'ready';
     el.className=`ep-badge ${st}`;
     el.textContent=st.toUpperCase();
   });
 }
+
 
 function toggleEp(el){
   const body = el.nextElementSibling;
@@ -512,6 +519,15 @@ function getResultBox(btn){
 }
 
 async function executeApi(btn, path, paramNames){
+  const item = btn.closest('.ep-item');
+  const status = item?.getAttribute('data-status') || 'ready';
+  if (status === 'maintenance' || status === 'closed') {
+    const resultBox = getResultBox(btn);
+    resultBox.className = 'result-box show error';
+    resultBox.textContent = `// Endpoint ${status.toUpperCase()}\n// Request blocked from Playground`;
+    return;
+  }
+
   const params = getParams(btn, paramNames);
   const url = buildUrl(path, params);
   const resultBox = getResultBox(btn);
@@ -559,7 +575,11 @@ async function sinkronEndpointPlugin(){
       const path = item.querySelector('.ep-path')?.textContent?.trim();
       if (!path) return;
       const btn = item.querySelector('.btn-execute');
-      if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';}}
+      const st = item.getAttribute('data-status') || 'ready';
+      if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';} return; }
+      if (st === 'maintenance') { item.style.opacity='0.6'; if(btn){btn.disabled=true; btn.textContent='MAINTENANCE';} return; }
+      if (st === 'closed') { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='CLOSED';} return; }
+      item.style.opacity=''; if(btn){btn.disabled=false; btn.textContent='▶ EXECUTE';}
     });
   }catch(e){}
 }
