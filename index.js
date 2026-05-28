@@ -18,8 +18,8 @@ const FOTO_PADRAO = 'https://raw.githubusercontent.com/uploader762/dat3/main/upl
 const DB_TYPE = (process.env.DB_TYPE || '').toLowerCase();
 
 const { plugins } = require('./routes/config');
+const { attachMonitorWebSocket, recordRequest } = require('./routes/monitor-ws');
 const { getUsers: loadUsers, saveUsers, connectMongo } = require('./lib/user-store');
-plugins(app);
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -66,6 +66,27 @@ next();
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 app.use('/api/', limiter);
 
+
+app.use((req, res, next) => {
+const start = process.hrtime.bigint();
+res.on('finish', () => {
+  const end = process.hrtime.bigint();
+  const durationMs = Number(end - start) / 1e6;
+  if (!req.path.startsWith('/ws/monitor')) {
+    recordRequest({
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      durationMs,
+      ip: req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || '',
+      ua: req.headers['user-agent'] || ''
+    });
+  }
+});
+next();
+});
+
+plugins(app);
 
 function gerarKey(len = 32) {
 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -244,7 +265,6 @@ connectMongo().catch((err) => {
 });
 
 const server = http.createServer(app);
-const { attachMonitorWebSocket } = require('./routes/monitor-ws');
 attachMonitorWebSocket(server);
 
 server.listen(PORT, '0.0.0.0', () => console.log(`🚀 http://localhost:${PORT}`));

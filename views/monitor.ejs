@@ -385,14 +385,14 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
       <div class="code-box">
         <div class="code-label">2XX / 4XX / 5XX</div>
         <div class="code-val">
-          <span style="color:var(--green);">1645681</span> /
-          <span style="color:var(--yellow);">978342</span> /
-          <span style="color:var(--red2);">179304</span>
+          <span id="status2xx" style="color:var(--green);">0</span> /
+          <span id="status4xx" style="color:var(--yellow);">0</span> /
+          <span id="status5xx" style="color:var(--red2);">0</span>
         </div>
       </div>
       <div class="code-box">
-        <div class="code-label">AVG NODE FAIL</div>
-        <div class="code-val" style="font-size:clamp(18px,5vw,24px);color:var(--yellow);font-family:'Barlow Condensed',sans-serif;font-weight:900;">17.01%</div>
+        <div class="code-label">ERROR RATE</div>
+        <div class="code-val" id="errorRate" style="font-size:clamp(18px,5vw,24px);color:var(--yellow);font-family:'Barlow Condensed',sans-serif;font-weight:900;">0.0%</div>
       </div>
     </div>
   </div>
@@ -624,122 +624,36 @@ function formatK(n){
 
 /* ---- DATA ---- */
 const reqData = [
-  {label:'21/5',val:27200},{label:'22/5',val:25100},{label:'23/5',val:24300},
-  {label:'24/5',val:28600},{label:'25/5',val:30100},{label:'26/5',val:26400},{label:'27/5',val:6200}
+  {label:'-6d',val:0},{label:'-5d',val:0},{label:'-4d',val:0},
+  {label:'-3d',val:0},{label:'-2d',val:0},{label:'-1d',val:0},{label:'now',val:0}
 ];
 const atkData = [
-  {label:'21/5',val:860},{label:'22/5',val:1580},{label:'23/5',val:290},
-  {label:'24/5',val:1310},{label:'25/5',val:840},{label:'26/5',val:1630},{label:'27/5',val:60}
-];
-
-/* ---- REALTIME REQUESTS ---- */
-const realtimeSeed = [
-  {ago:'2s ago', status:200, path:'GET /api/s/pinterest', ip:'47.237.22.x', latency:'1988ms', ua:'python-requests/2.22.0'},
-  {ago:'18s ago', status:200, path:'GET /api/games/tebakkata', ip:'45.251.7.x', latency:'64ms', ua:'Mozilla/5.0'},
-  {ago:'18s ago', status:200, path:'GET /api/s/pinterest', ip:'114.5.146.x', latency:'1921ms', ua:'axios/1.15.0'},
-  {ago:'20s ago', status:200, path:'GET /api/s/pinterest', ip:'47.237.22.x', latency:'4166ms', ua:'python-requests/2.22.0'},
-  {ago:'34s ago', status:200, path:'GET /api/berita/cnbcindonesia', ip:'114.122.20.x', latency:'363ms', ua:'Dart/3.11 (dart:io)'},
+  {label:'-6d',val:0},{label:'-5d',val:0},{label:'-4d',val:0},
+  {label:'-3d',val:0},{label:'-2d',val:0},{label:'-1d',val:0},{label:'now',val:0}
 ];
 
 function renderRealtime(list){
   const el = document.getElementById('realtimeList');
-  el.innerHTML = list.map(r => {
+  el.innerHTML = (list||[]).map(r => {
     const sc = r.status >= 500 ? 's5xx' : r.status >= 400 ? 's4xx' : 's200';
-    return `<div class="req-item">
-      <div class="req-top">
-        <span class="req-ago">${r.ago}</span>
-        <span class="req-status ${sc}">${r.status}</span>
-      </div>
-      <div class="req-path">${r.path}</div>
-      <div class="req-meta">
-        <span>IP: <b>${r.ip}</b></span>
-        <span>Latency: <b>${r.latency}</b></span>
-        <span>UA: <b>${r.ua}</b></span>
-      </div>
-    </div>`;
-  }).join('');
+    const agoSec = Math.max(0, Math.floor((Date.now() - (r.ts || Date.now()))/1000));
+    return `<div class="req-item"><div class="req-top"><span class="req-ago">${agoSec}s ago</span><span class="req-status ${sc}">${r.status}</span></div><div class="req-path">${r.method} ${r.path}</div><div class="req-meta"><span>IP: <b>${r.ip}</b></span><span>Latency: <b>${r.latency}</b></span><span>UA: <b>${r.ua}</b></span></div></div>`;
+  }).join('') || '<div class="req-item"><div class="req-path">Belum ada request realtime.</div></div>';
 }
 
-/* ---- TOP ENDPOINTS ---- */
-const allEndpoints = [
-  {path:'/api/berita/cnbcindonesia',req:'4.794',sr:99.9},{path:'/api/m/brat',req:'3.528',sr:99.9},
-  {path:'/api/s/pinterest',req:'2.175',sr:100},{path:'/api/d/facebook',req:'1.250',sr:67.6},
-  {path:'/api/ai/duckai',req:'1.181',sr:78.9},{path:'/api/ai/gemini',req:'1.034',sr:71.2},
-  {path:'/api/games/tebakkata',req:'987',sr:99.5},{path:'/api/d/instagram',req:'876',sr:82.3},
-  {path:'/api/s/google',req:'754',sr:98.1},{path:'/api/d/tiktok',req:'712',sr:88.4},
-  {path:'/api/berita/detik',req:'698',sr:97.8},{path:'/api/ai/deepseekr1',req:'645',sr:91.2},
-  {path:'/api/anime/info',req:'601',sr:99.1},{path:'/api/d/twitter',req:'589',sr:75.4},
-  {path:'/api/tools/qr',req:'544',sr:100},{path:'/api/m/capcut',req:'510',sr:88.9},
-];
-
-let currentPage = 1;
-const perPage = 5;
-const totalPages = Math.ceil(allEndpoints.length / perPage);
-
-function renderTable(page){
-  const start = (page-1)*perPage;
-  const rows = allEndpoints.slice(start, start+perPage);
+function renderTable(items){
   const tbody = document.getElementById('epTableBody');
-  tbody.innerHTML = rows.map((ep, i) => {
-    const rank = start+i+1;
-    const srClass = ep.sr >= 95 ? 'high' : ep.sr >= 75 ? 'mid' : 'low';
-    return `<tr onclick="alert('Live detail: ${ep.path}')">
-      <td class="num">${rank}</td>
-      <td class="path">${ep.path}</td>
-      <td class="req">${ep.req}</td>
-      <td class="sr ${srClass}">${ep.sr}%</td>
-    </tr>`;
-  }).join('');
-  document.getElementById('pageInfo').textContent = `PAGE ${page}/${totalPages}`;
-  document.getElementById('prevBtn').disabled = page <= 1;
-  document.getElementById('nextBtn').disabled = page >= totalPages;
+  tbody.innerHTML = (items||[]).map((ep, i) => `<tr><td class="num">${i+1}</td><td class="path">${ep.path}</td><td class="req">${ep.hits}</td><td class="sr high">LIVE</td></tr>`).join('') || '<tr><td class="num">-</td><td class="path">No data</td><td class="req">0</td><td class="sr low">-</td></tr>';
+  document.getElementById('pageInfo').textContent = 'LIVE';
+  document.getElementById('prevBtn').disabled = true;
+  document.getElementById('nextBtn').disabled = true;
 }
 
-function changePage(dir){
-  currentPage = Math.max(1, Math.min(totalPages, currentPage + dir));
-  renderTable(currentPage);
-}
-
-/* ---- LIVE COUNTER SIMULATION ---- */
-let totalReqCount = 2970689;
-let totalErrCount = 300467;
-let totalAtkCount = 1029672;
-
-function fmt(n){ return n.toLocaleString('id-ID'); }
-
-function tickCounters(){
-  totalReqCount += Math.floor(Math.random()*8)+1;
-  totalErrCount += Math.random() > 0.85 ? 1 : 0;
-  totalAtkCount += Math.random() > 0.92 ? 1 : 0;
-  document.getElementById('totalReq').textContent = fmt(totalReqCount);
-  document.getElementById('totalErr').textContent = fmt(totalErrCount);
-  document.getElementById('totalAtk').textContent = fmt(totalAtkCount);
-  const rate = ((totalReqCount - totalErrCount) / totalReqCount * 100).toFixed(1);
-  document.getElementById('successRate').textContent = rate + '%';
-
-  // rotate realtime list
-  const paths = ['/api/s/pinterest','/api/m/brat','/api/ai/duckai','/api/berita/cnbcindonesia','/api/d/tiktok','/api/games/tebakkata','/api/d/instagram'];
-  const uas = ['python-requests/2.22.0','Mozilla/5.0','axios/1.15.0','Dart/3.11 (dart:io)','okhttp/4.9.0'];
-  const ips = ['47.237.22.x','114.5.146.x','45.251.7.x','114.122.20.x','103.41.7.x'];
-  realtimeSeed.pop();
-  realtimeSeed.unshift({
-    ago: 'just now',
-    status: Math.random() > 0.1 ? 200 : (Math.random() > 0.5 ? 404 : 500),
-    path: 'GET ' + paths[Math.floor(Math.random()*paths.length)],
-    ip: ips[Math.floor(Math.random()*ips.length)],
-    latency: (Math.floor(Math.random()*2000)+50) + 'ms',
-    ua: uas[Math.floor(Math.random()*uas.length)]
-  });
-  renderRealtime(realtimeSeed);
-}
-
-/* ---- INIT ---- */
 function init(){
   drawBarChart('reqChart', reqData, '#c0392b');
   drawBarChart('atkChart', atkData, '#922b21');
-  renderRealtime(realtimeSeed);
-  renderTable(1);
-  setInterval(tickCounters, 3000);
+  renderRealtime([]);
+  renderTable([]);
 }
 
 window.addEventListener('load', init);
@@ -756,19 +670,35 @@ window.addEventListener('resize', ()=>{
       const payload = JSON.parse(ev.data || '{}');
       if (payload.type !== 'monitor') return;
       const up = Number(payload.uptime || 0);
-      const h = Math.floor(up/3600), m=Math.floor((up%3600)/60), s=Math.floor(up%60);
-      const uptimeEl = document.getElementById('uptime');
-      if (uptimeEl) uptimeEl.textContent = `${h}h ${m}m ${s}s`;
-      const connEl = document.getElementById('activeConn');
-      if (connEl) connEl.textContent = '1';
+      const h = Math.floor(up/3600), m=Math.floor((up%3600)/60), sec=Math.floor(up%60);
+      document.getElementById('uptime').textContent = `${h}h ${m}m ${sec}s`;
+      document.getElementById('activeConn').textContent = String(payload.activeConns || 0);
+
+      const stats = payload.stats || {};
+      document.getElementById('totalReq').textContent = (stats.totalRequests || 0).toLocaleString('id-ID');
+      document.getElementById('totalErr').textContent = (stats.totalErrors || 0).toLocaleString('id-ID');
+      document.getElementById('successRate').textContent = `${stats.successRate || '0.0'}%`;
+      const sCodes = stats.statusCodes || {};
+      const errCount = (sCodes.s4xx || 0) + (sCodes.s5xx || 0);
+      document.getElementById('totalAtk').textContent = errCount.toLocaleString('id-ID');
+      const errorRate = (((errCount) / Math.max(1, (stats.totalRequests || 0))) * 100).toFixed(1);
+      document.getElementById('errorRate').textContent = `${errorRate}%`;
+      const recent = stats.recent || [];
+      const avg = recent.length ? Math.round(recent.reduce((a, r) => a + parseFloat(String(r.latency).replace('ms','') || 0), 0) / recent.length) : 0;
+      document.getElementById('avgLatency').textContent = `${avg}ms`;
+      document.getElementById('failover').textContent = `${(sCodes.s5xx || 0)} events`;
+      document.getElementById('nodeConn').textContent = String(payload.activeConns || 0);
+
+      document.getElementById('status2xx').textContent = sCodes.s2xx || 0;
+      document.getElementById('status4xx').textContent = sCodes.s4xx || 0;
+      document.getElementById('status5xx').textContent = sCodes.s5xx || 0;
+
+      renderRealtime(recent);
+      renderTable(stats.topEndpoints || []);
     };
-    ws.onclose = () => {
-      const connEl = document.getElementById('activeConn');
-      if (connEl) connEl.textContent = '0';
-    };
+    ws.onclose = () => { document.getElementById('activeConn').textContent = '0'; };
   } catch (e) {}
 })();
-
 </script>
 </body>
 </html>
