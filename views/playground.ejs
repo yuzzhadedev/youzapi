@@ -355,16 +355,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   <div class="settings-box">
     <div class="settings-row">
       <div class="settings-field">
-        <div class="settings-label">API TOKEN</div>
-        <input id="apiToken" class="settings-input" type="text" placeholder="tempel apitoken di sini">
-      </div>
-      <div class="settings-field">
-        <div class="settings-label">LOADING TEXT</div>
-        <input id="loadingText" class="settings-input" type="text" placeholder="Loading Playground">
-      </div>
-      <div class="settings-field" style="max-width:200px;">
-        <div class="settings-label">ACCENT</div>
-        <input id="accentColor" class="settings-input settings-color" type="color" value="#c0392b">
+        <div class="settings-label">API TOKEN ACCOUNT</div>
+        <input id="apiToken" class="settings-input" type="text" value="<%= user?.key || '' %>" readonly>
       </div>
     </div>
   </div>
@@ -432,27 +424,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
 <script>
 const BASE = '';
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
 function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');}
-
-function setCookie(name, value, maxAge = COOKIE_MAX_AGE){
-  document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value || '')}; Max-Age=${maxAge}; Path=/; SameSite=Lax`;
-}
-
-function getCookie(name){
-  const parts = (`; ${document.cookie || ''}`).split(`; ${encodeURIComponent(name)}=`);
-  if (parts.length < 2) return '';
-  return decodeURIComponent(parts.pop().split(';').shift() || '');
-}
-
-function applyAccent(color){
-  if (!color) return;
-  document.documentElement.style.setProperty('--red', color);
-  document.documentElement.style.setProperty('--red2', color);
-}
-
 function getApiToken(){
   return (document.getElementById('apiToken')?.value || '').trim();
 }
@@ -475,10 +449,7 @@ function getParams(btn, paramNames){
 }
 
 function buildUrl(path, params){
-  const merged = { ...(params || {}) };
-  const token = getApiToken();
-  if (token && merged.apitoken == null) merged.apitoken = token;
-  const qs = Object.entries(merged).map(([k,v])=>`${k}=${encodeURIComponent(v)}`).join('&');
+  const qs = Object.entries(params || {}).map(([k,v])=>`${k}=${encodeURIComponent(v)}`).join('&');
   return `${BASE}${path}${qs ? '?'+qs : ''}`;
 }
 
@@ -498,7 +469,9 @@ async function executeApi(btn, path, paramNames){
   resultBox.textContent = '// Fetching...';
 
   try{
-    const res = await fetch(url);
+    const token = getApiToken();
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const res = await fetch(url, { headers });
     const data = await res.json();
     resultBox.textContent = JSON.stringify(data, null, 2);
     resultBox.className = 'result-box show';
@@ -526,7 +499,7 @@ async function sinkronEndpointPlugin(){
   try{
     const res = await fetch('/api/plugins/list');
     const data = await res.json();
-    const available = new Set((data.endpoints || []).map(e => e.rota));
+    const available = new Set((data.data?.endpoints || []).map(e => e.rota));
     document.querySelectorAll('.ep-item').forEach((item)=>{
       const path = item.querySelector('.ep-path')?.textContent?.trim();
       if (!path) return;
@@ -534,33 +507,6 @@ async function sinkronEndpointPlugin(){
       if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';}}
     });
   }catch(e){}
-}
-
-function initSettings(){
-  const tokenEl = document.getElementById('apiToken');
-  const loadingTextEl = document.getElementById('loadingText');
-  const accentEl = document.getElementById('accentColor');
-  const loaderTextEl = document.getElementById('pgLoaderText');
-
-  const savedToken = getCookie('pg_apitoken');
-  const savedLoadingText = getCookie('pg_loading_text') || 'Loading Playground';
-  const savedAccent = getCookie('pg_accent') || '#c0392b';
-
-  if (tokenEl) tokenEl.value = savedToken;
-  if (loadingTextEl) loadingTextEl.value = savedLoadingText;
-  if (accentEl) accentEl.value = savedAccent;
-  if (loaderTextEl) loaderTextEl.textContent = savedLoadingText;
-  applyAccent(savedAccent);
-
-  tokenEl?.addEventListener('input', () => setCookie('pg_apitoken', tokenEl.value));
-  loadingTextEl?.addEventListener('input', () => {
-    setCookie('pg_loading_text', loadingTextEl.value);
-    if (loaderTextEl) loaderTextEl.textContent = loadingTextEl.value || 'Loading Playground';
-  });
-  accentEl?.addEventListener('input', () => {
-    setCookie('pg_accent', accentEl.value);
-    applyAccent(accentEl.value);
-  });
 }
 
 function initLoader(){
@@ -572,7 +518,6 @@ function initLoader(){
   });
 }
 
-initSettings();
 initLoader();
 sinkronEndpointPlugin();
 

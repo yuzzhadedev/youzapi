@@ -6,14 +6,14 @@ module.exports = {
     if (!text) {
       return res.status(400).json({
         success: false,
-        message: 'Parameter "text" wajib diisi'
+        message: 'Parameter "text" is required'
       });
     }
 
     const encoded = encodeURIComponent(text);
     return res.json({
       success: true,
-      creator: 'Youz API',
+      message: 'OK',
       data: {
         text,
         qr_image: `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${encoded}`

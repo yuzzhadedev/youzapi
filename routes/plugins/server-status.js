@@ -4,7 +4,7 @@ module.exports = {
   async run(req, res) {
     return res.json({
       success: true,
-      creator: 'Youz API',
+      message: 'OK',
       data: {
         status: 'online',
         uptime: process.uptime(),

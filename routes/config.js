@@ -1,19 +1,31 @@
 const fs = require('fs');
 const path = require('path');
-const { getUsers: lerUsers, saveUsers: salvarUsers } = require('../lib/user-store');
+const { getUsers, saveUsers } = require('../lib/user-store');
 
 const pluginRegistry = [];
 
-async function check_key(req, res, next) {
-  const { apitoken } = req.query;
-  if (!apitoken) return res.status(401).json({ ok: false, msg: 'Token belum diberikan' });
+function apiResponse(res, status, success, message, data = null) {
+  const payload = { success, message };
+  if (data !== null) payload.data = data;
+  return res.status(status).json(payload);
+}
 
-  const users = await lerUsers();
-  const i = users.findIndex((u) => u.key === apitoken);
-  if (i === -1) return res.status(401).json({ ok: false, msg: 'Token tidak valid' });
+function extractApiToken(req) {
+  const auth = req.headers.authorization || "";
+  if (auth.toLowerCase().startsWith("bearer ")) return auth.slice(7).trim();
+  return (req.query.apitoken || "").trim();
+}
+
+async function checkApiKey(req, res, next) {
+  const apiToken = extractApiToken(req);
+  if (!apiToken) return apiResponse(res, 401, false, 'API token is required. Send Authorization: Bearer <token>.');
+
+  const users = await getUsers();
+  const i = users.findIndex((u) => u.key === apiToken);
+  if (i === -1) return apiResponse(res, 401, false, "Invalid API token.");
 
   const u = users[i];
-  if ((u.totalRequests || 0) < 1) return res.status(403).json({ ok: false, msg: 'Request habis. Silakan upgrade paket.' });
+  if ((u.totalRequests || 0) < 1) return apiResponse(res, 403, false, 'Request quota exhausted. Please upgrade your plan.');
 
   u.totalRequests--;
   const xp = (u.xp || 0) + 10;
@@ -27,8 +39,8 @@ async function check_key(req, res, next) {
   }
 
   users[i] = u;
-  await salvarUsers(users);
-  req.usuario = u;
+  await saveUsers(users);
+  req.user = u;
   next();
 }
 
@@ -43,7 +55,7 @@ function plugins(app) {
         const p = require(path.join(dir, f));
         if (!p.rota || !p.run) return console.warn(`${f}: kurang 'rota' atau 'run'`);
         pluginRegistry.push({ file: f, rota: p.rota, method: 'GET' });
-        app.get(p.rota, check_key, p.run);
+        app.get(p.rota, checkApiKey, p.run);
         console.log(`${f} - GET ${p.rota}`);
       } catch (e) {
         console.error(`${f}:`, e.message);
@@ -51,8 +63,8 @@ function plugins(app) {
     });
 
   app.get('/api/plugins/list', (req, res) => {
-    res.json({ ok: true, total: pluginRegistry.length, endpoints: pluginRegistry });
+    res.json({ success: true, message: 'Plugin list fetched', data: { total: pluginRegistry.length, endpoints: pluginRegistry } });
   });
 }
 
-module.exports = { lerUsers, salvarUsers, check_key, plugins };
+module.exports = { getUsers, saveUsers, checkApiKey, plugins, apiResponse };
