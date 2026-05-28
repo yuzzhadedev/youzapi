@@ -10,14 +10,16 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const http = require('http');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const FOTO_PADRAO = 'https://raw.githubusercontent.com/uploader762/dat3/main/uploads/3fae03-1776528467067.jpg';
 const DB_TYPE = (process.env.DB_TYPE || '').toLowerCase();
 
 const { plugins } = require('./routes/config');
+const { attachMonitorWebSocket, recordRequest } = require('./routes/monitor-ws');
 const { getUsers: loadUsers, saveUsers, connectMongo } = require('./lib/user-store');
-plugins(app);
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -65,9 +67,40 @@ const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 app.use('/api/', limiter);
 
 
+app.use((req, res, next) => {
+const start = process.hrtime.bigint();
+res.on('finish', () => {
+  const end = process.hrtime.bigint();
+  const durationMs = Number(end - start) / 1e6;
+  if (!req.path.startsWith('/ws/monitor')) {
+    recordRequest({
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      durationMs,
+      ip: req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || '',
+      ua: req.headers['user-agent'] || ''
+    });
+  }
+});
+next();
+});
+
+plugins(app);
+
 function gerarKey(len = 32) {
 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 return Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+
+
+function ensureApiKey(user, users) {
+  if (user.key && String(user.key).trim()) return user.key;
+  let key;
+  do { key = gerarKey(); } while (users.some((u) => u !== user && u.key === key));
+  user.key = key;
+  return key;
 }
 
 function safeUser(u) {
@@ -124,6 +157,22 @@ error_msg: req.flash('error')
 
 app.get('/logout', (req, res) => req.session.destroy(() => res.redirect('/login')));
 
+app.get('/api/account/me', auth, async (req, res) => {
+  const users = await loadUsers();
+  const idx = users.findIndex(u => u.username === req.session.user.username);
+  if (idx === -1) return res.status(404).json({ success: false, message: 'User not found' });
+
+  const user = users[idx];
+  const canUseKey = user.premium || user.adm;
+  const hadKey = Boolean(user.key && String(user.key).trim());
+  if (canUseKey) ensureApiKey(user, users);
+  else user.key = null;
+  if (canUseKey && !hadKey) await saveUsers(users);
+
+  req.session.user = safeUser(user);
+  return res.json({ success: true, data: { username: user.username, key: user.key, adm: !!user.adm, premium: !!user.premium } });
+});
+
 app.post('/api/login', async (req, res) => {
 const { username, password } = req.body;
 if (!username || !password) return res.json({ success: false, message: 'Preencha todos os campos' });
@@ -133,6 +182,11 @@ const user = users.find(u => u.username === username);
 if (!user || !(await bcrypt.compare(password, user.password))) {
 return res.json({ success: false, message: 'Credenciais inválidas' });
 }
+const canUseKey = user.premium || user.adm;
+const hadKey = Boolean(user.key && String(user.key).trim());
+if (canUseKey) ensureApiKey(user, users);
+else user.key = null;
+if (canUseKey && !hadKey) await saveUsers(users);
 req.session.user = safeUser(user);
 res.json({ success: true });
 });
@@ -210,4 +264,7 @@ connectMongo().catch((err) => {
   console.warn('[DB] MongoDB tidak aktif:', err.message);
 });
 
-app.listen(PORT, '0.0.0.0', () => console.log(`🚀 http://localhost:${PORT}`));
+const server = http.createServer(app);
+attachMonitorWebSocket(server);
+
+server.listen(PORT, '0.0.0.0', () => console.log(`🚀 http://localhost:${PORT}`));

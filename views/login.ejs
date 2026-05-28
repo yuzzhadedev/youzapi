@@ -347,7 +347,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     const d = await r.json();
     if (d.success) {
       showNotif('berhasil! mengalihkan...', 'success');
-      setTimeout(() => window.location.href = '/dash', 700);
+      window.location.href = '/dash';
     } else {
       showNotif(d.message || 'kredensial tidak valid', 'error');
       btn.disabled = false; btn.innerHTML = orig;

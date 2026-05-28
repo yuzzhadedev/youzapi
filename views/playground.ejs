@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>API Console V2 — API SIPUTZX</title>
+<title>API Console V2 — YOUZ API</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -30,8 +30,11 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 @keyframes pgpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.72);opacity:.65}}
 
 .settings-box{display:flex;flex-direction:column;gap:10px;border:1px solid var(--border);background:var(--bg2);padding:14px 16px;margin-bottom:14px;}
-.settings-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.settings-row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;}
 .settings-field{flex:1;min-width:180px;}
+.key-row{display:flex;gap:8px;align-items:center;}
+.key-blur{filter:blur(6px);user-select:none;}
+.badge-btn{border:1px solid var(--border);background:var(--bg3);color:var(--text);padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;}
 .settings-label{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;}
 .settings-input{width:100%;background:var(--bg);border:1px solid var(--border);padding:12px 12px;font-family:'Space Mono',monospace;font-size:11px;color:var(--text);outline:none;}
 .settings-input::placeholder{color:var(--dim);}
@@ -80,6 +83,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 }
 
 .search-box{
+  position:sticky;
+  top:64px;
+  z-index:80;
   display:flex;
   align-items:center;
   gap:12px;
@@ -186,6 +192,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   display:none;
 }
 @media(min-width:480px){.ep-name{display:block;}}
+.ep-badge{font-family:'Space Mono',monospace;font-size:10px;padding:3px 8px;border:1px solid var(--border);text-transform:uppercase;color:#fff;background:#2d3436;}
+.ep-badge.ready{background:#1e7e34;}
+.ep-badge.maintenance{background:#f39c12;}
+.ep-badge.closed{background:#7f1d1d;}
 
 .ep-chevron{
   width:24px;height:24px;
@@ -305,6 +315,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   line-height:1.7;
   display:none;
 }
+.result-tabs{display:flex;gap:8px;margin-top:10px;}
+.result-tab{border:1px solid var(--border);background:var(--bg3);color:var(--muted);padding:6px 10px;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;}
+.result-tab.active{color:var(--red2);border-color:var(--red);}
 .result-box.show{display:block;}
 .result-box.error{color:#ff7675;border-left-color:var(--red2);}
 
@@ -341,8 +354,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 </div>
 
 <nav>
-  <a href="/" class="nav-logo"><div class="logo-sq"></div>API SIPUTZX</a>
-  <button class="nav-menu-btn" onclick="openMenu()"><span></span><span></span></button>
+  <a href="/" class="nav-logo"><div class="logo-sq"></div>YOUZ API</a>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="<%= user ? '/perfil' : '/login' %>" class="badge-btn" style="text-decoration:none;"><%= user ? 'Profile' : 'Login' %></a>
+    <button class="nav-menu-btn" onclick="openMenu()"><span></span><span></span></button>
+  </div>
 </nav>
 
 <div class="page-hero">
@@ -355,16 +371,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   <div class="settings-box">
     <div class="settings-row">
       <div class="settings-field">
-        <div class="settings-label">API TOKEN</div>
-        <input id="apiToken" class="settings-input" type="text" placeholder="tempel apitoken di sini">
-      </div>
-      <div class="settings-field">
-        <div class="settings-label">LOADING TEXT</div>
-        <input id="loadingText" class="settings-input" type="text" placeholder="Loading Playground">
-      </div>
-      <div class="settings-field" style="max-width:200px;">
-        <div class="settings-label">ACCENT</div>
-        <input id="accentColor" class="settings-input settings-color" type="color" value="#c0392b">
+        <div class="settings-label">API TOKEN ACCOUNT</div>
+        <div class='key-row'><input id="apiToken" class="settings-input key-blur" type="text" value="<%= user?.key || '' %>" readonly><button class="badge-btn" id="toggleKeyBtn" type="button">Look API Key</button><button class="badge-btn" id="copyKeyBtn" type="button" style="display:none;">Salin</button></div>
       </div>
     </div>
   </div>
@@ -381,18 +389,23 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="group-header"><span class="group-title">SEARCH</span><span class="group-count">1 ENDPOINT</span></div>
     <div class="ep-list">
       <div class="ep-item" data-name="yt search youtube /api/s/youtube">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Cari video YouTube.</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><span class="ep-badge" data-status-for="/api/s/youtube">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Cari video YouTube.</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
 
   <div class="endpoint-group" data-group="tools">
-    <div class="group-header"><span class="group-title">TOOLS</span><span class="group-count">1 ENDPOINT</span></div>
+    <div class="group-header"><span class="group-title">TOOLS</span><span class="group-count">2 ENDPOINTS</span></div>
     <div class="ep-list">
-      <div class="ep-item" data-name="qr2text /api/tools/qr2text">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button></div><pre class="result-box"></pre></div>
+      
+      <div class="ep-item" data-name="text2qr /api/tools/text2qr">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/text2qr</span><span class="ep-name">TEXT2QR</span><span class="ep-badge" data-status-for="/api/tools/text2qr">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Generate QR image from plain text.</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/text2qr', ['text'])">COPY URL</button></div><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
+      </div>
+<div class="ep-item" data-name="qr2text /api/tools/qr2text">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><span class="ep-badge" data-status-for="/api/tools/qr2text">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -401,13 +414,21 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="group-header"><span class="group-title">SERVER</span><span class="group-count">1 ENDPOINT</span></div>
     <div class="ep-list">
       <div class="ep-item" data-name="status /api/server/status">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Status server YOUZ API.</p><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><span class="ep-badge" data-status-for="/api/server/status">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body"><p class="ep-desc">Status server YOUZ API.</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
 
 </div>
+
+<footer style="position:relative;z-index:1;border-top:1px solid var(--border);padding:40px 24px;margin-top:40px;">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;">YOUZ API</div>
+  <p style="color:var(--muted);margin:8px 0 16px;">Membangun ekosistem developer yang lebih cepat, terbuka, dan inklusif.</p>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;color:var(--dim);font-size:12px;">
+    <a href="/" style="color:inherit;text-decoration:none;">Home</a><a href="/playground" style="color:inherit;text-decoration:none;">Playground</a><a href="/monitor" style="color:inherit;text-decoration:none;">Monitor</a>
+  </div>
+</footer>
 
 <!-- MENU OVERLAY -->
 <div class="menu-overlay" id="menuOverlay">
@@ -432,30 +453,59 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
 <script>
 const BASE = '';
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
 function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');}
-
-function setCookie(name, value, maxAge = COOKIE_MAX_AGE){
-  document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value || '')}; Max-Age=${maxAge}; Path=/; SameSite=Lax`;
-}
-
-function getCookie(name){
-  const parts = (`; ${document.cookie || ''}`).split(`; ${encodeURIComponent(name)}=`);
-  if (parts.length < 2) return '';
-  return decodeURIComponent(parts.pop().split(';').shift() || '');
-}
-
-function applyAccent(color){
-  if (!color) return;
-  document.documentElement.style.setProperty('--red', color);
-  document.documentElement.style.setProperty('--red2', color);
-}
-
 function getApiToken(){
   return (document.getElementById('apiToken')?.value || '').trim();
 }
+
+async function syncApiKeyFromAccount(){
+  try{
+    const res=await fetch('/api/account/me');
+    const data=await res.json();
+    if(data?.success && data?.data?.key){
+      const tokenEl=document.getElementById('apiToken');
+      if(tokenEl) tokenEl.value=data.data.key;
+    }
+  }catch(e){}
+}
+
+
+function initApiKeyVisibility(){
+  const tokenEl=document.getElementById('apiToken');
+  const toggleBtn=document.getElementById('toggleKeyBtn');
+  const copyBtn=document.getElementById('copyKeyBtn');
+  if(!tokenEl||!toggleBtn||!copyBtn) return;
+  let visible=false;
+  toggleBtn.addEventListener('click',()=>{
+    visible=!visible;
+    tokenEl.classList.toggle('key-blur',!visible);
+    toggleBtn.textContent=visible?'Hide API Key':'Look API Key';
+    copyBtn.style.display=visible?'inline-block':'none';
+  });
+  copyBtn.addEventListener('click', async ()=>{
+    await navigator.clipboard.writeText(tokenEl.value||'');
+    copyBtn.textContent='Copied!';
+    setTimeout(()=>copyBtn.textContent='Salin',1200);
+  });
+}
+
+function applyEndpointStatuses(endpoints){
+  const m=new Map((endpoints||[]).map(e=>[e.rota,(e.status||'ready').toLowerCase()]));
+  document.querySelectorAll('.ep-item').forEach((item)=>{
+    const path = item.querySelector('.ep-path')?.textContent?.trim();
+    if(!path) return;
+    const st = m.get(path) || 'ready';
+    item.setAttribute('data-status', st);
+  });
+  document.querySelectorAll('.ep-badge[data-status-for]').forEach((el)=>{
+    const st=m.get(el.getAttribute('data-status-for'))||'ready';
+    el.className=`ep-badge ${st}`;
+    el.textContent=st.toUpperCase();
+  });
+}
+
 
 function toggleEp(el){
   const body = el.nextElementSibling;
@@ -475,10 +525,7 @@ function getParams(btn, paramNames){
 }
 
 function buildUrl(path, params){
-  const merged = { ...(params || {}) };
-  const token = getApiToken();
-  if (token && merged.apitoken == null) merged.apitoken = token;
-  const qs = Object.entries(merged).map(([k,v])=>`${k}=${encodeURIComponent(v)}`).join('&');
+  const qs = Object.entries(params || {}).map(([k,v])=>`${k}=${encodeURIComponent(v)}`).join('&');
   return `${BASE}${path}${qs ? '?'+qs : ''}`;
 }
 
@@ -488,6 +535,15 @@ function getResultBox(btn){
 }
 
 async function executeApi(btn, path, paramNames){
+  const item = btn.closest('.ep-item');
+  const status = item?.getAttribute('data-status') || 'ready';
+  if (status === 'maintenance' || status === 'closed') {
+    const resultBox = getResultBox(btn);
+    resultBox.className = 'result-box show error';
+    resultBox.textContent = `// Endpoint ${status.toUpperCase()}\n// Request blocked from Playground`;
+    return;
+  }
+
   const params = getParams(btn, paramNames);
   const url = buildUrl(path, params);
   const resultBox = getResultBox(btn);
@@ -498,9 +554,13 @@ async function executeApi(btn, path, paramNames){
   resultBox.textContent = '// Fetching...';
 
   try{
-    const res = await fetch(url);
+    const token = getApiToken();
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const res = await fetch(url, { headers });
     const data = await res.json();
-    resultBox.textContent = JSON.stringify(data, null, 2);
+    const curl = `curl -X GET "${url}"${token ? ` -H "Authorization: Bearer ${token}"` : ""}`;
+    const activeTab = btn.closest('.ep-body').querySelector('.result-tab.active')?.dataset?.tab || "preview";
+    resultBox.textContent = activeTab === "curl" ? curl : JSON.stringify(data, null, 2);
     resultBox.className = 'result-box show';
   }catch(e){
     resultBox.textContent = `// Error: ${e.message}\n// URL: ${url}`;
@@ -526,41 +586,20 @@ async function sinkronEndpointPlugin(){
   try{
     const res = await fetch('/api/plugins/list');
     const data = await res.json();
-    const available = new Set((data.endpoints || []).map(e => e.rota));
+    const endpoints = data.data?.endpoints || [];
+    const available = new Set(endpoints.map(e => e.rota));
+    applyEndpointStatuses(endpoints);
     document.querySelectorAll('.ep-item').forEach((item)=>{
       const path = item.querySelector('.ep-path')?.textContent?.trim();
       if (!path) return;
       const btn = item.querySelector('.btn-execute');
-      if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';}}
+      const st = item.getAttribute('data-status') || 'ready';
+      if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';} return; }
+      if (st === 'maintenance') { item.style.opacity='0.6'; if(btn){btn.disabled=true; btn.textContent='MAINTENANCE';} return; }
+      if (st === 'closed') { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='CLOSED';} return; }
+      item.style.opacity=''; if(btn){btn.disabled=false; btn.textContent='▶ EXECUTE';}
     });
   }catch(e){}
-}
-
-function initSettings(){
-  const tokenEl = document.getElementById('apiToken');
-  const loadingTextEl = document.getElementById('loadingText');
-  const accentEl = document.getElementById('accentColor');
-  const loaderTextEl = document.getElementById('pgLoaderText');
-
-  const savedToken = getCookie('pg_apitoken');
-  const savedLoadingText = getCookie('pg_loading_text') || 'Loading Playground';
-  const savedAccent = getCookie('pg_accent') || '#c0392b';
-
-  if (tokenEl) tokenEl.value = savedToken;
-  if (loadingTextEl) loadingTextEl.value = savedLoadingText;
-  if (accentEl) accentEl.value = savedAccent;
-  if (loaderTextEl) loaderTextEl.textContent = savedLoadingText;
-  applyAccent(savedAccent);
-
-  tokenEl?.addEventListener('input', () => setCookie('pg_apitoken', tokenEl.value));
-  loadingTextEl?.addEventListener('input', () => {
-    setCookie('pg_loading_text', loadingTextEl.value);
-    if (loaderTextEl) loaderTextEl.textContent = loadingTextEl.value || 'Loading Playground';
-  });
-  accentEl?.addEventListener('input', () => {
-    setCookie('pg_accent', accentEl.value);
-    applyAccent(accentEl.value);
-  });
 }
 
 function initLoader(){
@@ -572,8 +611,10 @@ function initLoader(){
   });
 }
 
-initSettings();
+syncApiKeyFromAccount();
+initApiKeyVisibility();
 initLoader();
+document.addEventListener('click',(e)=>{if(!e.target.classList.contains('result-tab'))return;const body=e.target.closest('.ep-body');body.querySelectorAll('.result-tab').forEach(t=>t.classList.remove('active'));e.target.classList.add('active');});
 sinkronEndpointPlugin();
 
 function filterEndpoints(val){
