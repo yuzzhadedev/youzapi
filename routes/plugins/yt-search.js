@@ -4,7 +4,7 @@ module.exports = {
   status: 'ready',
   rota: '/api/s/youtube',
   async run(req, res) {
-    const { query } = req.query || {};
+    const { query } = req.paramsInput || req.query || {};
 
     if (!query || typeof query !== 'string' || !query.trim()) {
       return res.status(400).json({ success: false, message: "Parameter 'query' is required" });
