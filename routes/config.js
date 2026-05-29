@@ -15,7 +15,7 @@ function apiResponse(res, status, success, message, data = null) {
 function extractApiToken(req) {
   const auth = req.headers.authorization || '';
   if (auth.toLowerCase().startsWith('bearer ')) return auth.slice(7).trim();
-  return (req.query.apitoken || '').trim();
+  return (req.query.apitoken || req.body?.apitoken || '').trim();
 }
 
 function consumeFreeIpQuota(ipAddress) {
@@ -65,6 +65,19 @@ function toCatalogName(routePath) {
     .trim();
 }
 
+function normalizePluginMethods(plugin) {
+  const rawMethods = Array.isArray(plugin.methods) ? plugin.methods : (plugin.method ? [plugin.method] : ['GET', 'POST']);
+  const methods = rawMethods
+    .map((method) => String(method).toUpperCase())
+    .filter((method) => ['GET', 'POST'].includes(method));
+  return [...new Set(methods.length ? methods : ['GET'])];
+}
+
+function attachUnifiedParams(req, res, next) {
+  req.paramsInput = { ...(req.query || {}), ...(req.body || {}) };
+  return next();
+}
+
 function plugins(app) {
   const dir = path.join(__dirname, 'plugins');
   if (!fs.existsSync(dir)) return console.warn('Folder plugins tidak ada');
@@ -76,11 +89,14 @@ function plugins(app) {
         const p = require(path.join(dir, f));
         if (!p.rota || !p.run) return console.warn(`${f}: kurang 'rota' atau 'run'`);
         const status = (p.status || 'ready').toLowerCase();
-        pluginRegistry.push({ file: f, rota: p.rota, method: 'GET', status, catalog: toCatalogName(p.rota) });
-        app.get(p.rota, checkApiKey, (req, res, next) => {
-          if (status === 'maintenance') return apiResponse(res, 503, false, 'Endpoint is under maintenance.');
-          if (status === 'closed') return apiResponse(res, 403, false, 'Endpoint is closed.');
-          return p.run(req, res, next);
+        const methods = normalizePluginMethods(p);
+        pluginRegistry.push({ file: f, rota: p.rota, method: methods.join('|'), methods, status, catalog: toCatalogName(p.rota) });
+        methods.forEach((method) => {
+          app[method.toLowerCase()](p.rota, checkApiKey, attachUnifiedParams, (req, res, next) => {
+            if (status === 'maintenance') return apiResponse(res, 503, false, 'Endpoint is under maintenance.');
+            if (status === 'closed') return apiResponse(res, 403, false, 'Endpoint is closed.');
+            return p.run(req, res, next);
+          });
         });
       } catch (e) {
         console.error(`${f}:`, e.message);

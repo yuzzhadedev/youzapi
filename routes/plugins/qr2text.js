@@ -3,7 +3,7 @@ module.exports = {
   rota: '/api/tools/qr2text',
 
   async run(req, res) {
-    const { url } = req.query;
+    const { url } = req.paramsInput || req.query;
     if (!url) {
       return res.status(400).json({ success: false, message: 'Parameter "url" is required' });
     }

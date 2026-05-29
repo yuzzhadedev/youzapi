@@ -54,6 +54,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.97);backdrop-fi
   font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;
 }
 .live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite;}
+.live-badge.connecting .live-dot{background:var(--yellow);}
+.live-badge.offline .live-dot{background:var(--red2);animation:none;}
+.live-badge.offline{color:var(--red2);}
+.live-badge.connecting{color:var(--yellow);}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
 
 /* STATS GRID */
@@ -305,7 +309,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
   <!-- HERO -->
   <div class="monitor-hero">
     <div class="monitor-hero-title">SYSTEM <span>MONITOR</span></div>
-    <div class="live-badge"><span class="live-dot"></span> LIVE</div>
+    <div class="live-badge connecting" id="wsState"><span class="live-dot"></span> CONNECTING WS</div>
   </div>
 
   <!-- STATS GRID -->
@@ -353,7 +357,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
   <div class="section">
     <div class="section-head">
       <span class="section-title">LIVE TRAFFIC SIGNALS</span>
-      <span class="section-tag green">LIVE</span>
+      <span class="section-tag green" id="wsTransport">WS /ws/monitor</span>
     </div>
     <div class="traffic-grid">
       <div class="traffic-box">
@@ -663,12 +667,27 @@ window.addEventListener('resize', ()=>{
 });
 
 (function initRealtimeWs(){
-  try {
-    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-    const ws = new WebSocket(`${proto}://${location.host}/ws/monitor`);
-    ws.onmessage = (ev) => {
-      const payload = JSON.parse(ev.data || '{}');
-      if (payload.type !== 'monitor') return;
+  let reconnectTimer;
+  let retry = 0;
+
+  function setWsState(state, label){
+    const badge = document.getElementById('wsState');
+    if(!badge) return;
+    badge.className = `live-badge ${state}`;
+    badge.innerHTML = `<span class="live-dot"></span> ${label}`;
+  }
+
+  function connect(){
+    try {
+      const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+      const ws = new WebSocket(`${proto}://${location.host}/ws/monitor`);
+      setWsState('connecting', retry ? `RECONNECTING ${retry}` : 'CONNECTING WS');
+      document.getElementById('wsTransport').textContent = 'WS /ws/monitor';
+
+      ws.onopen = () => { retry = 0; setWsState('', 'LIVE WS'); };
+      ws.onmessage = (ev) => {
+        const payload = JSON.parse(ev.data || '{}');
+        if (payload.type !== 'monitor') return;
       const up = Number(payload.uptime || 0);
       const h = Math.floor(up/3600), m=Math.floor((up%3600)/60), sec=Math.floor(up%60);
       document.getElementById('uptime').textContent = `${h}h ${m}m ${sec}s`;
@@ -693,11 +712,23 @@ window.addEventListener('resize', ()=>{
       document.getElementById('status4xx').textContent = sCodes.s4xx || 0;
       document.getElementById('status5xx').textContent = sCodes.s5xx || 0;
 
-      renderRealtime(recent);
-      renderTable(stats.topEndpoints || []);
-    };
-    ws.onclose = () => { document.getElementById('activeConn').textContent = '0'; };
-  } catch (e) {}
+        renderRealtime(recent);
+        renderTable(stats.topEndpoints || []);
+      };
+      ws.onerror = () => setWsState('offline', 'WS ERROR');
+      ws.onclose = () => {
+        document.getElementById('activeConn').textContent = '0';
+        setWsState('offline', 'WS OFFLINE');
+        clearTimeout(reconnectTimer);
+        retry += 1;
+        reconnectTimer = setTimeout(connect, Math.min(10000, 1000 * retry));
+      };
+    } catch (e) {
+      setWsState('offline', 'WS UNSUPPORTED');
+    }
+  }
+
+  connect();
 })();
 </script>
 </body>

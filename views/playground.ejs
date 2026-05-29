@@ -29,16 +29,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 @keyframes pgspin{to{transform:rotate(360deg)}}
 @keyframes pgpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.72);opacity:.65}}
 
-.settings-box{display:flex;flex-direction:column;gap:10px;border:1px solid var(--border);background:var(--bg2);padding:14px 16px;margin-bottom:14px;}
-.settings-row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;}
-.settings-field{flex:1;min-width:180px;}
-.key-row{display:flex;gap:8px;align-items:center;}
-.key-blur{filter:blur(6px);user-select:none;}
 .badge-btn{border:1px solid var(--border);background:var(--bg3);color:var(--text);padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;}
-.settings-label{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;}
-.settings-input{width:100%;background:var(--bg);border:1px solid var(--border);padding:12px 12px;font-family:'Space Mono',monospace;font-size:11px;color:var(--text);outline:none;}
-.settings-input::placeholder{color:var(--dim);}
-.settings-color{height:41px;padding:0;border-radius:0;}
 
 nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;}
 .nav-logo{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;text-decoration:none;color:var(--text);}
@@ -170,7 +161,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   background:var(--blue);
   color:#fff;
   flex-shrink:0;
-  min-width:44px;
+  min-width:68px;
   text-align:center;
 }
 .ep-path{
@@ -286,7 +277,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 .btn-execute:hover{background:var(--red2);}
 .btn-execute.loading{opacity:.6;cursor:not-allowed;}
 
-.btn-copy-url{
+.btn-copy-url,.btn-clear{
   background:var(--bg2);
   color:var(--muted);
   border:1px solid var(--border);
@@ -297,7 +288,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   transition:background .15s,color .15s;
   white-space:nowrap;
 }
-.btn-copy-url:hover{background:var(--bg3);color:var(--text);}
+.btn-copy-url:hover,.btn-clear:hover{background:var(--bg3);color:var(--text);}
 
 .result-box{
   margin-top:14px;
@@ -315,9 +306,13 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   line-height:1.7;
   display:none;
 }
-.result-tabs{display:flex;gap:8px;margin-top:10px;}
-.result-tab{border:1px solid var(--border);background:var(--bg3);color:var(--muted);padding:6px 10px;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;}
-.result-tab.active{color:var(--red2);border-color:var(--red);}
+.playground-controls{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px;}
+.method-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+.result-tabs{display:none;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.result-tabs.show{display:flex;}
+.method-tab,.result-tab{border:1px solid var(--border);background:var(--bg3);color:var(--muted);padding:6px 10px;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;text-transform:uppercase;}
+.method-tab.active,.result-tab.active{color:var(--red2);border-color:var(--red);}
+
 .result-box.show{display:block;}
 .result-box.error{color:#ff7675;border-left-color:var(--red2);}
 
@@ -368,15 +363,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
 <div class="console-wrap">
 
-  <div class="settings-box">
-    <div class="settings-row">
-      <div class="settings-field">
-        <div class="settings-label">API TOKEN ACCOUNT</div>
-        <div class='key-row'><input id="apiToken" class="settings-input key-blur" type="text" value="<%= user?.key || '' %>" readonly><button class="badge-btn" id="toggleKeyBtn" type="button">Look API Key</button><button class="badge-btn" id="copyKeyBtn" type="button" style="display:none;">Salin</button></div>
-      </div>
-    </div>
-  </div>
-
   <div class="search-box">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
     <input type="text" class="search-input" id="searchInput" placeholder="FILTER ENDPOINTS..." oninput="filterEndpoints(this.value)">
@@ -389,8 +375,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="group-header"><span class="group-title">SEARCH</span><span class="group-count">1 ENDPOINT</span></div>
     <div class="ep-list">
       <div class="ep-item" data-name="yt search youtube /api/s/youtube">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><span class="ep-badge" data-status-for="/api/s/youtube">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Cari video YouTube.</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><span class="ep-badge" data-status-for="/api/s/youtube">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body" data-path="/api/s/youtube" data-params="query"><p class="ep-desc">Cari video YouTube.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -400,12 +386,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       
       <div class="ep-item" data-name="text2qr /api/tools/text2qr">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/text2qr</span><span class="ep-name">TEXT2QR</span><span class="ep-badge" data-status-for="/api/tools/text2qr">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Generate QR image from plain text.</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/text2qr', ['text'])">COPY URL</button></div><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/tools/text2qr</span><span class="ep-name">TEXT2QR</span><span class="ep-badge" data-status-for="/api/tools/text2qr">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body" data-path="/api/tools/text2qr" data-params="text"><p class="ep-desc">Generate QR image from plain text.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/text2qr', ['text'])">COPY URL</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
       </div>
 <div class="ep-item" data-name="qr2text /api/tools/qr2text">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><span class="ep-badge" data-status-for="/api/tools/qr2text">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><span class="ep-badge" data-status-for="/api/tools/qr2text">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body" data-path="/api/tools/qr2text" data-params="url"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -414,8 +400,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="group-header"><span class="group-title">SERVER</span><span class="group-count">1 ENDPOINT</span></div>
     <div class="ep-list">
       <div class="ep-item" data-name="status /api/server/status">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><span class="ep-badge" data-status-for="/api/server/status">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Status server YOUZ API.</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><span class="ep-badge" data-status-for="/api/server/status">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body" data-path="/api/server/status" data-params=""><p class="ep-desc">Status server YOUZ API.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -456,39 +442,9 @@ const BASE = '';
 
 function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
 function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');}
+const ACCOUNT_API_TOKEN = <%- JSON.stringify(user?.key || '') %>;
 function getApiToken(){
-  return (document.getElementById('apiToken')?.value || '').trim();
-}
-
-async function syncApiKeyFromAccount(){
-  try{
-    const res=await fetch('/api/account/me');
-    const data=await res.json();
-    if(data?.success && data?.data?.key){
-      const tokenEl=document.getElementById('apiToken');
-      if(tokenEl) tokenEl.value=data.data.key;
-    }
-  }catch(e){}
-}
-
-
-function initApiKeyVisibility(){
-  const tokenEl=document.getElementById('apiToken');
-  const toggleBtn=document.getElementById('toggleKeyBtn');
-  const copyBtn=document.getElementById('copyKeyBtn');
-  if(!tokenEl||!toggleBtn||!copyBtn) return;
-  let visible=false;
-  toggleBtn.addEventListener('click',()=>{
-    visible=!visible;
-    tokenEl.classList.toggle('key-blur',!visible);
-    toggleBtn.textContent=visible?'Hide API Key':'Look API Key';
-    copyBtn.style.display=visible?'inline-block':'none';
-  });
-  copyBtn.addEventListener('click', async ()=>{
-    await navigator.clipboard.writeText(tokenEl.value||'');
-    copyBtn.textContent='Copied!';
-    setTimeout(()=>copyBtn.textContent='Salin',1200);
-  });
+  return (ACCOUNT_API_TOKEN || '').trim();
 }
 
 function applyEndpointStatuses(endpoints){
@@ -511,7 +467,23 @@ function toggleEp(el){
   const body = el.nextElementSibling;
   const wasOpen = el.classList.contains('open');
   document.querySelectorAll('.ep-header.open').forEach(h=>{h.classList.remove('open');h.nextElementSibling.classList.remove('open');});
-  if(!wasOpen){el.classList.add('open');body.classList.add('open');}
+  if(!wasOpen){
+    el.classList.add('open');
+    body.classList.add('open');
+  }
+}
+
+function getParamNames(body){
+  return (body?.dataset?.params || '').split(',').map(v=>v.trim()).filter(Boolean);
+}
+
+function getParamsFromBody(body){
+  const params = {};
+  getParamNames(body).forEach(name=>{
+    const inp = body.querySelector(`[data-param="${name}"]`);
+    if(inp && inp.value.trim()) params[name] = inp.value.trim();
+  });
+  return params;
 }
 
 function getParams(btn, paramNames){
@@ -529,56 +501,171 @@ function buildUrl(path, params){
   return `${BASE}${path}${qs ? '?'+qs : ''}`;
 }
 
-function getResultBox(btn){
-  const body = btn.closest('.ep-body');
+function getSelectedMethod(body){
+  return body.querySelector('.method-tab.active')?.dataset?.method || 'GET';
+}
+
+function getActiveTab(body){
+  return body.querySelector('.result-tab.active')?.dataset?.tab || 'preview';
+}
+
+function getResultBox(target){
+  const body = target.closest('.ep-body');
   return body.querySelector('.result-box');
 }
 
-async function executeApi(btn, path, paramNames){
-  const item = btn.closest('.ep-item');
+function missingParams(body){
+  const params = getParamsFromBody(body);
+  return getParamNames(body).filter(name=>!params[name]);
+}
+
+function buildCurl(method, path, params, token){
+  const url = method === 'GET' ? buildUrl(path, params) : `${BASE}${path}`;
+  const headers = [];
+  if(token) headers.push(`-H "Authorization: Bearer ${token}"`);
+  if(method === 'POST') headers.push('-H "Content-Type: application/json"');
+  const body = method === 'POST' ? ` -d '${JSON.stringify(params || {})}'` : '';
+  return [`curl -X ${method} "${url}"`, ...headers].join(' ') + body;
+}
+
+function renderCachedResult(body){
+  const resultBox = body.querySelector('.result-box');
+  const cache = body._playgroundResult;
+  if(!cache) return;
+  body.querySelector('.result-tabs')?.classList.add('show');
+  resultBox.className = `result-box show${cache.error ? ' error' : ''}`;
+  resultBox.textContent = getActiveTab(body) === 'curl' ? cache.curl : cache.preview;
+}
+
+async function executeBody(body, triggerBtn = null){
+  const item = body.closest('.ep-item');
   const status = item?.getAttribute('data-status') || 'ready';
+  const resultBox = body.querySelector('.result-box');
+  if(triggerBtn){
+    triggerBtn.classList.add('loading');
+    triggerBtn.textContent = '⏳ LOADING...';
+  }
   if (status === 'maintenance' || status === 'closed') {
-    const resultBox = getResultBox(btn);
-    resultBox.className = 'result-box show error';
-    resultBox.textContent = `// Endpoint ${status.toUpperCase()}\n// Request blocked from Playground`;
+    body._playgroundResult = {
+      error: true,
+      preview: `// Endpoint ${status.toUpperCase()}\n// Request blocked from Playground`,
+      curl: '// Curl unavailable because endpoint is not ready'
+    };
+    renderCachedResult(body);
+    if(triggerBtn){
+      triggerBtn.classList.remove('loading');
+      triggerBtn.textContent = '▶ EXECUTE';
+    }
     return;
   }
 
-  const params = getParams(btn, paramNames);
-  const url = buildUrl(path, params);
-  const resultBox = getResultBox(btn);
+  const missing = missingParams(body);
+  if (missing.length) {
+    body._playgroundResult = {
+      error: false,
+      preview: `// Isi parameter: ${missing.join(', ')}\n// Klik EXECUTE setelah parameter lengkap.`,
+      curl: buildCurl(getSelectedMethod(body), body.dataset.path, getParamsFromBody(body), getApiToken())
+    };
+    renderCachedResult(body);
+    if(triggerBtn){
+      triggerBtn.classList.remove('loading');
+      triggerBtn.textContent = '▶ EXECUTE';
+    }
+    return;
+  }
 
-  btn.classList.add('loading');
-  btn.textContent = '⏳ LOADING...';
+  const path = body.dataset.path;
+  const params = getParamsFromBody(body);
+  const method = getSelectedMethod(body);
+  const token = getApiToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const fetchOptions = { method, headers };
+  const url = method === 'GET' ? buildUrl(path, params) : `${BASE}${path}`;
+
+  if(method === 'POST') {
+    fetchOptions.headers = { ...headers, 'Content-Type': 'application/json' };
+    fetchOptions.body = JSON.stringify(params);
+  }
+
   resultBox.className = 'result-box show';
   resultBox.textContent = '// Fetching...';
 
   try{
-    const token = getApiToken();
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    const res = await fetch(url, { headers });
-    const data = await res.json();
-    const curl = `curl -X GET "${url}"${token ? ` -H "Authorization: Bearer ${token}"` : ""}`;
-    const activeTab = btn.closest('.ep-body').querySelector('.result-tab.active')?.dataset?.tab || "preview";
-    resultBox.textContent = activeTab === "curl" ? curl : JSON.stringify(data, null, 2);
-    resultBox.className = 'result-box show';
+    const res = await fetch(url, fetchOptions);
+    const contentType = res.headers.get('content-type') || '';
+    const data = contentType.includes('application/json') ? await res.json() : await res.text();
+    body._playgroundResult = {
+      error: !res.ok,
+      preview: typeof data === 'string' ? data : JSON.stringify(data, null, 2),
+      curl: buildCurl(method, path, params, token)
+    };
   }catch(e){
-    resultBox.textContent = `// Error: ${e.message}\n// URL: ${url}`;
-    resultBox.className = 'result-box show error';
+    body._playgroundResult = {
+      error: true,
+      preview: `// Error: ${e.message}\n// URL: ${url}`,
+      curl: buildCurl(method, path, params, token)
+    };
   }
 
-  btn.classList.remove('loading');
-  btn.textContent = '▶ EXECUTE';
+  renderCachedResult(body);
+  if(triggerBtn){
+    triggerBtn.classList.remove('loading');
+    triggerBtn.textContent = '▶ EXECUTE';
+  }
+}
+
+function resetEndpointResult(body, clearParams = false){
+  body._playgroundResult = null;
+  body.querySelector('.result-box').className = 'result-box';
+  body.querySelector('.result-box').textContent = '';
+  body.querySelector('.result-tabs')?.classList.remove('show');
+  body.querySelectorAll('.result-tab').forEach((tab)=>tab.classList.toggle('active', tab.dataset.tab === 'preview'));
+  if(clearParams) body.querySelectorAll('.param-input').forEach((input)=>{ input.value = ''; });
+}
+
+function clearEndpoint(btn){
+  resetEndpointResult(btn.closest('.ep-body'), true);
+}
+
+async function executeApi(btn, path, paramNames){
+  await executeBody(btn.closest('.ep-body'), btn);
 }
 
 function copyUrl(btn, path, paramNames){
-  const params = getParams(btn, paramNames);
-  const url = buildUrl(path, params);
-  navigator.clipboard.writeText(url).then(()=>{
+  const body = btn.closest('.ep-body');
+  const params = getParamsFromBody(body);
+  const method = getSelectedMethod(body);
+  const value = method === 'GET' ? buildUrl(path, params) : buildCurl(method, path, params, getApiToken());
+  navigator.clipboard.writeText(value).then(()=>{
     const orig = btn.textContent;
-    btn.textContent = 'COPIED!';
+    btn.textContent = method === 'GET' ? 'URL COPIED!' : 'CURL COPIED!';
     btn.style.color = '#2ecc71';
     setTimeout(()=>{btn.textContent = orig;btn.style.color='';}, 1500);
+  });
+}
+
+function initPlaygroundInteractions(){
+  document.querySelectorAll('.ep-body').forEach((body)=>{
+    body.querySelectorAll('.param-input').forEach((input)=>{
+      input.addEventListener('input',()=>resetEndpointResult(body));
+      input.addEventListener('change',()=>resetEndpointResult(body));
+    });
+  });
+
+  document.addEventListener('click',(e)=>{
+    if(e.target.classList.contains('result-tab')){
+      const body=e.target.closest('.ep-body');
+      body.querySelectorAll('.result-tab').forEach(t=>t.classList.remove('active'));
+      e.target.classList.add('active');
+      renderCachedResult(body);
+      return;
+    }
+    if(e.target.classList.contains('method-tab')){
+      const body=e.target.closest('.ep-body');
+      body.querySelectorAll('.method-tab').forEach(t=>t.classList.remove('active'));
+      e.target.classList.add('active');
+      resetEndpointResult(body);
+    }
   });
 }
 
@@ -611,10 +698,8 @@ function initLoader(){
   });
 }
 
-syncApiKeyFromAccount();
-initApiKeyVisibility();
 initLoader();
-document.addEventListener('click',(e)=>{if(!e.target.classList.contains('result-tab'))return;const body=e.target.closest('.ep-body');body.querySelectorAll('.result-tab').forEach(t=>t.classList.remove('active'));e.target.classList.add('active');});
+initPlaygroundInteractions();
 sinkronEndpointPlugin();
 
 function filterEndpoints(val){
