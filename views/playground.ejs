@@ -161,9 +161,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   background:var(--blue);
   color:#fff;
   flex-shrink:0;
-  min-width:68px;
+  min-width:52px;
   text-align:center;
+  transition:background .15s,box-shadow .15s;
 }
+.ep-method.post{background:#1e7e34;box-shadow:0 0 14px rgba(46,204,113,.16);}
 .ep-path{
   font-family:'Space Mono',monospace;
   font-size:11px;
@@ -256,15 +258,16 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
 .ep-actions{
   display:flex;
-  gap:8px;
-  margin-top:12px;
+  flex-direction:column;
+  gap:10px;
+  margin-top:18px;
 }
 
 .btn-execute{
   background:var(--red);
   color:#fff;
   border:none;
-  padding:10px 20px;
+  padding:14px 20px;
   font-family:'Barlow Condensed',sans-serif;
   font-size:14px;
   font-weight:700;
@@ -272,12 +275,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   text-transform:uppercase;
   cursor:pointer;
   transition:background .15s;
-  flex:1;
+  width:100%;
 }
 .btn-execute:hover{background:var(--red2);}
 .btn-execute.loading{opacity:.6;cursor:not-allowed;}
 
-.btn-copy-url,.btn-clear{
+.btn-clear,.btn-copy-result{
   background:var(--bg2);
   color:var(--muted);
   border:1px solid var(--border);
@@ -288,30 +291,38 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   transition:background .15s,color .15s;
   white-space:nowrap;
 }
-.btn-copy-url:hover,.btn-clear:hover{background:var(--bg3);color:var(--text);}
+.btn-clear:hover,.btn-copy-result:hover{background:var(--bg3);color:var(--text);}
 
 .result-box{
-  margin-top:14px;
+  margin-top:0;
   background:var(--bg2);
   border:1px solid var(--border);
+  border-top:none;
   border-left:3px solid var(--red);
   font-family:'Space Mono',monospace;
   font-size:11px;
   color:#a8ff78;
-  padding:14px;
+  padding:18px 14px;
   white-space:pre-wrap;
-  word-break:break-all;
-  max-height:300px;
+  word-break:break-word;
+  max-height:340px;
   overflow-y:auto;
   line-height:1.7;
   display:none;
 }
 .playground-controls{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px;}
 .method-tabs{display:flex;gap:8px;flex-wrap:wrap;}
-.result-tabs{display:none;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.result-tabs{display:none;align-items:center;gap:8px;flex-wrap:wrap;margin-top:18px;padding:12px 14px;border:1px solid var(--border);background:var(--bg2);}
 .result-tabs.show{display:flex;}
-.method-tab,.result-tab{border:1px solid var(--border);background:var(--bg3);color:var(--muted);padding:6px 10px;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;text-transform:uppercase;}
-.method-tab.active,.result-tab.active{color:var(--red2);border-color:var(--red);}
+.method-tab,.result-tab{border:1px solid var(--border);background:var(--bg3);color:var(--muted);padding:6px 10px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;}
+.method-tab.active{color:#fff;border-color:var(--red);background:var(--red);}
+.method-tab[data-method="POST"].active{border-color:#1e7e34;background:#1e7e34;}
+.result-tab.active{color:var(--red2);border-color:transparent;background:transparent;}
+.result-spacer{flex:1;}
+.btn-copy-result{width:40px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;}
+.btn-copy-result svg{width:16px;height:16px;}
+.result-status{display:inline-flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);}
+.result-code.ok{color:#2ecc71;}.result-code.err{color:#ff7675;}.result-ms{color:var(--dim);font-weight:400;}
 
 .result-box.show{display:block;}
 .result-box.error{color:#ff7675;border-left-color:var(--red2);}
@@ -375,8 +386,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="group-header"><span class="group-title">SEARCH</span><span class="group-count">1 ENDPOINT</span></div>
     <div class="ep-list">
       <div class="ep-item" data-name="yt search youtube /api/s/youtube">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><span class="ep-badge" data-status-for="/api/s/youtube">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/s/youtube" data-params="query"><p class="ep-desc">Cari video YouTube.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><span class="ep-badge" data-status-for="/api/s/youtube">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body" data-path="/api/s/youtube" data-params="query"><p class="ep-desc">Cari video YouTube.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -386,12 +397,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       
       <div class="ep-item" data-name="text2qr /api/tools/text2qr">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/tools/text2qr</span><span class="ep-name">TEXT2QR</span><span class="ep-badge" data-status-for="/api/tools/text2qr">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/tools/text2qr" data-params="text"><p class="ep-desc">Generate QR image from plain text.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/text2qr', ['text'])">COPY URL</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/text2qr</span><span class="ep-name">TEXT2QR</span><span class="ep-badge" data-status-for="/api/tools/text2qr">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body" data-path="/api/tools/text2qr" data-params="text"><p class="ep-desc">Generate QR image from plain text.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
 <div class="ep-item" data-name="qr2text /api/tools/qr2text">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><span class="ep-badge" data-status-for="/api/tools/qr2text">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/tools/qr2text" data-params="url"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><span class="ep-badge" data-status-for="/api/tools/qr2text">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body" data-path="/api/tools/qr2text" data-params="url"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -400,8 +411,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="group-header"><span class="group-title">SERVER</span><span class="group-count">1 ENDPOINT</span></div>
     <div class="ep-list">
       <div class="ep-item" data-name="status /api/server/status">
-        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET/POST</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><span class="ep-badge" data-status-for="/api/server/status">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/server/status" data-params=""><p class="ep-desc">Status server YOUZ API.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><span class="ep-badge" data-status-for="/api/server/status">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body" data-path="/api/server/status" data-params=""><p class="ep-desc">Status server YOUZ API.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -528,19 +539,43 @@ function buildCurl(method, path, params, token){
   return [`curl -X ${method} "${url}"`, ...headers].join(' ') + body;
 }
 
+function getActiveResultText(body){
+  const cache = body._playgroundResult;
+  if(!cache) return '';
+  const active = getActiveTab(body);
+  if(active === 'curl') return cache.curl || '';
+  if(active === 'headers') return cache.headers || '// No response headers captured';
+  return cache.preview || '';
+}
+
+function updateResultMeta(body){
+  const cache = body._playgroundResult || {};
+  const codeEl = body.querySelector('.result-code');
+  const msEl = body.querySelector('.result-ms');
+  const code = Number(cache.statusCode || 0);
+  const ok = code >= 200 && code < 400;
+  if(codeEl){
+    codeEl.className = `result-code ${ok ? 'ok' : 'err'}`;
+    codeEl.textContent = code ? `${code} ${ok ? 'OK' : 'ERR'}` : 'ERR';
+  }
+  if(msEl) msEl.textContent = `${Math.max(0, Math.round(cache.durationMs || 0))}ms`;
+}
+
 function renderCachedResult(body){
   const resultBox = body.querySelector('.result-box');
   const cache = body._playgroundResult;
   if(!cache) return;
   body.querySelector('.result-tabs')?.classList.add('show');
+  updateResultMeta(body);
   resultBox.className = `result-box show${cache.error ? ' error' : ''}`;
-  resultBox.textContent = getActiveTab(body) === 'curl' ? cache.curl : cache.preview;
+  resultBox.textContent = getActiveResultText(body);
 }
 
 async function executeBody(body, triggerBtn = null){
   const item = body.closest('.ep-item');
   const status = item?.getAttribute('data-status') || 'ready';
   const resultBox = body.querySelector('.result-box');
+  const startedAt = performance.now();
   if(triggerBtn){
     triggerBtn.classList.add('loading');
     triggerBtn.textContent = '⏳ LOADING...';
@@ -548,28 +583,35 @@ async function executeBody(body, triggerBtn = null){
   if (status === 'maintenance' || status === 'closed') {
     body._playgroundResult = {
       error: true,
-      preview: `// Endpoint ${status.toUpperCase()}\n// Request blocked from Playground`,
+      statusCode: status === 'maintenance' ? 503 : 403,
+      durationMs: performance.now() - startedAt,
+      preview: JSON.stringify({ success: false, message: `Endpoint ${status.toUpperCase()}`, code: status === 'maintenance' ? 503 : 403 }, null, 2),
+      headers: '// Request blocked from Playground',
       curl: '// Curl unavailable because endpoint is not ready'
     };
     renderCachedResult(body);
     if(triggerBtn){
       triggerBtn.classList.remove('loading');
-      triggerBtn.textContent = '▶ EXECUTE';
+      triggerBtn.textContent = 'EXECUTE REQUEST';
     }
     return;
   }
 
   const missing = missingParams(body);
   if (missing.length) {
+    const code = 400;
     body._playgroundResult = {
-      error: false,
-      preview: `// Isi parameter: ${missing.join(', ')}\n// Klik EXECUTE setelah parameter lengkap.`,
+      error: true,
+      statusCode: code,
+      durationMs: performance.now() - startedAt,
+      preview: JSON.stringify({ status: false, error: `Parameter "${missing[0]}" is required`, code }, null, 2),
+      headers: '// No response headers: request was not sent',
       curl: buildCurl(getSelectedMethod(body), body.dataset.path, getParamsFromBody(body), getApiToken())
     };
     renderCachedResult(body);
     if(triggerBtn){
       triggerBtn.classList.remove('loading');
-      triggerBtn.textContent = '▶ EXECUTE';
+      triggerBtn.textContent = 'EXECUTE REQUEST';
     }
     return;
   }
@@ -587,6 +629,7 @@ async function executeBody(body, triggerBtn = null){
     fetchOptions.body = JSON.stringify(params);
   }
 
+  body.querySelector('.result-tabs')?.classList.add('show');
   resultBox.className = 'result-box show';
   resultBox.textContent = '// Fetching...';
 
@@ -594,15 +637,22 @@ async function executeBody(body, triggerBtn = null){
     const res = await fetch(url, fetchOptions);
     const contentType = res.headers.get('content-type') || '';
     const data = contentType.includes('application/json') ? await res.json() : await res.text();
+    const responseHeaders = [...res.headers.entries()].map(([key, value]) => `${key}: ${value}`).join('\n');
     body._playgroundResult = {
       error: !res.ok,
+      statusCode: res.status,
+      durationMs: performance.now() - startedAt,
       preview: typeof data === 'string' ? data : JSON.stringify(data, null, 2),
+      headers: responseHeaders || '// No response headers',
       curl: buildCurl(method, path, params, token)
     };
   }catch(e){
     body._playgroundResult = {
       error: true,
-      preview: `// Error: ${e.message}\n// URL: ${url}`,
+      statusCode: 0,
+      durationMs: performance.now() - startedAt,
+      preview: JSON.stringify({ status: false, error: e.message, code: 0, url }, null, 2),
+      headers: '// Request failed before response headers were received',
       curl: buildCurl(method, path, params, token)
     };
   }
@@ -610,7 +660,7 @@ async function executeBody(body, triggerBtn = null){
   renderCachedResult(body);
   if(triggerBtn){
     triggerBtn.classList.remove('loading');
-    triggerBtn.textContent = '▶ EXECUTE';
+    triggerBtn.textContent = 'EXECUTE REQUEST';
   }
 }
 
@@ -619,6 +669,10 @@ function resetEndpointResult(body, clearParams = false){
   body.querySelector('.result-box').className = 'result-box';
   body.querySelector('.result-box').textContent = '';
   body.querySelector('.result-tabs')?.classList.remove('show');
+  const codeEl = body.querySelector('.result-code');
+  const msEl = body.querySelector('.result-ms');
+  if(codeEl){ codeEl.className = 'result-code'; codeEl.textContent = '---'; }
+  if(msEl) msEl.textContent = '0ms';
   body.querySelectorAll('.result-tab').forEach((tab)=>tab.classList.toggle('active', tab.dataset.tab === 'preview'));
   if(clearParams) body.querySelectorAll('.param-input').forEach((input)=>{ input.value = ''; });
 }
@@ -631,21 +685,29 @@ async function executeApi(btn, path, paramNames){
   await executeBody(btn.closest('.ep-body'), btn);
 }
 
-function copyUrl(btn, path, paramNames){
-  const body = btn.closest('.ep-body');
-  const params = getParamsFromBody(body);
+function syncMethodBadge(body){
   const method = getSelectedMethod(body);
-  const value = method === 'GET' ? buildUrl(path, params) : buildCurl(method, path, params, getApiToken());
+  const badge = body.closest('.ep-item')?.querySelector('.ep-method');
+  if(!badge) return;
+  badge.textContent = method;
+  badge.classList.toggle('post', method === 'POST');
+}
+
+function copyResult(btn){
+  const body = btn.closest('.ep-body');
+  const value = getActiveResultText(body);
+  if(!value) return;
   navigator.clipboard.writeText(value).then(()=>{
-    const orig = btn.textContent;
-    btn.textContent = method === 'GET' ? 'URL COPIED!' : 'CURL COPIED!';
+    const original = btn.innerHTML;
+    btn.textContent = 'OK';
     btn.style.color = '#2ecc71';
-    setTimeout(()=>{btn.textContent = orig;btn.style.color='';}, 1500);
+    setTimeout(()=>{btn.innerHTML = original;btn.style.color='';}, 1200);
   });
 }
 
 function initPlaygroundInteractions(){
   document.querySelectorAll('.ep-body').forEach((body)=>{
+    syncMethodBadge(body);
     body.querySelectorAll('.param-input').forEach((input)=>{
       input.addEventListener('input',()=>resetEndpointResult(body));
       input.addEventListener('change',()=>resetEndpointResult(body));
@@ -664,6 +726,7 @@ function initPlaygroundInteractions(){
       const body=e.target.closest('.ep-body');
       body.querySelectorAll('.method-tab').forEach(t=>t.classList.remove('active'));
       e.target.classList.add('active');
+      syncMethodBadge(body);
       resetEndpointResult(body);
     }
   });
@@ -684,7 +747,7 @@ async function sinkronEndpointPlugin(){
       if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';} return; }
       if (st === 'maintenance') { item.style.opacity='0.6'; if(btn){btn.disabled=true; btn.textContent='MAINTENANCE';} return; }
       if (st === 'closed') { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='CLOSED';} return; }
-      item.style.opacity=''; if(btn){btn.disabled=false; btn.textContent='▶ EXECUTE';}
+      item.style.opacity=''; if(btn){btn.disabled=false; btn.textContent='EXECUTE REQUEST';}
     });
   }catch(e){}
 }
