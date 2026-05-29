@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>API Console V2 — YOUZ API</title>
+<title>API Console V1 — YOUZ API</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -29,16 +29,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 @keyframes pgspin{to{transform:rotate(360deg)}}
 @keyframes pgpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.72);opacity:.65}}
 
-.settings-box{display:flex;flex-direction:column;gap:10px;border:1px solid var(--border);background:var(--bg2);padding:14px 16px;margin-bottom:14px;}
-.settings-row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;}
-.settings-field{flex:1;min-width:180px;}
-.key-row{display:flex;gap:8px;align-items:center;}
-.key-blur{filter:blur(6px);user-select:none;}
 .badge-btn{border:1px solid var(--border);background:var(--bg3);color:var(--text);padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;}
-.settings-label{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;}
-.settings-input{width:100%;background:var(--bg);border:1px solid var(--border);padding:12px 12px;font-family:'Space Mono',monospace;font-size:11px;color:var(--text);outline:none;}
-.settings-input::placeholder{color:var(--dim);}
-.settings-color{height:41px;padding:0;border-radius:0;}
 
 nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;}
 .nav-logo{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;text-decoration:none;color:var(--text);}
@@ -170,9 +161,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   background:var(--blue);
   color:#fff;
   flex-shrink:0;
-  min-width:44px;
+  min-width:52px;
   text-align:center;
+  transition:background .15s,box-shadow .15s;
 }
+.ep-method.post{background:#1e7e34;box-shadow:0 0 14px rgba(46,204,113,.16);}
 .ep-path{
   font-family:'Space Mono',monospace;
   font-size:11px;
@@ -213,7 +206,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   background:var(--bg);
   border-top:1px solid var(--border);
 }
-.ep-body.open{display:block;}
+.ep-body.open{display:block;animation:endpointOpen .28s cubic-bezier(.2,.8,.2,1) both;}
+@keyframes endpointOpen{from{opacity:0;transform:translateY(-8px);clip-path:inset(0 0 100% 0)}to{opacity:1;transform:translateY(0);clip-path:inset(0 0 0 0)}}
 
 .ep-desc{
   font-size:13px;
@@ -265,15 +259,16 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
 .ep-actions{
   display:flex;
-  gap:8px;
-  margin-top:12px;
+  flex-direction:column;
+  gap:10px;
+  margin-top:18px;
 }
 
 .btn-execute{
   background:var(--red);
   color:#fff;
   border:none;
-  padding:10px 20px;
+  padding:14px 20px;
   font-family:'Barlow Condensed',sans-serif;
   font-size:14px;
   font-weight:700;
@@ -281,12 +276,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   text-transform:uppercase;
   cursor:pointer;
   transition:background .15s;
-  flex:1;
+  width:100%;
 }
 .btn-execute:hover{background:var(--red2);}
 .btn-execute.loading{opacity:.6;cursor:not-allowed;}
 
-.btn-copy-url{
+.btn-clear,.btn-copy-result{
   background:var(--bg2);
   color:var(--muted);
   border:1px solid var(--border);
@@ -297,27 +292,39 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   transition:background .15s,color .15s;
   white-space:nowrap;
 }
-.btn-copy-url:hover{background:var(--bg3);color:var(--text);}
+.btn-clear:hover,.btn-copy-result:hover{background:var(--bg3);color:var(--text);}
 
 .result-box{
-  margin-top:14px;
+  margin-top:0;
   background:var(--bg2);
   border:1px solid var(--border);
+  border-top:none;
   border-left:3px solid var(--red);
   font-family:'Space Mono',monospace;
   font-size:11px;
   color:#a8ff78;
-  padding:14px;
+  padding:18px 14px;
   white-space:pre-wrap;
-  word-break:break-all;
-  max-height:300px;
+  word-break:break-word;
+  max-height:340px;
   overflow-y:auto;
   line-height:1.7;
   display:none;
 }
-.result-tabs{display:flex;gap:8px;margin-top:10px;}
-.result-tab{border:1px solid var(--border);background:var(--bg3);color:var(--muted);padding:6px 10px;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;}
-.result-tab.active{color:var(--red2);border-color:var(--red);}
+.playground-controls{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px;}
+.method-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+.result-tabs{display:none;align-items:center;gap:8px;flex-wrap:wrap;margin-top:18px;padding:12px 14px;border:1px solid var(--border);background:var(--bg2);}
+.result-tabs.show{display:flex;}
+.method-tab,.result-tab{border:1px solid var(--border);background:var(--bg3);color:var(--muted);padding:6px 10px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;}
+.method-tab.active{color:#fff;border-color:var(--red);background:var(--red);}
+.method-tab[data-method="POST"].active{border-color:#1e7e34;background:#1e7e34;}
+.result-tab.active{color:var(--red2);border-color:transparent;background:transparent;}
+.result-spacer{flex:1;}
+.btn-copy-result{width:40px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;}
+.btn-copy-result svg{width:16px;height:16px;}
+.result-status{display:inline-flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);}
+.result-code.ok{color:#2ecc71;}.result-code.err{color:#ff7675;}.result-ms{color:var(--dim);font-weight:400;}
+
 .result-box.show{display:block;}
 .result-box.error{color:#ff7675;border-left-color:var(--red2);}
 
@@ -362,20 +369,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 </nav>
 
 <div class="page-hero">
-  <h1>API <span class="red">CONSOLE</span><span class="version">V2</span></h1>
+  <h1>API <span class="red">CONSOLE</span><span class="version">V1</span></h1>
   <p class="page-hero-sub">DIRECT ENDPOINT EXECUTION ENVIRONMENT</p>
 </div>
 
 <div class="console-wrap">
-
-  <div class="settings-box">
-    <div class="settings-row">
-      <div class="settings-field">
-        <div class="settings-label">API TOKEN ACCOUNT</div>
-        <div class='key-row'><input id="apiToken" class="settings-input key-blur" type="text" value="<%= user?.key || '' %>" readonly><button class="badge-btn" id="toggleKeyBtn" type="button">Look API Key</button><button class="badge-btn" id="copyKeyBtn" type="button" style="display:none;">Salin</button></div>
-      </div>
-    </div>
-  </div>
 
   <div class="search-box">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
@@ -390,7 +388,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="yt search youtube /api/s/youtube">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><span class="ep-badge" data-status-for="/api/s/youtube">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Cari video YouTube.</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/s/youtube', ['query'])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/s/youtube" data-params="query"><p class="ep-desc">Cari video YouTube.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -401,11 +399,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
       
       <div class="ep-item" data-name="text2qr /api/tools/text2qr">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/text2qr</span><span class="ep-name">TEXT2QR</span><span class="ep-badge" data-status-for="/api/tools/text2qr">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Generate QR image from plain text.</p><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/text2qr', ['text'])">COPY URL</button></div><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/tools/text2qr" data-params="text"><p class="ep-desc">Generate QR image from plain text.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
 <div class="ep-item" data-name="qr2text /api/tools/qr2text">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><span class="ep-badge" data-status-for="/api/tools/qr2text">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/tools/qr2text', ['url'])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/tools/qr2text" data-params="url"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -415,7 +413,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="status /api/server/status">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><span class="ep-badge" data-status-for="/api/server/status">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body"><p class="ep-desc">Status server YOUZ API.</p><div class="result-tabs"><button class="result-tab active" data-tab="preview">PREVIEW</button><button class="result-tab" data-tab="curl">CURL</button></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">▶ EXECUTE</button><button class="btn-copy-url" onclick="copyUrl(this, '/api/server/status', [])">COPY URL</button></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/server/status" data-params=""><p class="ep-desc">Status server YOUZ API.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -456,39 +454,9 @@ const BASE = '';
 
 function openMenu(){document.getElementById('menuOverlay').classList.add('open');}
 function closeMenu(){document.getElementById('menuOverlay').classList.remove('open');}
+const ACCOUNT_API_TOKEN = <%- JSON.stringify(user?.key || '') %>;
 function getApiToken(){
-  return (document.getElementById('apiToken')?.value || '').trim();
-}
-
-async function syncApiKeyFromAccount(){
-  try{
-    const res=await fetch('/api/account/me');
-    const data=await res.json();
-    if(data?.success && data?.data?.key){
-      const tokenEl=document.getElementById('apiToken');
-      if(tokenEl) tokenEl.value=data.data.key;
-    }
-  }catch(e){}
-}
-
-
-function initApiKeyVisibility(){
-  const tokenEl=document.getElementById('apiToken');
-  const toggleBtn=document.getElementById('toggleKeyBtn');
-  const copyBtn=document.getElementById('copyKeyBtn');
-  if(!tokenEl||!toggleBtn||!copyBtn) return;
-  let visible=false;
-  toggleBtn.addEventListener('click',()=>{
-    visible=!visible;
-    tokenEl.classList.toggle('key-blur',!visible);
-    toggleBtn.textContent=visible?'Hide API Key':'Look API Key';
-    copyBtn.style.display=visible?'inline-block':'none';
-  });
-  copyBtn.addEventListener('click', async ()=>{
-    await navigator.clipboard.writeText(tokenEl.value||'');
-    copyBtn.textContent='Copied!';
-    setTimeout(()=>copyBtn.textContent='Salin',1200);
-  });
+  return (ACCOUNT_API_TOKEN || '').trim();
 }
 
 function applyEndpointStatuses(endpoints){
@@ -511,7 +479,23 @@ function toggleEp(el){
   const body = el.nextElementSibling;
   const wasOpen = el.classList.contains('open');
   document.querySelectorAll('.ep-header.open').forEach(h=>{h.classList.remove('open');h.nextElementSibling.classList.remove('open');});
-  if(!wasOpen){el.classList.add('open');body.classList.add('open');}
+  if(!wasOpen){
+    el.classList.add('open');
+    body.classList.add('open');
+  }
+}
+
+function getParamNames(body){
+  return (body?.dataset?.params || '').split(',').map(v=>v.trim()).filter(Boolean);
+}
+
+function getParamsFromBody(body){
+  const params = {};
+  getParamNames(body).forEach(name=>{
+    const inp = body.querySelector(`[data-param="${name}"]`);
+    if(inp && inp.value.trim()) params[name] = inp.value.trim();
+  });
+  return params;
 }
 
 function getParams(btn, paramNames){
@@ -529,56 +513,225 @@ function buildUrl(path, params){
   return `${BASE}${path}${qs ? '?'+qs : ''}`;
 }
 
-function getResultBox(btn){
-  const body = btn.closest('.ep-body');
+function getSelectedMethod(body){
+  return body.querySelector('.method-tab.active')?.dataset?.method || 'GET';
+}
+
+function getActiveTab(body){
+  return body.querySelector('.result-tab.active')?.dataset?.tab || 'preview';
+}
+
+function getResultBox(target){
+  const body = target.closest('.ep-body');
   return body.querySelector('.result-box');
 }
 
-async function executeApi(btn, path, paramNames){
-  const item = btn.closest('.ep-item');
+function missingParams(body){
+  const params = getParamsFromBody(body);
+  return getParamNames(body).filter(name=>!params[name]);
+}
+
+function buildCurl(method, path, params, token){
+  const url = method === 'GET' ? buildUrl(path, params) : `${BASE}${path}`;
+  const headers = [];
+  if(token) headers.push(`-H "Authorization: Bearer ${token}"`);
+  if(method === 'POST') headers.push('-H "Content-Type: application/json"');
+  const jsonBody = JSON.stringify(params || {});
+  const escapedBody = jsonBody.replace(/'/g, "'\\''");
+  const body = method === 'POST' ? ` -d '${escapedBody}'` : '';
+  return [`curl -X ${method} "${url}"`, ...headers].join(' ') + body;
+}
+
+function getActiveResultText(body){
+  const cache = body._playgroundResult;
+  if(!cache) return '';
+  const active = getActiveTab(body);
+  if(active === 'curl') return cache.curl || '';
+  if(active === 'headers') return cache.headers || '// No response headers captured';
+  return cache.preview || '';
+}
+
+function updateResultMeta(body){
+  const cache = body._playgroundResult || {};
+  const codeEl = body.querySelector('.result-code');
+  const msEl = body.querySelector('.result-ms');
+  const code = Number(cache.statusCode || 0);
+  const ok = code >= 200 && code < 400;
+  if(codeEl){
+    codeEl.className = `result-code ${ok ? 'ok' : 'err'}`;
+    codeEl.textContent = code ? `${code} ${ok ? 'OK' : 'ERR'}` : 'ERR';
+  }
+  if(msEl) msEl.textContent = `${Math.max(0, Math.round(cache.durationMs || 0))}ms`;
+}
+
+function renderCachedResult(body){
+  const resultBox = body.querySelector('.result-box');
+  const cache = body._playgroundResult;
+  if(!cache) return;
+  body.querySelector('.result-tabs')?.classList.add('show');
+  updateResultMeta(body);
+  resultBox.className = `result-box show${cache.error ? ' error' : ''}`;
+  resultBox.textContent = getActiveResultText(body);
+}
+
+async function executeBody(body, triggerBtn = null){
+  const item = body.closest('.ep-item');
   const status = item?.getAttribute('data-status') || 'ready';
+  const resultBox = body.querySelector('.result-box');
+  const startedAt = performance.now();
+  if(triggerBtn){
+    triggerBtn.classList.add('loading');
+    triggerBtn.textContent = '⏳ LOADING...';
+  }
   if (status === 'maintenance' || status === 'closed') {
-    const resultBox = getResultBox(btn);
-    resultBox.className = 'result-box show error';
-    resultBox.textContent = `// Endpoint ${status.toUpperCase()}\n// Request blocked from Playground`;
+    body._playgroundResult = {
+      error: true,
+      statusCode: status === 'maintenance' ? 503 : 403,
+      durationMs: performance.now() - startedAt,
+      preview: JSON.stringify({ success: false, message: `Endpoint ${status.toUpperCase()}`, code: status === 'maintenance' ? 503 : 403 }, null, 2),
+      headers: '// Request blocked from Playground',
+      curl: '// Curl unavailable because endpoint is not ready'
+    };
+    renderCachedResult(body);
+    if(triggerBtn){
+      triggerBtn.classList.remove('loading');
+      triggerBtn.textContent = 'EXECUTE REQUEST';
+    }
     return;
   }
 
-  const params = getParams(btn, paramNames);
-  const url = buildUrl(path, params);
-  const resultBox = getResultBox(btn);
+  const missing = missingParams(body);
+  if (missing.length) {
+    const code = 400;
+    body._playgroundResult = {
+      error: true,
+      statusCode: code,
+      durationMs: performance.now() - startedAt,
+      preview: JSON.stringify({ status: false, error: `Parameter "${missing[0]}" is required`, code }, null, 2),
+      headers: '// No response headers: request was not sent',
+      curl: buildCurl(getSelectedMethod(body), body.dataset.path, getParamsFromBody(body), getApiToken())
+    };
+    renderCachedResult(body);
+    if(triggerBtn){
+      triggerBtn.classList.remove('loading');
+      triggerBtn.textContent = 'EXECUTE REQUEST';
+    }
+    return;
+  }
 
-  btn.classList.add('loading');
-  btn.textContent = '⏳ LOADING...';
+  const path = body.dataset.path;
+  const params = getParamsFromBody(body);
+  const method = getSelectedMethod(body);
+  const token = getApiToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const fetchOptions = { method, headers };
+  const url = method === 'GET' ? buildUrl(path, params) : `${BASE}${path}`;
+
+  if(method === 'POST') {
+    fetchOptions.headers = { ...headers, 'Content-Type': 'application/json' };
+    fetchOptions.body = JSON.stringify(params);
+  }
+
+  body.querySelector('.result-tabs')?.classList.add('show');
   resultBox.className = 'result-box show';
   resultBox.textContent = '// Fetching...';
 
   try{
-    const token = getApiToken();
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    const res = await fetch(url, { headers });
-    const data = await res.json();
-    const curl = `curl -X GET "${url}"${token ? ` -H "Authorization: Bearer ${token}"` : ""}`;
-    const activeTab = btn.closest('.ep-body').querySelector('.result-tab.active')?.dataset?.tab || "preview";
-    resultBox.textContent = activeTab === "curl" ? curl : JSON.stringify(data, null, 2);
-    resultBox.className = 'result-box show';
+    const res = await fetch(url, fetchOptions);
+    const contentType = res.headers.get('content-type') || '';
+    const data = contentType.includes('application/json') ? await res.json() : await res.text();
+    const responseHeaders = [...res.headers.entries()].map(([key, value]) => `${key}: ${value}`).join('\n');
+    body._playgroundResult = {
+      error: !res.ok,
+      statusCode: res.status,
+      durationMs: performance.now() - startedAt,
+      preview: typeof data === 'string' ? data : JSON.stringify(data, null, 2),
+      headers: responseHeaders || '// No response headers',
+      curl: buildCurl(method, path, params, token)
+    };
   }catch(e){
-    resultBox.textContent = `// Error: ${e.message}\n// URL: ${url}`;
-    resultBox.className = 'result-box show error';
+    body._playgroundResult = {
+      error: true,
+      statusCode: 0,
+      durationMs: performance.now() - startedAt,
+      preview: JSON.stringify({ status: false, error: e.message, code: 0, url }, null, 2),
+      headers: '// Request failed before response headers were received',
+      curl: buildCurl(method, path, params, token)
+    };
   }
 
-  btn.classList.remove('loading');
-  btn.textContent = '▶ EXECUTE';
+  renderCachedResult(body);
+  if(triggerBtn){
+    triggerBtn.classList.remove('loading');
+    triggerBtn.textContent = 'EXECUTE REQUEST';
+  }
 }
 
-function copyUrl(btn, path, paramNames){
-  const params = getParams(btn, paramNames);
-  const url = buildUrl(path, params);
-  navigator.clipboard.writeText(url).then(()=>{
-    const orig = btn.textContent;
-    btn.textContent = 'COPIED!';
+function resetEndpointResult(body, clearParams = false){
+  body._playgroundResult = null;
+  body.querySelector('.result-box').className = 'result-box';
+  body.querySelector('.result-box').textContent = '';
+  body.querySelector('.result-tabs')?.classList.remove('show');
+  const codeEl = body.querySelector('.result-code');
+  const msEl = body.querySelector('.result-ms');
+  if(codeEl){ codeEl.className = 'result-code'; codeEl.textContent = '---'; }
+  if(msEl) msEl.textContent = '0ms';
+  body.querySelectorAll('.result-tab').forEach((tab)=>tab.classList.toggle('active', tab.dataset.tab === 'preview'));
+  if(clearParams) body.querySelectorAll('.param-input').forEach((input)=>{ input.value = ''; });
+}
+
+function clearEndpoint(btn){
+  resetEndpointResult(btn.closest('.ep-body'), true);
+}
+
+async function executeApi(btn, path, paramNames){
+  await executeBody(btn.closest('.ep-body'), btn);
+}
+
+function syncMethodBadge(body){
+  const method = getSelectedMethod(body);
+  const badge = body.closest('.ep-item')?.querySelector('.ep-method');
+  if(!badge) return;
+  badge.textContent = method;
+  badge.classList.toggle('post', method === 'POST');
+}
+
+function copyResult(btn){
+  const body = btn.closest('.ep-body');
+  const value = getActiveResultText(body);
+  if(!value) return;
+  navigator.clipboard.writeText(value).then(()=>{
+    const original = btn.innerHTML;
+    btn.textContent = 'OK';
     btn.style.color = '#2ecc71';
-    setTimeout(()=>{btn.textContent = orig;btn.style.color='';}, 1500);
+    setTimeout(()=>{btn.innerHTML = original;btn.style.color='';}, 1200);
+  });
+}
+
+function initPlaygroundInteractions(){
+  document.querySelectorAll('.ep-body').forEach((body)=>{
+    syncMethodBadge(body);
+    body.querySelectorAll('.param-input').forEach((input)=>{
+      input.addEventListener('input',()=>resetEndpointResult(body));
+      input.addEventListener('change',()=>resetEndpointResult(body));
+    });
+  });
+
+  document.addEventListener('click',(e)=>{
+    if(e.target.classList.contains('result-tab')){
+      const body=e.target.closest('.ep-body');
+      body.querySelectorAll('.result-tab').forEach(t=>t.classList.remove('active'));
+      e.target.classList.add('active');
+      renderCachedResult(body);
+      return;
+    }
+    if(e.target.classList.contains('method-tab')){
+      const body=e.target.closest('.ep-body');
+      body.querySelectorAll('.method-tab').forEach(t=>t.classList.remove('active'));
+      e.target.classList.add('active');
+      syncMethodBadge(body);
+      resetEndpointResult(body);
+    }
   });
 }
 
@@ -597,7 +750,7 @@ async function sinkronEndpointPlugin(){
       if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';} return; }
       if (st === 'maintenance') { item.style.opacity='0.6'; if(btn){btn.disabled=true; btn.textContent='MAINTENANCE';} return; }
       if (st === 'closed') { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='CLOSED';} return; }
-      item.style.opacity=''; if(btn){btn.disabled=false; btn.textContent='▶ EXECUTE';}
+      item.style.opacity=''; if(btn){btn.disabled=false; btn.textContent='EXECUTE REQUEST';}
     });
   }catch(e){}
 }
@@ -611,10 +764,8 @@ function initLoader(){
   });
 }
 
-syncApiKeyFromAccount();
-initApiKeyVisibility();
 initLoader();
-document.addEventListener('click',(e)=>{if(!e.target.classList.contains('result-tab'))return;const body=e.target.closest('.ep-body');body.querySelectorAll('.result-tab').forEach(t=>t.classList.remove('active'));e.target.classList.add('active');});
+initPlaygroundInteractions();
 sinkronEndpointPlugin();
 
 function filterEndpoints(val){

@@ -42,6 +42,8 @@ body::before{
   pointer-events:none;
   z-index:0;
 }
+body::after{content:'';position:fixed;inset:-40%;z-index:0;pointer-events:none;background:radial-gradient(circle at 20% 20%,rgba(192,57,43,.18),transparent 26%),radial-gradient(circle at 80% 10%,rgba(231,76,60,.11),transparent 24%),radial-gradient(circle at 50% 90%,rgba(192,57,43,.10),transparent 28%);filter:blur(28px);animation:ambientGlow 18s ease-in-out infinite alternate;}
+@keyframes ambientGlow{0%{transform:translate3d(-2%,0,0) scale(1)}50%{transform:translate3d(2%,-2%,0) scale(1.04)}100%{transform:translate3d(0,2%,0) scale(1.08)}}
 
 /* NAV */
 nav{
@@ -75,7 +77,9 @@ nav{
   height:20px;
   background:var(--red);
   flex-shrink:0;
+  animation:logoBeat 2.8s ease-in-out infinite;
 }
+@keyframes logoBeat{0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(8deg) scale(1.08)}}
 
 .nav-menu-btn{
   width:44px;height:44px;
@@ -93,12 +97,24 @@ nav{
 .hero{
   position:relative;
   z-index:1;
-  padding:80px 24px 60px;
+  padding:90px 24px 70px;
   display:flex;
   flex-direction:column;
   align-items:center;
   text-align:center;
+  overflow:hidden;
 }
+.hero::before{content:'';position:absolute;inset:24px 18px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(192,57,43,.08),transparent 38%,rgba(255,255,255,.025));clip-path:polygon(0 0,100% 0,100% calc(100% - 34px),calc(100% - 34px) 100%,0 100%);z-index:-1;animation:heroFrame 6s ease-in-out infinite;}
+.hero::after{content:'';position:absolute;left:-30%;top:10%;width:160%;height:1px;background:linear-gradient(90deg,transparent,rgba(231,76,60,.6),transparent);opacity:.5;animation:scanLine 4.5s linear infinite;z-index:-1;}
+.hero-fx{position:absolute;inset:0;pointer-events:none;z-index:-1;overflow:hidden;}
+.hero-orb{position:absolute;width:180px;height:180px;border:1px solid rgba(231,76,60,.25);background:radial-gradient(circle,rgba(231,76,60,.16),transparent 60%);filter:blur(.2px);animation:floatOrb 9s ease-in-out infinite;}
+.hero-orb.one{left:6%;top:15%;}
+.hero-orb.two{right:8%;bottom:8%;width:120px;height:120px;animation-delay:-3s;}
+.code-rain{position:absolute;inset:0;font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,255,255,.08);letter-spacing:2px;text-align:left;line-height:2.6;transform:rotate(-8deg) translateY(-12%);animation:codeRain 18s linear infinite;}
+@keyframes heroFrame{0%,100%{box-shadow:0 0 0 rgba(192,57,43,0)}50%{box-shadow:0 0 45px rgba(192,57,43,.16)}}
+@keyframes scanLine{from{transform:translateY(-80px)}to{transform:translateY(420px)}}
+@keyframes floatOrb{0%,100%{transform:translate3d(0,0,0) rotate(0deg)}50%{transform:translate3d(18px,-24px,0) rotate(12deg)}}
+@keyframes codeRain{from{transform:rotate(-8deg) translateY(-18%)}to{transform:rotate(-8deg) translateY(12%)}}
 
 .status-pill{
   display:inline-flex;
@@ -174,7 +190,9 @@ nav{
   border-right:1px solid var(--border);
   border-bottom:1px solid var(--border);
   text-align:center;
+  transition:transform .25s ease,background .25s ease;
 }
+.stat-box:hover{transform:translateY(-4px);background:rgba(192,57,43,.06);}
 .stat-box:nth-child(even){border-right:none;}
 
 .stat-val{
@@ -235,7 +253,9 @@ nav{
   background:var(--bg);
   padding:28px 24px;
   border:none;
+  transition:transform .25s ease,background .25s ease;
 }
+.feat-card:hover{transform:translateY(-5px);background:linear-gradient(135deg,rgba(192,57,43,.08),var(--bg));}
 
 .feat-icon{
   font-size:28px;
@@ -656,6 +676,9 @@ footer{
   transition:background .2s;
 }
 .btn-join:hover{background:var(--red2);}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.in-view{opacity:1;transform:translateY(0);}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}.hero::after,.code-rain,.hero-orb{display:none}}
 </style>
 </head>
 <body>
@@ -673,9 +696,10 @@ footer{
 
 <!-- HERO -->
 <section class="hero">
+  <div class="hero-fx" aria-hidden="true"><div class="hero-orb one"></div><div class="hero-orb two"></div><div class="code-rain">GET /api/tools/text2qr · POST /api/s/youtube · WS /ws/monitor · JSON RESPONSE · LOW LATENCY · REALTIME METRICS · YOUZ API ·</div></div>
   <div class="status-pill">
     <span class="status-dot"></span>
-    SISTEM OPERASIONAL: V.2.0.0
+    SISTEM OPERASIONAL: V1.0.0
   </div>
   <h1 class="hero-title">
     TANPA LOGIN.<br>
@@ -957,7 +981,19 @@ function toggleQA(el){
   document.querySelectorAll('.qa-q.open').forEach(q=>{q.classList.remove('open');q.nextElementSibling.classList.remove('open');});
   if(!wasOpen){el.classList.add('open');a.classList.add('open');}
 }
+
+function initRevealAnimations(){
+  const nodes=document.querySelectorAll('.stat-box,.section,.feat-card,.catalog-section,.qa-section,.sponsors,footer');
+  nodes.forEach((node)=>node.classList.add('reveal'));
+  if(!('IntersectionObserver' in window)){nodes.forEach((node)=>node.classList.add('in-view'));return;}
+  const observer=new IntersectionObserver((entries)=>{
+    entries.forEach((entry)=>{if(entry.isIntersecting){entry.target.classList.add('in-view');observer.unobserve(entry.target);}});
+  },{threshold:.14});
+  nodes.forEach((node)=>observer.observe(node));
+}
+
 syncCatalog();
+initRevealAnimations();
 </script>
 </body>
 </html>
