@@ -535,7 +535,9 @@ function buildCurl(method, path, params, token){
   const headers = [];
   if(token) headers.push(`-H "Authorization: Bearer ${token}"`);
   if(method === 'POST') headers.push('-H "Content-Type: application/json"');
-  const body = method === 'POST' ? ` -d '${JSON.stringify(params || {})}'` : '';
+  const jsonBody = JSON.stringify(params || {});
+  const escapedBody = jsonBody.replace(/'/g, "'\\''");
+  const body = method === 'POST' ? ` -d '${escapedBody}'` : '';
   return [`curl -X ${method} "${url}"`, ...headers].join(' ') + body;
 }
 

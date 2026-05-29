@@ -686,7 +686,9 @@ window.addEventListener('resize', ()=>{
 
       ws.onopen = () => { retry = 0; setWsState('', 'LIVE WS'); };
       ws.onmessage = (ev) => {
-        const payload = JSON.parse(ev.data || '{}');
+        let payload;
+        try { payload = JSON.parse(ev.data || '{}'); }
+        catch { return; }
         if (payload.type !== 'monitor') return;
       const up = Number(payload.uptime || 0);
       const h = Math.floor(up/3600), m=Math.floor((up%3600)/60), sec=Math.floor(up%60);
