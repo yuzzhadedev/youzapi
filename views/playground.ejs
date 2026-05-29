@@ -206,7 +206,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   background:var(--bg);
   border-top:1px solid var(--border);
 }
-.ep-body.open{display:block;}
+.ep-body.open{display:block;animation:endpointOpen .28s cubic-bezier(.2,.8,.2,1) both;}
+@keyframes endpointOpen{from{opacity:0;transform:translateY(-8px);clip-path:inset(0 0 100% 0)}to{opacity:1;transform:translateY(0);clip-path:inset(0 0 0 0)}}
 
 .ep-desc{
   font-size:13px;

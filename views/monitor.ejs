@@ -316,22 +316,22 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-card-label">TOTAL REQUESTS</div>
-      <div class="stat-card-val white" id="totalReq">2.970.689</div>
-      <div class="stat-card-sub">Realtime</div>
+      <div class="stat-card-val white" id="totalReq">0</div>
+      <div class="stat-card-sub">Realtime via WebSocket</div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label">TOTAL ERRORS</div>
-      <div class="stat-card-val yellow" id="totalErr">300.467</div>
+      <div class="stat-card-val yellow" id="totalErr">0</div>
       <div class="stat-card-sub">5xx dominant</div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label">TOTAL ATTACKS</div>
-      <div class="stat-card-val red" id="totalAtk">1.029.672</div>
+      <div class="stat-card-val red" id="totalAtk">0</div>
       <div class="stat-card-sub">Guard layer</div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label">SUCCESS RATE</div>
-      <div class="stat-card-val yellow" id="successRate">88.9%</div>
+      <div class="stat-card-val yellow" id="successRate">0.0%</div>
       <div class="stat-card-sub">Response quality</div>
     </div>
   </div>
@@ -340,15 +340,15 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
   <div class="section">
     <div class="section-head">
       <span class="section-title">NODE STATUS</span>
-      <span class="section-tag green">1/1 HEALTHY</span>
+      <span class="section-tag green" id="nodeHealthTag">1/1 HEALTHY</span>
     </div>
     <div class="node-row">
       <div class="node-dot healthy"></div>
       <span class="node-name">LOCAL-NODE</span>
       <div class="node-meta">
-        <span id="nodeLatency">7ms</span>
+        <span id="nodeLatency">0ms</span>
         <span>conn <span id="nodeConn">0</span></span>
-        <span class="healthy">healthy</span>
+        <span class="healthy" id="nodeHealthText">healthy</span>
       </div>
     </div>
   </div>
@@ -362,7 +362,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
     <div class="traffic-grid">
       <div class="traffic-box">
         <div class="traffic-label">UPTIME</div>
-        <div class="traffic-val" id="uptime">23h</div>
+        <div class="traffic-val" id="uptime">0s</div>
       </div>
       <div class="traffic-box">
         <div class="traffic-label">ACTIVE CONNS</div>
@@ -370,11 +370,11 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
       </div>
       <div class="traffic-box" style="margin-top:1px;">
         <div class="traffic-label">RECENT AVG LATENCY</div>
-        <div class="traffic-val" id="avgLatency">1319.1ms</div>
+        <div class="traffic-val" id="avgLatency">0ms</div>
       </div>
       <div class="traffic-box" style="margin-top:1px;">
         <div class="traffic-label">FAILOVER RATE</div>
-        <div class="traffic-val" id="failover">2.7%</div>
+        <div class="traffic-val" id="failover">0 events</div>
       </div>
     </div>
   </div>
@@ -429,19 +429,20 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
   <div class="section">
     <div class="section-head">
       <span class="section-title">ERROR RATE OVERVIEW</span>
+      <span class="section-tag green">REALTIME VIA WEBSOCKET</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <div class="rate-row">
         <span class="rate-label green">SUCCESS</span>
-        <span class="rate-pct green">88.9%</span>
+        <span class="rate-pct green" id="successPct">0.0%</span>
       </div>
       <div class="rate-row">
         <span class="rate-label yellow">ERRORS</span>
-        <span class="rate-pct yellow">11.1%</span>
+        <span class="rate-pct yellow" id="errorPct">0.0%</span>
       </div>
       <div class="rate-bar-wrap">
-        <div class="rate-bar-fill green" style="width:88.9%;"></div>
-        <div class="rate-bar-fill yellow" style="width:11.1%;"></div>
+        <div class="rate-bar-fill green" id="successBar" style="width:100%;"></div>
+        <div class="rate-bar-fill yellow" id="errorBar" style="width:0%;"></div>
       </div>
     </div>
   </div>
@@ -694,6 +695,8 @@ window.addEventListener('resize', ()=>{
       const h = Math.floor(up/3600), m=Math.floor((up%3600)/60), sec=Math.floor(up%60);
       document.getElementById('uptime').textContent = `${h}h ${m}m ${sec}s`;
       document.getElementById('activeConn').textContent = String(payload.activeConns || 0);
+      document.getElementById('nodeHealthTag').textContent = '1/1 HEALTHY';
+      document.getElementById('nodeHealthText').textContent = 'healthy';
 
       const stats = payload.stats || {};
       document.getElementById('totalReq').textContent = (stats.totalRequests || 0).toLocaleString('id-ID');
@@ -704,11 +707,16 @@ window.addEventListener('resize', ()=>{
       document.getElementById('totalAtk').textContent = errCount.toLocaleString('id-ID');
       const errorRate = (((errCount) / Math.max(1, (stats.totalRequests || 0))) * 100).toFixed(1);
       document.getElementById('errorRate').textContent = `${errorRate}%`;
+      document.getElementById('successPct').textContent = `${stats.successRate || '0.0'}%`;
+      document.getElementById('errorPct').textContent = `${errorRate}%`;
+      document.getElementById('successBar').style.width = `${stats.successRate || '0.0'}%`;
+      document.getElementById('errorBar').style.width = `${errorRate}%`;
       const recent = stats.recent || [];
       const avg = recent.length ? Math.round(recent.reduce((a, r) => a + parseFloat(String(r.latency).replace('ms','') || 0), 0) / recent.length) : 0;
       document.getElementById('avgLatency').textContent = `${avg}ms`;
       document.getElementById('failover').textContent = `${(sCodes.s5xx || 0)} events`;
       document.getElementById('nodeConn').textContent = String(payload.activeConns || 0);
+      document.getElementById('nodeLatency').textContent = `${avg}ms`;
 
       document.getElementById('status2xx').textContent = sCodes.s2xx || 0;
       document.getElementById('status4xx').textContent = sCodes.s4xx || 0;
@@ -720,6 +728,8 @@ window.addEventListener('resize', ()=>{
       ws.onerror = () => setWsState('offline', 'WS ERROR');
       ws.onclose = () => {
         document.getElementById('activeConn').textContent = '0';
+        document.getElementById('nodeHealthTag').textContent = '0/1 OFFLINE';
+        document.getElementById('nodeHealthText').textContent = 'offline';
         setWsState('offline', 'WS OFFLINE');
         clearTimeout(reconnectTimer);
         retry += 1;
