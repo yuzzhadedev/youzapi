@@ -18,33 +18,16 @@
 body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
 
-.pg-loader{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(circle at 50% 42%,rgba(231,76,60,.24),transparent 26%),linear-gradient(135deg,#090909 0%,#111 48%,#1a0f0d 100%);backdrop-filter:blur(14px);transition:opacity .55s ease,visibility .55s ease;}
-.pg-loader::before{content:'';position:absolute;inset:-35%;background:conic-gradient(from 0deg,transparent,rgba(192,57,43,.45),transparent 34%,rgba(255,255,255,.12),transparent 62%,rgba(231,76,60,.3),transparent);animation:pgspin 5.8s linear infinite;opacity:.5;}
-.pg-loader::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(transparent 0 48%,rgba(231,76,60,.15) 50%,transparent 52%);background-size:44px 44px,44px 44px,100% 8px;mix-blend-mode:screen;animation:pgscan 2.6s linear infinite;opacity:.42;}
+.pg-loader{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(17,17,17,0.98);backdrop-filter:blur(10px);transition:opacity .35s ease,visibility .35s ease;}
 .pg-loader.hide{opacity:0;visibility:hidden;}
-.pg-loader-inner{position:relative;width:min(560px,92vw);padding:34px 22px 30px;border:1px solid rgba(231,76,60,.35);background:linear-gradient(180deg,rgba(24,24,24,.9),rgba(12,12,12,.78));box-shadow:0 0 0 1px rgba(255,255,255,.04) inset,0 24px 80px rgba(0,0,0,.55),0 0 60px rgba(192,57,43,.22);text-align:center;clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);}
-.pg-loader-inner::before,.pg-loader-inner::after{content:'';position:absolute;width:78px;height:2px;background:var(--red2);box-shadow:0 0 18px rgba(231,76,60,.8);}
-.pg-loader-inner::before{top:0;left:24px;}.pg-loader-inner::after{right:24px;bottom:0;}
-.pg-loader-mark{position:relative;width:136px;height:136px;margin:0 auto 18px;display:grid;place-items:center;}
-.pg-loader-orbit{position:absolute;inset:0;border-radius:999px;border:1px solid rgba(255,255,255,.1);animation:pgspin 2.7s linear infinite;}
-.pg-loader-orbit::before,.pg-loader-orbit::after{content:'';position:absolute;width:10px;height:10px;border-radius:999px;background:var(--red2);box-shadow:0 0 18px rgba(231,76,60,.95);}
-.pg-loader-orbit::before{top:7px;left:50%;}.pg-loader-orbit::after{bottom:14px;right:16px;transform:scale(.65);}
-.pg-loader-ring{position:absolute;width:94px;height:94px;border-radius:999px;border:2px solid rgba(255,255,255,0.1);border-top-color:var(--red2);border-right-color:rgba(231,76,60,.55);animation:pgspin 1.05s cubic-bezier(.5,0,.5,1) infinite;}
-.pg-loader-ring.second{width:116px;height:116px;border-top-color:transparent;border-left-color:rgba(231,76,60,.55);animation-duration:1.8s;animation-direction:reverse;}
-.pg-loader-sq{position:relative;width:42px;height:42px;background:linear-gradient(135deg,var(--red),var(--red2));box-shadow:0 0 32px rgba(231,76,60,.7);animation:pgcore 1.4s ease-in-out infinite;transform:rotate(45deg);}
-.pg-loader-sq::after{content:'';position:absolute;inset:11px;background:#fff;opacity:.16;}
-.pg-loader-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(30px,8vw,46px);font-weight:900;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;text-shadow:0 0 24px rgba(231,76,60,.45);}
-.pg-loader-sub{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2.8px;text-transform:uppercase;color:var(--muted);}
-.pg-loader-bar{position:relative;height:4px;margin:22px auto 0;width:min(360px,80%);overflow:hidden;background:rgba(255,255,255,.08);}
-.pg-loader-bar span{position:absolute;inset:0;background:linear-gradient(90deg,transparent,var(--red2),#fff,var(--red),transparent);animation:pgbar 1.3s ease-in-out infinite;transform:translateX(-100%);}
-.pg-loader-dots{display:flex;justify-content:center;gap:6px;margin-top:14px;}
-.pg-loader-dots span{width:5px;height:5px;border-radius:50%;background:var(--red2);animation:pgdot .9s ease-in-out infinite;box-shadow:0 0 10px rgba(231,76,60,.8);}
-.pg-loader-dots span:nth-child(2){animation-delay:.12s}.pg-loader-dots span:nth-child(3){animation-delay:.24s}.pg-loader-dots span:nth-child(4){animation-delay:.36s}
+.pg-loader-inner{width:min(520px,92vw);padding:28px 18px;border:1px solid var(--border);background:rgba(24,24,24,0.7);text-align:center;}
+.pg-loader-mark{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;}
+.pg-loader-ring{width:26px;height:26px;border-radius:999px;border:2px solid rgba(255,255,255,0.12);border-top-color:var(--red);animation:pgspin .85s linear infinite;}
+.pg-loader-sq{width:16px;height:16px;background:var(--red);animation:pgpulse .9s ease-in-out infinite;}
+.pg-loader-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.pg-loader-sub{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
 @keyframes pgspin{to{transform:rotate(360deg)}}
-@keyframes pgscan{to{background-position:0 44px,44px 0,0 24px}}
-@keyframes pgcore{0%,100%{transform:rotate(45deg) scale(1);filter:saturate(1)}50%{transform:rotate(225deg) scale(.76);filter:saturate(1.7)}}
-@keyframes pgbar{0%{transform:translateX(-100%)}55%,100%{transform:translateX(100%)}}
-@keyframes pgdot{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-7px);opacity:1}}
+@keyframes pgpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.72);opacity:.65}}
 
 .badge-btn{border:1px solid var(--border);background:var(--bg3);color:var(--text);padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;}
 
@@ -282,8 +265,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 }
 
 .btn-execute{
-  position:relative;
-  overflow:hidden;
   background:var(--red);
   color:#fff;
   border:none;
@@ -294,15 +275,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   letter-spacing:1px;
   text-transform:uppercase;
   cursor:pointer;
-  transition:background .15s,box-shadow .15s,transform .15s;
+  transition:background .15s;
   width:100%;
 }
-.btn-execute::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.24),transparent);transform:translateX(-110%);transition:transform .35s;}
-.btn-execute:hover{background:var(--red2);box-shadow:0 10px 28px rgba(192,57,43,.24);}
-.btn-execute:hover::before{transform:translateX(110%);}
-.btn-execute.loading{cursor:not-allowed;background:linear-gradient(90deg,#7f1d15,var(--red2),#7f1d15);background-size:220% 100%;animation:reqButton 1s linear infinite;box-shadow:0 0 32px rgba(231,76,60,.35);}
-.btn-execute.loading::after{content:'';position:absolute;right:16px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:999px;border:2px solid rgba(255,255,255,.28);border-top-color:#fff;animation:pgspin .75s linear infinite;}
-@keyframes reqButton{to{background-position:220% 0}}
+.btn-execute:hover{background:var(--red2);}
+.btn-execute.loading{opacity:.6;cursor:not-allowed;}
 
 .btn-clear,.btn-copy-result{
   background:var(--bg2);
@@ -350,25 +327,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
 .result-box.show{display:block;}
 .result-box.error{color:#ff7675;border-left-color:var(--red2);}
-.request-loader{position:relative;display:none;margin-top:0;padding:18px 14px;border:1px solid var(--border);border-top:none;border-left:3px solid var(--red);background:radial-gradient(circle at 12% 18%,rgba(231,76,60,.18),transparent 24%),linear-gradient(135deg,rgba(24,24,24,.98),rgba(12,12,12,.98));overflow:hidden;}
-.request-loader.show{display:block;}
-.request-loader::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(231,76,60,.08),transparent);animation:reqSweep 1.2s linear infinite;}
-.req-loader-grid{position:relative;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;}
-.req-loader-core{position:relative;width:54px;height:54px;display:grid;place-items:center;}
-.req-loader-core span{position:absolute;border-radius:999px;border:1px solid rgba(231,76,60,.45);animation:pgspin 1.4s linear infinite;}
-.req-loader-core span:nth-child(1){inset:0;border-top-color:#fff;}
-.req-loader-core span:nth-child(2){inset:10px;border-left-color:#fff;animation-direction:reverse;animation-duration:1s;}
-.req-loader-core span:nth-child(3){inset:22px;background:var(--red2);border:none;box-shadow:0 0 18px rgba(231,76,60,.9);animation:pgpulse .9s ease-in-out infinite;}
-.req-loader-copy{position:relative;min-width:0;}
-.req-loader-kicker{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--red2);text-transform:uppercase;margin-bottom:6px;}
-.req-loader-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;text-transform:uppercase;}
-.req-loader-route{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.req-loader-bars{display:flex;gap:5px;margin-top:14px;height:18px;align-items:end;}
-.req-loader-bars span{width:8px;background:linear-gradient(180deg,#fff,var(--red2));animation:reqBars .8s ease-in-out infinite;box-shadow:0 0 12px rgba(231,76,60,.45);}
-.req-loader-bars span:nth-child(2){animation-delay:.08s}.req-loader-bars span:nth-child(3){animation-delay:.16s}.req-loader-bars span:nth-child(4){animation-delay:.24s}.req-loader-bars span:nth-child(5){animation-delay:.32s}
-@keyframes reqSweep{to{transform:translateX(100%)}}
-@keyframes reqBars{0%,100%{height:5px;opacity:.45}50%{height:18px;opacity:1}}
-@keyframes pgpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.72);opacity:.65}}
 
 /* MENU OVERLAY */
 .menu-overlay{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
@@ -394,15 +352,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 <div class="pg-loader" id="pgLoader">
   <div class="pg-loader-inner">
     <div class="pg-loader-mark">
-      <div class="pg-loader-orbit"></div>
-      <div class="pg-loader-ring second"></div>
       <div class="pg-loader-ring"></div>
       <div class="pg-loader-sq"></div>
     </div>
     <div class="pg-loader-title" id="pgLoaderText">Menyiapkan Playground</div>
-    <div class="pg-loader-sub" id="pgLoaderSub">MENYUSUN DAFTAR LAYANAN</div>
-    <div class="pg-loader-bar"><span></span></div>
-    <div class="pg-loader-dots"><span></span><span></span><span></span><span></span></div>
+    <div class="pg-loader-sub">DAFTAR LAYANAN DIMUAT</div>
   </div>
 </div>
 
@@ -620,41 +574,7 @@ function updateResultMeta(body){
   if(msEl) msEl.textContent = `${Math.max(0, Math.round(cache.durationMs || 0))}ms`;
 }
 
-function hideRequestLoader(body){
-  const loader = body.querySelector('.request-loader');
-  if(loader) loader.remove();
-}
-
-function setExecuteLoading(triggerBtn, isLoading){
-  if(!triggerBtn) return;
-  triggerBtn.classList.toggle('loading', isLoading);
-  triggerBtn.disabled = isLoading;
-  triggerBtn.textContent = isLoading ? 'MEMPROSES' : 'JALANKAN';
-}
-
-function showRequestLoader(body, method, path){
-  hideRequestLoader(body);
-  const resultBox = body.querySelector('.result-box');
-  const loader = document.createElement('div');
-  loader.className = 'request-loader show';
-  loader.innerHTML = `
-    <div class="req-loader-grid">
-      <div class="req-loader-core"><span></span><span></span><span></span></div>
-      <div class="req-loader-copy">
-        <div class="req-loader-kicker">SEDANG BERJALAN</div>
-        <div class="req-loader-title">Permintaan sedang diproses</div>
-        <div class="req-loader-route"></div>
-        <div class="req-loader-bars"><span></span><span></span><span></span><span></span><span></span></div>
-      </div>
-    </div>`;
-  loader.querySelector('.req-loader-route').textContent = `${method} ${path}`;
-  resultBox.insertAdjacentElement('beforebegin', loader);
-  resultBox.className = 'result-box';
-  resultBox.textContent = '';
-}
-
 function renderCachedResult(body){
-  hideRequestLoader(body);
   const resultBox = body.querySelector('.result-box');
   const cache = body._playgroundResult;
   if(!cache) return;
@@ -667,8 +587,12 @@ function renderCachedResult(body){
 async function executeBody(body, triggerBtn = null){
   const item = body.closest('.ep-item');
   const status = item?.getAttribute('data-status') || 'ready';
+  const resultBox = body.querySelector('.result-box');
   const startedAt = performance.now();
-  setExecuteLoading(triggerBtn, true);
+  if(triggerBtn){
+    triggerBtn.classList.add('loading');
+    triggerBtn.textContent = 'MEMPROSES';
+  }
   if (status === 'maintenance' || status === 'closed') {
     body._playgroundResult = {
       error: true,
@@ -679,7 +603,10 @@ async function executeBody(body, triggerBtn = null){
       curl: '// Curl belum tersedia karena layanan belum siap'
     };
     renderCachedResult(body);
-    setExecuteLoading(triggerBtn, false);
+    if(triggerBtn){
+      triggerBtn.classList.remove('loading');
+      triggerBtn.textContent = 'JALANKAN';
+    }
     return;
   }
 
@@ -695,7 +622,10 @@ async function executeBody(body, triggerBtn = null){
       curl: buildCurl(getSelectedMethod(body), body.dataset.path, getParamsFromBody(body), getApiToken())
     };
     renderCachedResult(body);
-    setExecuteLoading(triggerBtn, false);
+    if(triggerBtn){
+      triggerBtn.classList.remove('loading');
+      triggerBtn.textContent = 'JALANKAN';
+    }
     return;
   }
 
@@ -713,7 +643,8 @@ async function executeBody(body, triggerBtn = null){
   }
 
   body.querySelector('.result-tabs')?.classList.add('show');
-  showRequestLoader(body, method, path);
+  resultBox.className = 'result-box show';
+  resultBox.textContent = '// Memproses permintaan...';
 
   try{
     const res = await fetch(url, fetchOptions);
@@ -740,11 +671,13 @@ async function executeBody(body, triggerBtn = null){
   }
 
   renderCachedResult(body);
-  setExecuteLoading(triggerBtn, false);
+  if(triggerBtn){
+    triggerBtn.classList.remove('loading');
+    triggerBtn.textContent = 'JALANKAN';
+  }
 }
 
 function resetEndpointResult(body, clearParams = false){
-  hideRequestLoader(body);
   body._playgroundResult = null;
   body.querySelector('.result-box').className = 'result-box';
   body.querySelector('.result-box').textContent = '';
@@ -835,30 +768,9 @@ async function sinkronEndpointPlugin(){
 function initLoader(){
   const loader = document.getElementById('pgLoader');
   if (!loader) return;
-  const title = document.getElementById('pgLoaderText');
-  const sub = document.getElementById('pgLoaderSub');
-  const startedAt = Date.now();
-  const steps = [
-    ['Membuka Playground', 'MENYIAPKAN TAMPILAN'],
-    ['Memuat Layanan', 'MEMERIKSA DAFTAR ENDPOINT'],
-    ['Menyiapkan Rute', 'MERAPIKAN ALUR REQUEST'],
-    ['Siap Digunakan', 'TINGGAL JALANKAN']
-  ];
-  let idx = 0;
-  const stepTimer = setInterval(() => {
-    idx = (idx + 1) % steps.length;
-    if(title) title.textContent = steps[idx][0];
-    if(sub) sub.textContent = steps[idx][1];
-  }, 520);
-
   window.addEventListener('load', () => {
-    const minVisibleMs = 950;
-    const wait = Math.max(0, minVisibleMs - (Date.now() - startedAt));
-    setTimeout(() => {
-      clearInterval(stepTimer);
-      loader.classList.add('hide');
-      setTimeout(() => loader.remove(), 650);
-    }, wait);
+    loader.classList.add('hide');
+    setTimeout(() => loader.remove(), 600);
   });
 }
 
