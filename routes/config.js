@@ -73,6 +73,24 @@ function normalizePluginMethods(plugin) {
   return [...new Set(methods.length ? methods : ['GET'])];
 }
 
+function normalizePluginStatus(plugin) {
+  const flags = {
+    ismaintenance: plugin.ismaintenance === true,
+    isready: plugin.isready !== false,
+    isclosed: plugin.isclosed === true
+  };
+
+  if (flags.isclosed) return { status: 'closed', flags: { ismaintenance: false, isready: false, isclosed: true } };
+  if (flags.ismaintenance) return { status: 'maintenance', flags: { ismaintenance: true, isready: false, isclosed: false } };
+  if (plugin.isready === false) return { status: 'closed', flags: { ismaintenance: false, isready: false, isclosed: true } };
+
+  const legacyStatus = String(plugin.status || 'ready').toLowerCase();
+  if (legacyStatus === 'closed') return { status: 'closed', flags: { ismaintenance: false, isready: false, isclosed: true } };
+  if (legacyStatus === 'maintenance') return { status: 'maintenance', flags: { ismaintenance: true, isready: false, isclosed: false } };
+
+  return { status: 'ready', flags: { ismaintenance: false, isready: true, isclosed: false } };
+}
+
 function attachUnifiedParams(req, res, next) {
   req.paramsInput = { ...(req.query || {}), ...(req.body || {}) };
   return next();
@@ -88,9 +106,9 @@ function plugins(app) {
       try {
         const p = require(path.join(dir, f));
         if (!p.rota || !p.run) return console.warn(`${f}: kurang 'rota' atau 'run'`);
-        const status = (p.status || 'ready').toLowerCase();
+        const { status, flags } = normalizePluginStatus(p);
         const methods = normalizePluginMethods(p);
-        pluginRegistry.push({ file: f, rota: p.rota, method: methods.join('|'), methods, status, catalog: toCatalogName(p.rota) });
+        pluginRegistry.push({ file: f, rota: p.rota, method: methods.join('|'), methods, status, ...flags, catalog: toCatalogName(p.rota) });
         methods.forEach((method) => {
           app[method.toLowerCase()](p.rota, checkApiKey, attachUnifiedParams, (req, res, next) => {
             if (status === 'maintenance') return apiResponse(res, 503, false, 'Layanan sedang dirapikan. Coba lagi nanti.');

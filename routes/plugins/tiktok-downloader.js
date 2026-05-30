@@ -335,7 +335,9 @@ function isValidTikTokUrl(url) {
 }
 
 module.exports = {
-  status: 'ready',
+  ismaintenance: false,
+  isready: true,
+  isclosed: false,
   rota: '/api/downloader/tiktok',
   methods: ['GET', 'POST'],
 
