@@ -13,6 +13,7 @@ let pendingBroadcastTimer = null;
 
 const HEARTBEAT_INTERVAL_MS = 30000;
 const HEARTBEAT_MAX_MISSED_PONGS = 1;
+const MONITOR_WS_PATH = '/ws/monitor';
 
 function maskIp(ip = '') {
   if (!ip) return 'unknown';
@@ -80,7 +81,7 @@ function buildPayload(wss, reason = 'tick') {
     pid: process.pid,
     activeConns: wss.clients.size,
     websocket: {
-      path: '/ws/monitor',
+      path: MONITOR_WS_PATH,
       heartbeat: true,
       intervalMs: HEARTBEAT_INTERVAL_MS,
       maxMissedPongs: HEARTBEAT_MAX_MISSED_PONGS,
@@ -97,6 +98,15 @@ function buildPayload(wss, reason = 'tick') {
   };
 }
 
+function isMonitorWsPath(url = '') {
+  try {
+    const { pathname } = new URL(url, 'http://localhost');
+    return pathname === MONITOR_WS_PATH || pathname === `${MONITOR_WS_PATH}/`;
+  } catch {
+    return url === MONITOR_WS_PATH || url === `${MONITOR_WS_PATH}/`;
+  }
+}
+
 function attachMonitorWebSocket(server) {
   let WebSocketServer;
   let WebSocket;
@@ -108,8 +118,20 @@ function attachMonitorWebSocket(server) {
   }
 
   monitorWebSocket = WebSocket;
-  const wss = new WebSocketServer({ server, path: '/ws/monitor' });
+  const wss = new WebSocketServer({ noServer: true });
   monitorWss = wss;
+
+  server.on('upgrade', (req, socket, head) => {
+    if (!isMonitorWsPath(req.url)) {
+      socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+      socket.destroy();
+      return;
+    }
+
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      wss.emit('connection', ws, req);
+    });
+  });
 
   wss.on('connection', (ws, req) => {
     ws.isAlive = true;
@@ -155,5 +177,6 @@ module.exports = {
   recordRequest,
   buildPayload,
   HEARTBEAT_INTERVAL_MS,
-  HEARTBEAT_MAX_MISSED_PONGS
+  HEARTBEAT_MAX_MISSED_PONGS,
+  MONITOR_WS_PATH
 };

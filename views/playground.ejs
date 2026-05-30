@@ -439,6 +439,16 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     </div>
   </div>
 
+  <div class="endpoint-group" data-group="downloader">
+    <div class="group-header"><span class="group-title">DOWNLOADER</span><span class="group-count">1 ENDPOINT</span></div>
+    <div class="ep-list">
+      <div class="ep-item" data-name="tiktok downloader /api/downloader/tiktok">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/downloader/tiktok</span><span class="ep-name">TIKTOK</span><span class="ep-badge" data-status-for="/api/downloader/tiktok">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body" data-path="/api/downloader/tiktok" data-params="url"><p class="ep-desc">Download video TikTok via SnapTik.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://vt.tiktok.com/..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/downloader/tiktok', ['url'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+      </div>
+    </div>
+  </div>
+
   <div class="endpoint-group" data-group="tools">
     <div class="group-header"><span class="group-title">TOOLS</span><span class="group-count">2 ENDPOINTS</span></div>
     <div class="ep-list">
