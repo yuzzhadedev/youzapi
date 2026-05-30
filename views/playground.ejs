@@ -399,8 +399,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
       <div class="pg-loader-ring"></div>
       <div class="pg-loader-sq"></div>
     </div>
-    <div class="pg-loader-title" id="pgLoaderText">Loading Playground</div>
-    <div class="pg-loader-sub" id="pgLoaderSub">SYNCING ENDPOINT MATRIX</div>
+    <div class="pg-loader-title" id="pgLoaderText">Menyiapkan Playground</div>
+    <div class="pg-loader-sub" id="pgLoaderSub">MENYUSUN DAFTAR LAYANAN</div>
     <div class="pg-loader-bar"><span></span></div>
     <div class="pg-loader-dots"><span></span><span></span><span></span><span></span></div>
   </div>
@@ -409,7 +409,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 <nav>
   <a href="/" class="nav-logo"><div class="logo-sq"></div>YOUZ API</a>
   <div style="display:flex;gap:8px;align-items:center;">
-    <a href="<%= user ? '/perfil' : '/login' %>" class="badge-btn" style="text-decoration:none;"><%= user ? 'Profile' : 'Login' %></a>
+    <a href="<%= user ? '/perfil' : '/login' %>" class="badge-btn" style="text-decoration:none;"><%= user ? 'Akun' : 'Masuk' %></a>
     <button class="nav-menu-btn" onclick="openMenu()"><span></span><span></span></button>
   </div>
 </nav>
@@ -423,7 +423,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
   <div class="search-box">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-    <input type="text" class="search-input" id="searchInput" placeholder="FILTER ENDPOINTS..." oninput="filterEndpoints(this.value)">
+    <input type="text" class="search-input" id="searchInput" placeholder="CARI LAYANAN..." oninput="filterEndpoints(this.value)">
   </div>
 
 
@@ -434,7 +434,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="yt search youtube /api/s/youtube">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><span class="ep-badge" data-status-for="/api/s/youtube">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/s/youtube" data-params="query"><p class="ep-desc">Cari video YouTube.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/s/youtube" data-params="query"><p class="ep-desc">Cari video YouTube.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">JALANKAN</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">BERSIHKAN</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -444,7 +444,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="tiktok downloader /api/downloader/tiktok">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/downloader/tiktok</span><span class="ep-name">TIKTOK</span><span class="ep-badge" data-status-for="/api/downloader/tiktok">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/downloader/tiktok" data-params="url"><p class="ep-desc">Download video TikTok via SnapTik.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://vt.tiktok.com/..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/downloader/tiktok', ['url'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/downloader/tiktok" data-params="url"><p class="ep-desc">Download video TikTok via SnapTik.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://vt.tiktok.com/..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/downloader/tiktok', ['url'])">JALANKAN</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">BERSIHKAN</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -455,11 +455,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
       
       <div class="ep-item" data-name="text2qr /api/tools/text2qr">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/text2qr</span><span class="ep-name">TEXT2QR</span><span class="ep-badge" data-status-for="/api/tools/text2qr">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/tools/text2qr" data-params="text"><p class="ep-desc">Generate QR image from plain text.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/tools/text2qr" data-params="text"><p class="ep-desc">Generate QR image from plain text.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">JALANKAN</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">BERSIHKAN</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
 <div class="ep-item" data-name="qr2text /api/tools/qr2text">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><span class="ep-badge" data-status-for="/api/tools/qr2text">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/tools/qr2text" data-params="url"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">PARAMETERS</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/tools/qr2text" data-params="url"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">JALANKAN</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">BERSIHKAN</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -469,7 +469,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="status /api/server/status">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><span class="ep-badge" data-status-for="/api/server/status">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/server/status" data-params=""><p class="ep-desc">Status server YOUZ API.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">EXECUTE REQUEST</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/server/status" data-params=""><p class="ep-desc">Status server YOUZ API.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">JALANKAN</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">BERSIHKAN</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -603,7 +603,7 @@ function getActiveResultText(body){
   if(!cache) return '';
   const active = getActiveTab(body);
   if(active === 'curl') return cache.curl || '';
-  if(active === 'headers') return cache.headers || '// No response headers captured';
+  if(active === 'headers') return cache.headers || '// Header respons belum tersedia';
   return cache.preview || '';
 }
 
@@ -629,7 +629,7 @@ function setExecuteLoading(triggerBtn, isLoading){
   if(!triggerBtn) return;
   triggerBtn.classList.toggle('loading', isLoading);
   triggerBtn.disabled = isLoading;
-  triggerBtn.textContent = isLoading ? 'RUNNING PIPELINE' : 'EXECUTE REQUEST';
+  triggerBtn.textContent = isLoading ? 'MEMPROSES' : 'JALANKAN';
 }
 
 function showRequestLoader(body, method, path){
@@ -641,8 +641,8 @@ function showRequestLoader(body, method, path){
     <div class="req-loader-grid">
       <div class="req-loader-core"><span></span><span></span><span></span></div>
       <div class="req-loader-copy">
-        <div class="req-loader-kicker">REQUEST IN PROGRESS</div>
-        <div class="req-loader-title">Custom API Loader Active</div>
+        <div class="req-loader-kicker">SEDANG BERJALAN</div>
+        <div class="req-loader-title">Permintaan sedang diproses</div>
         <div class="req-loader-route"></div>
         <div class="req-loader-bars"><span></span><span></span><span></span><span></span><span></span></div>
       </div>
@@ -674,9 +674,9 @@ async function executeBody(body, triggerBtn = null){
       error: true,
       statusCode: status === 'maintenance' ? 503 : 403,
       durationMs: performance.now() - startedAt,
-      preview: JSON.stringify({ success: false, message: `Endpoint ${status.toUpperCase()}`, code: status === 'maintenance' ? 503 : 403 }, null, 2),
-      headers: '// Request blocked from Playground',
-      curl: '// Curl unavailable because endpoint is not ready'
+      preview: JSON.stringify({ success: false, message: status === 'maintenance' ? 'Layanan sedang dirapikan' : 'Layanan sedang ditutup', code: status === 'maintenance' ? 503 : 403 }, null, 2),
+      headers: '// Permintaan ditahan dari Playground',
+      curl: '// Curl belum tersedia karena layanan belum siap'
     };
     renderCachedResult(body);
     setExecuteLoading(triggerBtn, false);
@@ -690,8 +690,8 @@ async function executeBody(body, triggerBtn = null){
       error: true,
       statusCode: code,
       durationMs: performance.now() - startedAt,
-      preview: JSON.stringify({ status: false, error: `Parameter "${missing[0]}" is required`, code }, null, 2),
-      headers: '// No response headers: request was not sent',
+      preview: JSON.stringify({ status: false, message: `Parameter "${missing[0]}" perlu diisi`, code }, null, 2),
+      headers: '// Header tidak tersedia karena permintaan belum dikirim',
       curl: buildCurl(getSelectedMethod(body), body.dataset.path, getParamsFromBody(body), getApiToken())
     };
     renderCachedResult(body);
@@ -725,7 +725,7 @@ async function executeBody(body, triggerBtn = null){
       statusCode: res.status,
       durationMs: performance.now() - startedAt,
       preview: typeof data === 'string' ? data : JSON.stringify(data, null, 2),
-      headers: responseHeaders || '// No response headers',
+      headers: responseHeaders || '// Header respons belum tersedia',
       curl: buildCurl(method, path, params, token)
     };
   }catch(e){
@@ -733,8 +733,8 @@ async function executeBody(body, triggerBtn = null){
       error: true,
       statusCode: 0,
       durationMs: performance.now() - startedAt,
-      preview: JSON.stringify({ status: false, error: e.message, code: 0, url }, null, 2),
-      headers: '// Request failed before response headers were received',
+      preview: JSON.stringify({ status: false, message: e.message, code: 0, url }, null, 2),
+      headers: '// Permintaan berhenti sebelum header respons diterima',
       curl: buildCurl(method, path, params, token)
     };
   }
@@ -825,9 +825,9 @@ async function sinkronEndpointPlugin(){
       const btn = item.querySelector('.btn-execute');
       const st = item.getAttribute('data-status') || 'ready';
       if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';} return; }
-      if (st === 'maintenance') { item.style.opacity='0.6'; if(btn){btn.disabled=true; btn.textContent='MAINTENANCE';} return; }
-      if (st === 'closed') { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='CLOSED';} return; }
-      item.style.opacity=''; if(btn){btn.disabled=false; btn.textContent='EXECUTE REQUEST';}
+      if (st === 'maintenance') { item.style.opacity='0.6'; if(btn){btn.disabled=true; btn.textContent='DIRAPIKAN';} return; }
+      if (st === 'closed') { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='DITUTUP';} return; }
+      item.style.opacity=''; if(btn){btn.disabled=false; btn.textContent='JALANKAN';}
     });
   }catch(e){}
 }
@@ -839,10 +839,10 @@ function initLoader(){
   const sub = document.getElementById('pgLoaderSub');
   const startedAt = Date.now();
   const steps = [
-    ['Booting Playground', 'MOUNTING CONSOLE UI'],
-    ['Syncing Plugins', 'CHECKING ENDPOINT MATRIX'],
-    ['Warming Routes', 'BUILDING REQUEST PIPELINE'],
-    ['Ready To Execute', 'HANDOFF INCOMING']
+    ['Membuka Playground', 'MENYIAPKAN TAMPILAN'],
+    ['Memuat Layanan', 'MEMERIKSA DAFTAR ENDPOINT'],
+    ['Menyiapkan Rute', 'MERAPIKAN ALUR REQUEST'],
+    ['Siap Digunakan', 'TINGGAL JALANKAN']
   ];
   let idx = 0;
   const stepTimer = setInterval(() => {

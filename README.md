@@ -68,7 +68,7 @@ Aplikasi berjalan di:
 - Home: `http://localhost:3000/`
 - Playground: `http://localhost:3000/playground`
 - Monitor realtime: `http://localhost:3000/monitor`
-- Profile: `http://localhost:3000/perfil`
+- Profil: `http://localhost:3000/perfil`
 
 ---
 
@@ -161,7 +161,7 @@ Contoh payload:
 }
 ```
 
-Dashboard `/monitor` sudah memiliki reconnect otomatis dan indikator status `CONNECTING WS`, `LIVE WS`, `WS ERROR`, atau `WS OFFLINE`.
+Dashboard `/monitor` sudah memiliki reconnect otomatis dan indikator status `CONNECTING WS`, `LIVE WS`, `WS TERGANGGU`, atau `WS OFFLINE`.
 
 ---
 

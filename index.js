@@ -124,8 +124,8 @@ next();
 }
 
 app.get('/', (req, res) => res.render('home', { title: 'Home · YOUZ API', user: req.session.user || null }));
-app.get('/login', (req, res) => req.session.user ? res.redirect('/perfil') : res.render('login', { title: 'Login · YOUZ API' }));
-app.get('/registro', (req, res) => req.session.user ? res.redirect('/perfil') : res.render('registro', { title: 'Criar conta · Youz API' }));
+app.get('/login', (req, res) => req.session.user ? res.redirect('/perfil') : res.render('login', { title: 'Masuk · YOUZ API' }));
+app.get('/registro', (req, res) => req.session.user ? res.redirect('/perfil') : res.render('registro', { title: 'Daftar · YOUZ API' }));
 
 app.get('/dash', (req, res) => res.redirect('/'));
 
@@ -175,12 +175,12 @@ app.get('/api/account/me', auth, async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
 const { username, password } = req.body;
-if (!username || !password) return res.json({ success: false, message: 'Preencha todos os campos' });
+if (!username || !password) return res.json({ success: false, message: 'Lengkapi semua kolom.' });
 
 const users = await loadUsers();
 const user = users.find(u => u.username === username);
 if (!user || !(await bcrypt.compare(password, user.password))) {
-return res.json({ success: false, message: 'Credenciais inválidas' });
+return res.json({ success: false, message: 'Username atau kata sandi belum sesuai.' });
 }
 const canUseKey = user.premium || user.adm;
 const hadKey = Boolean(user.key && String(user.key).trim());
@@ -193,17 +193,17 @@ res.json({ success: true });
 
 app.post('/api/registro', async (req, res) => {
 let { username, email, password } = req.body;
-if (!username || !email || !password) return res.json({ success: false, message: 'Preencha todos os campos' });
+if (!username || !email || !password) return res.json({ success: false, message: 'Lengkapi semua kolom.' });
 
 username = sanitizeHtml(username, { allowedTags: [], allowedAttributes: {} }).trim();
 email = sanitizeHtml(email, { allowedTags: [], allowedAttributes: {} }).trim().toLowerCase();
-if (!username) return res.json({ success: false, message: 'Usuário inválido' });
-if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.json({ success: false, message: 'E-mail tidak valid' });
-if (password.length < 6) return res.json({ success: false, message: 'Senha muito curta (mín. 6)' });
+if (!username) return res.json({ success: false, message: 'Username belum sesuai.' });
+if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.json({ success: false, message: 'Format email belum sesuai.' });
+if (password.length < 6) return res.json({ success: false, message: 'Kata sandi minimal 6 karakter.' });
 
 const users = await loadUsers();
-if (users.some(u => u.username === username)) return res.json({ success: false, message: 'Usuário já existe' });
-if (users.some(u => (u.email || '').toLowerCase() === email)) return res.json({ success: false, message: 'E-mail já cadastrado' });
+if (users.some(u => u.username === username)) return res.json({ success: false, message: 'Username sudah dipakai.' });
+if (users.some(u => (u.email || '').toLowerCase() === email)) return res.json({ success: false, message: 'Email sudah terdaftar.' });
 
 const newUser = {
 id: (users.length ? Math.max(...users.map(u => u.id || 0)) : 0) + 1,
@@ -231,13 +231,13 @@ app.post('/api/perfil/editar', auth, async (req, res) => {
 const { username, foto, capa, key } = req.body;
 const users = await loadUsers();
 const idx = users.findIndex(u => u.username === req.session.user.username);
-  if (idx === -1) return res.json({ success: false, message: 'Usuário não encontrado' });
+  if (idx === -1) return res.json({ success: false, message: 'Akun tidak ditemukan.' });
 
 const user = users[idx];
 
 if (username && username !== user.username) {
-if (username.length < 3 || username.length > 20) return res.json({ success: false, message: 'Usuário deve ter entre 3 e 20 caracteres' });
-if (users.some(u => u.username === username && u.id !== user.id)) return res.json({ success: false, message: 'Usuário já em uso' });
+if (username.length < 3 || username.length > 20) return res.json({ success: false, message: 'Username harus 3 sampai 20 karakter.' });
+if (users.some(u => u.username === username && u.id !== user.id)) return res.json({ success: false, message: 'Username sudah dipakai.' });
 user.username = username.trim();
 }
 if (foto && foto.startsWith('https://')) user.foto = foto.trim();
@@ -246,7 +246,7 @@ if (key && (user.premium || user.adm)) user.key = key.trim();
 
 await saveUsers(users);
 req.session.user = safeUser(user);
-req.flash('success', 'Perfil atualizado!');
+req.flash('success', 'Profil berhasil diperbarui!');
 res.json({ success: true });
 });
 

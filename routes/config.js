@@ -39,7 +39,7 @@ async function checkApiKey(req, res, next) {
     const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || 'unknown';
     const quota = consumeFreeIpQuota(ip);
     if (!quota.allowed) {
-      return apiResponse(res, 429, false, 'Free plan limit reached: 100 requests per IP per day. Upgrade to premium/admin for API key access.');
+      return apiResponse(res, 429, false, 'Kuota gratis harian sudah habis. Gunakan API key aktif untuk akses lebih stabil.');
     }
     req.user = { role: 'free', ip, remainingDailyRequests: quota.remaining };
     return next();
@@ -47,9 +47,9 @@ async function checkApiKey(req, res, next) {
 
   const users = await getUsers();
   const user = users.find((u) => u.key === apiToken);
-  if (!user) return apiResponse(res, 401, false, 'Invalid API token.');
+  if (!user) return apiResponse(res, 401, false, 'API token belum sesuai.');
   if (!(user.premium || user.adm)) {
-    return apiResponse(res, 403, false, 'API key is only available for premium/admin accounts.');
+    return apiResponse(res, 403, false, 'API key aktif diperlukan untuk akses ini.');
   }
 
   req.user = user;
@@ -93,8 +93,8 @@ function plugins(app) {
         pluginRegistry.push({ file: f, rota: p.rota, method: methods.join('|'), methods, status, catalog: toCatalogName(p.rota) });
         methods.forEach((method) => {
           app[method.toLowerCase()](p.rota, checkApiKey, attachUnifiedParams, (req, res, next) => {
-            if (status === 'maintenance') return apiResponse(res, 503, false, 'Endpoint is under maintenance.');
-            if (status === 'closed') return apiResponse(res, 403, false, 'Endpoint is closed.');
+            if (status === 'maintenance') return apiResponse(res, 503, false, 'Layanan sedang dirapikan. Coba lagi nanti.');
+            if (status === 'closed') return apiResponse(res, 403, false, 'Layanan ini sedang ditutup sementara.');
             return p.run(req, res, next);
           });
         });
@@ -104,7 +104,7 @@ function plugins(app) {
     });
 
   app.get('/api/plugins/list', (req, res) => {
-    res.json({ success: true, message: 'Plugin list fetched', data: { total: pluginRegistry.length, endpoints: pluginRegistry } });
+    res.json({ success: true, message: 'Daftar layanan tersedia', data: { total: pluginRegistry.length, endpoints: pluginRegistry } });
   });
 }
 

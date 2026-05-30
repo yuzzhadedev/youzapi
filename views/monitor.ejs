@@ -191,7 +191,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.97);backdrop-fi
   letter-spacing:.5px;margin-top:6px;padding:0 2px;
 }
 
-/* ERROR RATE BAR */
+/* RASIO GANGGUAN BAR */
 .rate-row{
   display:flex;justify-content:space-between;align-items:center;
   margin-bottom:10px;
@@ -320,7 +320,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
       <div class="stat-card-sub">Realtime via WebSocket</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-label">TOTAL ERRORS</div>
+      <div class="stat-card-label">TOTAL GANGGUAN</div>
       <div class="stat-card-val yellow" id="totalErr">0</div>
       <div class="stat-card-sub">5xx dominant</div>
     </div>
@@ -395,7 +395,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
         </div>
       </div>
       <div class="code-box">
-        <div class="code-label">ERROR RATE</div>
+        <div class="code-label">RASIO GANGGUAN</div>
         <div class="code-val" id="errorRate" style="font-size:clamp(18px,5vw,24px);color:var(--yellow);font-family:'Barlow Condensed',sans-serif;font-weight:900;">0.0%</div>
       </div>
     </div>
@@ -425,10 +425,10 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
     <div class="chart-labels" id="atkLabels"></div>
   </div>
 
-  <!-- ERROR RATE OVERVIEW -->
+  <!-- RINGKASAN GANGGUAN -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">ERROR RATE OVERVIEW</span>
+      <span class="section-title">RINGKASAN GANGGUAN</span>
       <span class="section-tag green">REALTIME VIA WEBSOCKET</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;">
@@ -437,7 +437,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
         <span class="rate-pct green" id="successPct">0.0%</span>
       </div>
       <div class="rate-row">
-        <span class="rate-label yellow">ERRORS</span>
+        <span class="rate-label yellow">GANGGUAN</span>
         <span class="rate-pct yellow" id="errorPct">0.0%</span>
       </div>
       <div class="rate-bar-wrap">
@@ -769,7 +769,7 @@ window.addEventListener('resize', ()=>{
       };
       socket.onerror = () => {
         if (socket !== ws) return;
-        setWsState('offline', 'WS ERROR');
+        setWsState('offline', 'WS TERGANGGU');
       };
       socket.onclose = () => {
         if (socket !== ws) return;

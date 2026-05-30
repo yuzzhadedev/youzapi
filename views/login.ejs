@@ -299,7 +299,7 @@ body::after{
 
     <div class="field">
       <span class="field-label">// username</span>
-      <input type="text" id="username" placeholder="masukkan username" autocomplete="username">
+      <input type="text" id="username" placeholder="username" autocomplete="username">
     </div>
 
     <div class="field">
@@ -313,7 +313,7 @@ body::after{
   </div>
 
   <div class="auth-footer">
-    belum punya akun? <a href="/registro">daftar sekarang →</a>
+    Belum punya akun? <a href="/registro">Daftar sekarang →</a>
   </div>
 
 </div>
@@ -335,26 +335,26 @@ function showNotif(msg, tipo) {
 document.getElementById('loginBtn').addEventListener('click', async () => {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
-  if (!username || !password) { showNotif('isi semua kolom', 'error'); return; }
+  if (!username || !password) { showNotif('Lengkapi semua kolom.', 'error'); return; }
 
   const btn = document.getElementById('loginBtn');
   const orig = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<span class="loading-spinner"></span> LOADING...';
+  btn.innerHTML = '<span class="loading-spinner"></span> MEMERIKSA...';
 
   try {
     const r = await fetch('/api/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ username, password }) });
     const d = await r.json();
     if (d.success) {
-      showNotif('berhasil! mengalihkan...', 'success');
+      showNotif('Berhasil masuk. Mengalihkan...', 'success');
       window.location.href = '/dash';
     } else {
-      showNotif(d.message || 'kredensial tidak valid', 'error');
+      showNotif(d.message || 'Username atau kata sandi belum sesuai.', 'error');
       btn.disabled = false; btn.innerHTML = orig;
       document.getElementById('password').focus();
     }
   } catch {
-    showNotif('kesalahan koneksi. coba lagi', 'error');
+    showNotif('Koneksi belum stabil. Coba lagi.', 'error');
     btn.disabled = false; btn.innerHTML = orig;
   }
 });

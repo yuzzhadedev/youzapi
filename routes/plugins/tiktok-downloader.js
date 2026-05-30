@@ -343,30 +343,30 @@ module.exports = {
     const { url } = req.paramsInput || req.query;
 
     if (!url) {
-      return res.status(400).json({ success: false, message: 'Parameter "url" is required' });
+      return res.status(400).json({ success: false, message: 'Isi parameter "url" terlebih dahulu.' });
     }
 
     if (!isValidTikTokUrl(url)) {
-      return res.status(400).json({ success: false, message: 'Parameter "url" must be a valid TikTok URL' });
+      return res.status(400).json({ success: false, message: 'Masukkan link TikTok yang valid.' });
     }
 
     try {
       const result = await ask(url);
       return res.status(result.Code || 200).json({
         success: Boolean(result.Status),
-        message: result.Status ? 'OK' : 'SnapTik request failed',
+        message: result.Status ? 'OK' : 'SnapTik belum mengirim hasil.',
         data: result
       });
     } catch (error) {
       return res.status(500).json({
         success: false,
-        message: error.message || 'Failed to process TikTok URL',
+        message: error.message || 'Link TikTok belum bisa diproses.',
         data: {
           Status: false,
           Code: 500,
           Label: 'SnapTik',
           Input: url,
-          Error: error.message || 'Failed to process TikTok URL'
+          error: error.message || 'Link TikTok belum bisa diproses.'
         }
       });
     }

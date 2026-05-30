@@ -77,7 +77,7 @@ body::after{content:'';position:fixed;bottom:-100px;right:-100px;width:400px;hei
   <div class="auth-avatar-row">
     <div class="avatar-img"></div>
     <div>
-      <div class="avatar-title">Buat Akun</div>
+      <div class="avatar-title">Daftar Akun</div>
       <div class="avatar-sub">// DAFTAR PENGGUNA BARU</div>
     </div>
   </div>
@@ -87,12 +87,12 @@ body::after{content:'';position:fixed;bottom:-100px;right:-100px;width:400px;hei
 
     <div class="field">
       <span class="field-label">// username</span>
-      <input type="text" id="username" placeholder="pilih username">
+      <input type="text" id="username" placeholder="username baru">
     </div>
 
     <div class="field">
       <span class="field-label">// e-mail</span>
-      <input type="email" id="email" placeholder="email@kamu.com">
+      <input type="email" id="email" placeholder="email@domain.com">
     </div>
 
     <div class="field">
@@ -106,7 +106,7 @@ body::after{content:'';position:fixed;bottom:-100px;right:-100px;width:400px;hei
   </div>
 
   <div class="auth-footer">
-    sudah punya akun? <a href="/login">masuk sekarang →</a>
+    Sudah punya akun? <a href="/login">Masuk sekarang →</a>
   </div>
 
 </div>
@@ -122,8 +122,8 @@ document.getElementById('regBtn').addEventListener('click', async () => {
   const username = document.getElementById('username').value.trim();
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
-  if (!username || !email || !password) { showNotif('isi semua kolom', 'error'); return; }
-  if (password.length < 6) { showNotif('kata sandi minimal 6 karakter', 'error'); return; }
+  if (!username || !email || !password) { showNotif('Lengkapi semua kolom.', 'error'); return; }
+  if (password.length < 6) { showNotif('Kata sandi minimal 6 karakter.', 'error'); return; }
 
   const btn = document.getElementById('regBtn');
   const orig = btn.innerHTML;
@@ -133,9 +133,9 @@ document.getElementById('regBtn').addEventListener('click', async () => {
   try {
     const r = await fetch('/api/registro', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ username, email, password }) });
     const d = await r.json();
-    if (d.success) { showNotif('akun dibuat! mengalihkan...', 'success'); setTimeout(() => window.location.href = '/perfil', 700); }
-    else { showNotif(d.message || 'gagal membuat akun', 'error'); btn.disabled = false; btn.innerHTML = orig; }
-  } catch { showNotif('kesalahan koneksi. coba lagi', 'error'); btn.disabled = false; btn.innerHTML = orig; }
+    if (d.success) { showNotif('Akun berhasil dibuat. Mengalihkan...', 'success'); setTimeout(() => window.location.href = '/perfil', 700); }
+    else { showNotif(d.message || 'Akun belum bisa dibuat.', 'error'); btn.disabled = false; btn.innerHTML = orig; }
+  } catch { showNotif('Koneksi belum stabil. Coba lagi.', 'error'); btn.disabled = false; btn.innerHTML = orig; }
 });
 
 document.addEventListener('keydown', e => { if (e.key === 'Enter') { const b = document.getElementById('regBtn'); if (!b.disabled) b.click(); }});
