@@ -192,15 +192,15 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     });
     const d = await r.json();
     if (d.success) {
-      showToast('PROFIL DIPERBARUI', 'success');
+      showToast('PROFIL TERSIMPAN', 'success');
       setTimeout(() => window.location.href = '/perfil', 1000);
     } else {
-      showToast(d.message || 'GAGAL MENYIMPAN', 'error');
+      showToast(d.message || 'BELUM BISA DISIMPAN', 'error');
       btn.disabled = false;
       btn.innerHTML = '<i class="bi bi-check-lg"></i> SIMPAN PERUBAHAN';
     }
   } catch {
-    showToast('KESALAHAN KONEKSI', 'error');
+    showToast('KONEKSI BELUM STABIL', 'error');
     btn.disabled = false;
     btn.innerHTML = '<i class="bi bi-check-lg"></i> SIMPAN PERUBAHAN';
   }

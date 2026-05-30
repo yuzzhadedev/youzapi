@@ -11,6 +11,10 @@ let monitorWebSocket = null;
 let lastBroadcastAt = 0;
 let pendingBroadcastTimer = null;
 
+const HEARTBEAT_INTERVAL_MS = 30000;
+const HEARTBEAT_MAX_MISSED_PONGS = 1;
+const MONITOR_WS_PATH = '/ws/monitor';
+
 function maskIp(ip = '') {
   if (!ip) return 'unknown';
   if (ip.includes(':')) return ip.split(':').slice(0, 4).join(':') + ':x';
@@ -77,9 +81,10 @@ function buildPayload(wss, reason = 'tick') {
     pid: process.pid,
     activeConns: wss.clients.size,
     websocket: {
-      path: '/ws/monitor',
+      path: MONITOR_WS_PATH,
       heartbeat: true,
-      intervalMs: 1000,
+      intervalMs: HEARTBEAT_INTERVAL_MS,
+      maxMissedPongs: HEARTBEAT_MAX_MISSED_PONGS,
       clients: wss.clients.size
     },
     stats: {
@@ -93,6 +98,15 @@ function buildPayload(wss, reason = 'tick') {
   };
 }
 
+function isMonitorWsPath(url = '') {
+  try {
+    const { pathname } = new URL(url, 'http://localhost');
+    return pathname === MONITOR_WS_PATH || pathname === `${MONITOR_WS_PATH}/`;
+  } catch {
+    return url === MONITOR_WS_PATH || url === `${MONITOR_WS_PATH}/`;
+  }
+}
+
 function attachMonitorWebSocket(server) {
   let WebSocketServer;
   let WebSocket;
@@ -104,14 +118,30 @@ function attachMonitorWebSocket(server) {
   }
 
   monitorWebSocket = WebSocket;
-  const wss = new WebSocketServer({ server, path: '/ws/monitor' });
+  const wss = new WebSocketServer({ noServer: true });
   monitorWss = wss;
+
+  server.on('upgrade', (req, socket, head) => {
+    if (!isMonitorWsPath(req.url)) {
+      socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+      socket.destroy();
+      return;
+    }
+
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      wss.emit('connection', ws, req);
+    });
+  });
 
   wss.on('connection', (ws, req) => {
     ws.isAlive = true;
+    ws.missedPongs = 0;
     ws.connectedAt = Date.now();
     ws.ip = maskIp(req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown');
-    ws.on('pong', () => { ws.isAlive = true; });
+    ws.on('pong', () => {
+      ws.isAlive = true;
+      ws.missedPongs = 0;
+    });
     safeSend(ws, JSON.stringify(buildPayload(wss, 'connection')));
     scheduleBroadcast('connection');
   });
@@ -119,13 +149,16 @@ function attachMonitorWebSocket(server) {
   const heartbeat = setInterval(() => {
     for (const ws of wss.clients) {
       if (ws.isAlive === false) {
-        ws.terminate();
-        continue;
+        ws.missedPongs = (ws.missedPongs || 0) + 1;
+        if (ws.missedPongs >= HEARTBEAT_MAX_MISSED_PONGS) {
+          ws.terminate();
+          continue;
+        }
       }
       ws.isAlive = false;
-      try { ws.ping(); } catch {}
+      try { ws.ping(); } catch { ws.terminate(); }
     }
-  }, 30000);
+  }, HEARTBEAT_INTERVAL_MS);
 
   const tick = setInterval(() => broadcastMonitor('tick'), 1000);
 
@@ -139,4 +172,11 @@ function attachMonitorWebSocket(server) {
   return wss;
 }
 
-module.exports = { attachMonitorWebSocket, recordRequest, buildPayload };
+module.exports = {
+  attachMonitorWebSocket,
+  recordRequest,
+  buildPayload,
+  HEARTBEAT_INTERVAL_MS,
+  HEARTBEAT_MAX_MISSED_PONGS,
+  MONITOR_WS_PATH
+};

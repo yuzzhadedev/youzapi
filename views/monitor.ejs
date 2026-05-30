@@ -191,7 +191,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.97);backdrop-fi
   letter-spacing:.5px;margin-top:6px;padding:0 2px;
 }
 
-/* ERROR RATE BAR */
+/* RASIO GANGGUAN BAR */
 .rate-row{
   display:flex;justify-content:space-between;align-items:center;
   margin-bottom:10px;
@@ -320,7 +320,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
       <div class="stat-card-sub">Realtime via WebSocket</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-label">TOTAL ERRORS</div>
+      <div class="stat-card-label">TOTAL GANGGUAN</div>
       <div class="stat-card-val yellow" id="totalErr">0</div>
       <div class="stat-card-sub">5xx dominant</div>
     </div>
@@ -395,7 +395,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
         </div>
       </div>
       <div class="code-box">
-        <div class="code-label">ERROR RATE</div>
+        <div class="code-label">RASIO GANGGUAN</div>
         <div class="code-val" id="errorRate" style="font-size:clamp(18px,5vw,24px);color:var(--yellow);font-family:'Barlow Condensed',sans-serif;font-weight:900;">0.0%</div>
       </div>
     </div>
@@ -425,10 +425,10 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
     <div class="chart-labels" id="atkLabels"></div>
   </div>
 
-  <!-- ERROR RATE OVERVIEW -->
+  <!-- RINGKASAN GANGGUAN -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">ERROR RATE OVERVIEW</span>
+      <span class="section-title">RINGKASAN GANGGUAN</span>
       <span class="section-tag green">REALTIME VIA WEBSOCKET</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;">
@@ -437,7 +437,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:48
         <span class="rate-pct green" id="successPct">0.0%</span>
       </div>
       <div class="rate-row">
-        <span class="rate-label yellow">ERRORS</span>
+        <span class="rate-label yellow">GANGGUAN</span>
         <span class="rate-pct yellow" id="errorPct">0.0%</span>
       </div>
       <div class="rate-bar-wrap">
@@ -668,8 +668,13 @@ window.addEventListener('resize', ()=>{
 });
 
 (function initRealtimeWs(){
+  const STALE_TIMEOUT_MS = 10000;
+  const STALE_CHECK_INTERVAL_MS = 2000;
   let reconnectTimer;
+  let staleTimer;
+  let ws;
   let retry = 0;
+  let lastMessageAt = 0;
 
   function setWsState(state, label){
     const badge = document.getElementById('wsState');
@@ -678,19 +683,56 @@ window.addEventListener('resize', ()=>{
     badge.innerHTML = `<span class="live-dot"></span> ${label}`;
   }
 
+  function scheduleReconnect(){
+    clearTimeout(reconnectTimer);
+    retry += 1;
+    reconnectTimer = setTimeout(connect, Math.min(10000, 1000 * retry));
+  }
+
+  function stopStaleWatch(){
+    clearInterval(staleTimer);
+    staleTimer = null;
+  }
+
+  function startStaleWatch(socket){
+    stopStaleWatch();
+    staleTimer = setInterval(() => {
+      if (socket !== ws || socket.readyState !== WebSocket.OPEN) return;
+      if (Date.now() - lastMessageAt <= STALE_TIMEOUT_MS) return;
+      setWsState('offline', 'WS STALE');
+      socket.onclose = null;
+      socket.onerror = null;
+      try { socket.close(4000, 'stale-monitor-connection'); } catch {}
+      if (socket === ws) ws = null;
+      stopStaleWatch();
+      scheduleReconnect();
+    }, STALE_CHECK_INTERVAL_MS);
+  }
+
   function connect(){
     try {
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
       const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-      const ws = new WebSocket(`${proto}://${location.host}/ws/monitor`);
+      ws = new WebSocket(`${proto}://${location.host}/ws/monitor`);
+      const socket = ws;
+      lastMessageAt = Date.now();
       setWsState('connecting', retry ? `RECONNECTING ${retry}` : 'CONNECTING WS');
       document.getElementById('wsTransport').textContent = 'WS /ws/monitor';
 
-      ws.onopen = () => { retry = 0; setWsState('', 'LIVE WS'); };
-      ws.onmessage = (ev) => {
+      socket.onopen = () => {
+        if (socket !== ws) return;
+        lastMessageAt = Date.now();
+        setWsState('', 'LIVE WS');
+        startStaleWatch(socket);
+      };
+      socket.onmessage = (ev) => {
+        if (socket !== ws) return;
+        lastMessageAt = Date.now();
         let payload;
         try { payload = JSON.parse(ev.data || '{}'); }
         catch { return; }
         if (payload.type !== 'monitor') return;
+        retry = 0;
       const up = Number(payload.uptime || 0);
       const h = Math.floor(up/3600), m=Math.floor((up%3600)/60), sec=Math.floor(up%60);
       document.getElementById('uptime').textContent = `${h}h ${m}m ${sec}s`;
@@ -725,15 +767,19 @@ window.addEventListener('resize', ()=>{
         renderRealtime(recent);
         renderTable(stats.topEndpoints || []);
       };
-      ws.onerror = () => setWsState('offline', 'WS ERROR');
-      ws.onclose = () => {
+      socket.onerror = () => {
+        if (socket !== ws) return;
+        setWsState('offline', 'WS TERGANGGU');
+      };
+      socket.onclose = () => {
+        if (socket !== ws) return;
+        ws = null;
+        stopStaleWatch();
         document.getElementById('activeConn').textContent = '0';
         document.getElementById('nodeHealthTag').textContent = '0/1 OFFLINE';
         document.getElementById('nodeHealthText').textContent = 'offline';
         setWsState('offline', 'WS OFFLINE');
-        clearTimeout(reconnectTimer);
-        retry += 1;
-        reconnectTimer = setTimeout(connect, Math.min(10000, 1000 * retry));
+        scheduleReconnect();
       };
     } catch (e) {
       setWsState('offline', 'WS UNSUPPORTED');

@@ -7,7 +7,7 @@ module.exports = {
     const { query } = req.paramsInput || req.query || {};
 
     if (!query || typeof query !== 'string' || !query.trim()) {
-      return res.status(400).json({ success: false, message: "Parameter 'query' is required" });
+      return res.status(400).json({ success: false, message: 'Isi parameter query terlebih dahulu.' });
     }
 
     if (query.length > 500) {
@@ -24,7 +24,7 @@ module.exports = {
 
       return res.json({ success: true, message: 'OK', data: { total: data.length, items: data } });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message || 'Internal server error' });
+      return res.status(500).json({ success: false, message: error.message || 'Layanan belum merespons dengan baik.' });
     }
   }
 };

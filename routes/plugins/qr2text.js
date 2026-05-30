@@ -5,7 +5,7 @@ module.exports = {
   async run(req, res) {
     const { url } = req.paramsInput || req.query;
     if (!url) {
-      return res.status(400).json({ success: false, message: 'Parameter "url" is required' });
+      return res.status(400).json({ success: false, message: 'Isi parameter "url" terlebih dahulu.' });
     }
 
     try {
@@ -14,7 +14,7 @@ module.exports = {
       const data = await r.json();
       const text = data?.[0]?.symbol?.[0]?.data || null;
       if (!text) {
-        return res.status(404).json({ success: false, message: 'QR cannot be read or is invalid' });
+        return res.status(404).json({ success: false, message: 'QR belum bisa dibaca. Periksa gambar lalu coba lagi.' });
       }
 
       return res.json({
@@ -22,7 +22,7 @@ module.exports = {
         data: { url, text }
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message || 'Failed to process QR' });
+      return res.status(500).json({ success: false, message: error.message || 'QR belum bisa diproses.' });
     }
   }
 };

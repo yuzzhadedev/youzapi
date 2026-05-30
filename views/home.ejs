@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YOUZ API — Tanpa Login. Tanpa Kunci. API Murni.</title>
+<title>YOUZ API — Akses Cepat. Tanpa Kunci. API Murni.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -784,9 +784,9 @@ footer{
   <div class="catalog-marquee" id="catalogMarquee">
     <div class="catalog-track" id="catalogTrack">
     <a href="/playground" class="cat-card">
-      <div class="cat-icon-wrap">AI</div>
-      <div class="cat-title">ARTIFICIAL INTELLIGENCE</div>
-      <div class="cat-sub">DuckAI, Blackbox, Claude.</div>
+      <div class="cat-icon-wrap">AUTO</div>
+      <div class="cat-title">AUTOMATION TOOLS</div>
+      <div class="cat-sub">Teks, produktivitas, dan utilitas cepat.</div>
     </a>
     <a href="/playground" class="cat-card">
       <div class="cat-icon-wrap">
@@ -837,7 +837,7 @@ footer{
       <span class="qa-q-text">BENAR-BENAR GRATIS?</span>
       <div class="qa-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
     </div>
-    <div class="qa-a">Ya, 100% gratis tanpa biaya tersembunyi, tanpa batasan harian, dan tanpa syarat apapun. Kami dibiayai oleh sponsor yang percaya pada ekosistem terbuka.</div>
+    <div class="qa-a">Ya, 100% gratis tanpa biaya tersembunyi. Akses dasar tetap ringan, terbuka, dan mudah dipakai.</div>
   </div>
 
   <div class="qa-item">
@@ -845,7 +845,7 @@ footer{
       <span class="qa-q-text">BUTUH API KEY?</span>
       <div class="qa-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
     </div>
-    <div class="qa-a">Plan Free tidak perlu API key (limit 100 request per IP per hari). API key khusus akun Premium/Admin untuk akses lebih stabil.</div>
+    <div class="qa-a">Plan Free bisa dipakai tanpa API key hingga 100 request per IP per hari. API key aktif memberi akses lebih stabil.</div>
   </div>
 
   <div class="qa-item">
@@ -853,7 +853,7 @@ footer{
       <span class="qa-q-text">CARA PAKAI?</span>
       <div class="qa-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div>
     </div>
-    <div class="qa-a">Buka Playground, pilih endpoint, masukkan parameter, dan langsung eksekusi. Atau panggil langsung via URL: <code>https://youzapi.example.com/api/ai/duckai?q=halo</code></div>
+    <div class="qa-a">Buka Playground, pilih endpoint, masukkan parameter, lalu jalankan. Bisa juga panggil langsung via URL: <code>https://youzapi.example.com/api/tools/text2qr?text=halo</code></div>
   </div>
 </section>
 
@@ -972,7 +972,7 @@ async function syncCatalog(){
     const cards=groups.map(g=>`<a href="/playground" class="cat-card"><div class="cat-icon-wrap">${g.icon}</div><div class="cat-title">${g.title}</div><div class="cat-sub">${(g.items.length?g.items:['no endpoint']).join(', ')}</div></a>`).join('');
     const track=document.getElementById('catalogTrack');
     if(track) track.innerHTML = cards + cards + cards;
-  }catch(e){console.error('catalog sync failed',e);}
+  }catch(e){console.error('sinkron katalog belum berhasil',e);}
 }
 
 function toggleQA(el){
