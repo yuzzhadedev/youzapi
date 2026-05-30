@@ -66,7 +66,8 @@ function toCatalogName(routePath) {
 }
 
 function normalizePluginMethods(plugin) {
-  const rawMethods = Array.isArray(plugin.methods) ? plugin.methods : (plugin.method ? [plugin.method] : ['GET', 'POST']);
+  const methodConfig = plugin.methods || plugin.metode || plugin.method || plugin.metodo;
+  const rawMethods = Array.isArray(methodConfig) ? methodConfig : (methodConfig ? [methodConfig] : ['GET', 'POST']);
   const methods = rawMethods
     .map((method) => String(method).toUpperCase())
     .filter((method) => ['GET', 'POST'].includes(method));

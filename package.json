@@ -5,9 +5,10 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "test": "node --check index.js && node --check routes/config.js && node --check routes/monitor-ws.js && node --check routes/plugins/qr2text.js && node --check routes/plugins/server-status.js && node --check routes/plugins/text2qr.js && node --check routes/plugins/yt-search.js && node --check routes/plugins/tiktok-downloader.js"
+    "test": "node --check index.js && node --check routes/config.js && node --check routes/monitor-ws.js && node --check routes/plugins/qr2text.js && node --check routes/plugins/server-status.js && node --check routes/plugins/ssweb.js && node --check routes/plugins/text2qr.js && node --check routes/plugins/yt-search.js && node --check routes/plugins/tiktok-downloader.js"
   },
   "dependencies": {
+    "@microlink/mql": "^0.15.1",
     "bcryptjs": "^2.4.3",
     "cheerio": "^1.2.0",
     "connect-flash": "^0.1.1",
