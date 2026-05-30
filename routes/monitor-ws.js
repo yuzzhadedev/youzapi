@@ -11,6 +11,9 @@ let monitorWebSocket = null;
 let lastBroadcastAt = 0;
 let pendingBroadcastTimer = null;
 
+const HEARTBEAT_INTERVAL_MS = 30000;
+const HEARTBEAT_MAX_MISSED_PONGS = 1;
+
 function maskIp(ip = '') {
   if (!ip) return 'unknown';
   if (ip.includes(':')) return ip.split(':').slice(0, 4).join(':') + ':x';
@@ -79,7 +82,8 @@ function buildPayload(wss, reason = 'tick') {
     websocket: {
       path: '/ws/monitor',
       heartbeat: true,
-      intervalMs: 1000,
+      intervalMs: HEARTBEAT_INTERVAL_MS,
+      maxMissedPongs: HEARTBEAT_MAX_MISSED_PONGS,
       clients: wss.clients.size
     },
     stats: {
@@ -109,9 +113,13 @@ function attachMonitorWebSocket(server) {
 
   wss.on('connection', (ws, req) => {
     ws.isAlive = true;
+    ws.missedPongs = 0;
     ws.connectedAt = Date.now();
     ws.ip = maskIp(req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown');
-    ws.on('pong', () => { ws.isAlive = true; });
+    ws.on('pong', () => {
+      ws.isAlive = true;
+      ws.missedPongs = 0;
+    });
     safeSend(ws, JSON.stringify(buildPayload(wss, 'connection')));
     scheduleBroadcast('connection');
   });
@@ -119,13 +127,16 @@ function attachMonitorWebSocket(server) {
   const heartbeat = setInterval(() => {
     for (const ws of wss.clients) {
       if (ws.isAlive === false) {
-        ws.terminate();
-        continue;
+        ws.missedPongs = (ws.missedPongs || 0) + 1;
+        if (ws.missedPongs >= HEARTBEAT_MAX_MISSED_PONGS) {
+          ws.terminate();
+          continue;
+        }
       }
       ws.isAlive = false;
-      try { ws.ping(); } catch {}
+      try { ws.ping(); } catch { ws.terminate(); }
     }
-  }, 30000);
+  }, HEARTBEAT_INTERVAL_MS);
 
   const tick = setInterval(() => broadcastMonitor('tick'), 1000);
 
@@ -139,4 +150,10 @@ function attachMonitorWebSocket(server) {
   return wss;
 }
 
-module.exports = { attachMonitorWebSocket, recordRequest, buildPayload };
+module.exports = {
+  attachMonitorWebSocket,
+  recordRequest,
+  buildPayload,
+  HEARTBEAT_INTERVAL_MS,
+  HEARTBEAT_MAX_MISSED_PONGS
+};
