@@ -1,4 +1,7 @@
 module.exports = {
+  ismaintenance: false,
+  isready: true,
+  isclosed: false,
   rota: '/api/server/status',
 
   async run(req, res) {

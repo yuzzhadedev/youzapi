@@ -40,12 +40,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 .page-hero{
   position:relative;z-index:1;
   text-align:center;
-  padding:60px 24px 48px;
+  padding:42px 20px 34px;
   border-bottom:1px solid var(--border);
 }
 .page-hero h1{
   font-family:'Barlow Condensed',sans-serif;
-  font-size:clamp(40px,12vw,72px);
+  font-size:clamp(32px,9vw,56px);
   font-weight:900;
   text-transform:uppercase;
   letter-spacing:1px;
@@ -53,15 +53,15 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 }
 .page-hero h1 .red{color:var(--red);}
 .page-hero h1 .version{
-  font-size:clamp(18px,5vw,28px);
+  font-size:clamp(14px,4vw,22px);
   color:var(--dim);
   vertical-align:middle;
   margin-left:8px;
 }
 .page-hero-sub{
-  font-size:12px;
+  font-size:10px;
   font-weight:600;
-  letter-spacing:3px;
+  letter-spacing:2px;
   text-transform:uppercase;
   color:var(--dim);
 }
@@ -69,7 +69,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 .console-wrap{
   position:relative;z-index:1;
   padding:24px 16px 80px;
-  max-width:700px;
+  max-width:640px;
   margin:0 auto;
 }
 
@@ -82,7 +82,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   gap:12px;
   border:1px solid var(--border);
   background:var(--bg2);
-  padding:14px 16px;
+  padding:12px 14px;
   margin-bottom:32px;
 }
 .search-box svg{width:18px;height:18px;color:var(--dim);flex-shrink:0;}
@@ -115,7 +115,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 }
 .group-title{
   font-family:'Barlow Condensed',sans-serif;
-  font-size:20px;
+  font-size:18px;
   font-weight:800;
   text-transform:uppercase;
   letter-spacing:.5px;
@@ -144,7 +144,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   display:flex;
   align-items:center;
   gap:12px;
-  padding:14px 14px;
+  padding:12px 12px;
   cursor:pointer;
   transition:background .15s;
   user-select:none;
@@ -154,14 +154,14 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
 .ep-method{
   font-family:'Barlow Condensed',sans-serif;
-  font-size:13px;
+  font-size:12px;
   font-weight:800;
   letter-spacing:1px;
   padding:3px 8px;
   background:var(--blue);
   color:#fff;
   flex-shrink:0;
-  min-width:52px;
+  min-width:48px;
   text-align:center;
   transition:background .15s,box-shadow .15s;
 }
@@ -210,7 +210,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 @keyframes endpointOpen{from{opacity:0;transform:translateY(-8px);clip-path:inset(0 0 100% 0)}to{opacity:1;transform:translateY(0);clip-path:inset(0 0 0 0)}}
 
 .ep-desc{
-  font-size:13px;
+  font-size:12px;
   color:var(--muted);
   margin:14px 0 16px;
   line-height:1.6;
@@ -268,9 +268,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
   background:var(--red);
   color:#fff;
   border:none;
-  padding:14px 20px;
+  padding:12px 18px;
   font-family:'Barlow Condensed',sans-serif;
-  font-size:14px;
+  font-size:13px;
   font-weight:700;
   letter-spacing:1px;
   text-transform:uppercase;
@@ -377,7 +377,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
 
   <div class="search-box">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-    <input type="text" class="search-input" id="searchInput" placeholder="CARI LAYANAN..." oninput="filterEndpoints(this.value)">
+    <input type="text" class="search-input" id="searchInput" placeholder="SEARCH ENDPOINT" oninput="filterEndpoints(this.value)">
   </div>
 
 
@@ -388,7 +388,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="yt search youtube /api/s/youtube">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/s/youtube</span><span class="ep-name">YT SEARCH</span><span class="ep-badge" data-status-for="/api/s/youtube">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/s/youtube" data-params="query"><p class="ep-desc">Cari video YouTube.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">JALANKAN</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">BERSIHKAN</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/s/youtube" data-params="query"><p class="ep-desc">Cari video YouTube.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">query</span><input type="text" class="param-input" placeholder="contoh: musik lofi" data-param="query"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/s/youtube', ['query'])">EXECUTE</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -398,22 +398,26 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="tiktok downloader /api/downloader/tiktok">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/downloader/tiktok</span><span class="ep-name">TIKTOK</span><span class="ep-badge" data-status-for="/api/downloader/tiktok">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/downloader/tiktok" data-params="url"><p class="ep-desc">Download video TikTok via SnapTik.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://vt.tiktok.com/..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/downloader/tiktok', ['url'])">JALANKAN</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">BERSIHKAN</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/downloader/tiktok" data-params="url"><p class="ep-desc">Download video TikTok via SnapTik.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://vt.tiktok.com/..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/downloader/tiktok', ['url'])">EXECUTE</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
 
   <div class="endpoint-group" data-group="tools">
-    <div class="group-header"><span class="group-title">TOOLS</span><span class="group-count">2 ENDPOINTS</span></div>
+    <div class="group-header"><span class="group-title">TOOLS</span><span class="group-count">3 ENDPOINTS</span></div>
     <div class="ep-list">
       
       <div class="ep-item" data-name="text2qr /api/tools/text2qr">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/text2qr</span><span class="ep-name">TEXT2QR</span><span class="ep-badge" data-status-for="/api/tools/text2qr">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/tools/text2qr" data-params="text"><p class="ep-desc">Generate QR image from plain text.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">JALANKAN</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">BERSIHKAN</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/tools/text2qr" data-params="text"><p class="ep-desc">Generate QR image from plain text.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">text</span><input type="text" class="param-input" placeholder="contoh: halo dunia" data-param="text"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/text2qr', ['text'])">EXECUTE</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
 <div class="ep-item" data-name="qr2text /api/tools/qr2text">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/qr2text</span><span class="ep-name">QR2TEXT</span><span class="ep-badge" data-status-for="/api/tools/qr2text">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/tools/qr2text" data-params="url"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">JALANKAN</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">BERSIHKAN</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/tools/qr2text" data-params="url"><p class="ep-desc">Baca teks dari gambar QR (URL).</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://..." data-param="url"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/qr2text', ['url'])">EXECUTE</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+      </div>
+      <div class="ep-item" data-name="ssweb screenshot web /api/tools/ssweb">
+        <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/tools/ssweb</span><span class="ep-name">SSWEB</span><span class="ep-badge" data-status-for="/api/tools/ssweb">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
+        <div class="ep-body" data-path="/api/tools/ssweb" data-params="url" data-optional-params="apitoken,width,height,waitFor,fullPage,element"><p class="ep-desc">Ambil screenshot halaman web via Microlink.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="param-label">INPUT</div><div class="param-row"><span class="param-name">url</span><input type="text" class="param-input" placeholder="https://example.com" data-param="url"></div><div class="param-row"><span class="param-name">apitoken</span><input type="text" class="param-input" placeholder="opsional jika sudah login" data-param="apitoken"></div><div class="param-row"><span class="param-name">width</span><input type="text" class="param-input" placeholder="1920" data-param="width"></div><div class="param-row"><span class="param-name">height</span><input type="text" class="param-input" placeholder="1080" data-param="height"></div><div class="param-row"><span class="param-name">waitFor</span><input type="text" class="param-input" placeholder="3000" data-param="waitFor"></div><div class="param-row"><span class="param-name">fullPage</span><input type="text" class="param-input" placeholder="true / false" data-param="fullPage"></div><div class="param-row"><span class="param-name">element</span><input type="text" class="param-input" placeholder="contoh: main" data-param="element"></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/tools/ssweb', ['url'])">EXECUTE</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -423,7 +427,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(17,17,17,0.95);backdrop-fi
     <div class="ep-list">
       <div class="ep-item" data-name="status /api/server/status">
         <div class="ep-header" onclick="toggleEp(this)"><span class="ep-method">GET</span><span class="ep-path">/api/server/status</span><span class="ep-name">STATUS</span><span class="ep-badge" data-status-for="/api/server/status">READY</span><div class="ep-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></div></div>
-        <div class="ep-body" data-path="/api/server/status" data-params=""><p class="ep-desc">Status server YOUZ API.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">JALANKAN</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">BERSIHKAN</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
+        <div class="ep-body" data-path="/api/server/status" data-params=""><p class="ep-desc">Status server YOUZ API.</p><div class="playground-controls"><div class="method-tabs"><button class="method-tab active" type="button" data-method="GET">GET</button><button class="method-tab" type="button" data-method="POST">POST</button></div></div><div class="ep-actions"><button class="btn-execute" onclick="executeApi(this, '/api/server/status', [])">EXECUTE</button><button class="btn-clear" onclick="clearEndpoint(this)" type="button">CLEAR</button></div><div class="result-tabs"><button class="result-tab active" type="button" data-tab="preview">PREVIEW</button><button class="result-tab" type="button" data-tab="headers">HEADERS</button><button class="result-tab" type="button" data-tab="curl">CURL</button><span class="result-spacer"></span><button class="btn-copy-result" onclick="copyResult(this)" type="button" aria-label="Salin hasil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2h-2"/><rect x="4" y="7" width="12" height="14" rx="2"/></svg></button><span class="result-status"><span class="result-code">---</span><span class="result-ms">0ms</span></span></div><pre class="result-box"></pre></div>
       </div>
     </div>
   </div>
@@ -495,13 +499,25 @@ function toggleEp(el){
   }
 }
 
+function splitParamList(value){
+  return (value || '').split(',').map(v=>v.trim()).filter(Boolean);
+}
+
 function getParamNames(body){
-  return (body?.dataset?.params || '').split(',').map(v=>v.trim()).filter(Boolean);
+  return splitParamList(body?.dataset?.params);
+}
+
+function getOptionalParamNames(body){
+  return splitParamList(body?.dataset?.optionalParams);
+}
+
+function getAllParamNames(body){
+  return [...new Set([...getParamNames(body), ...getOptionalParamNames(body)])];
 }
 
 function getParamsFromBody(body){
   const params = {};
-  getParamNames(body).forEach(name=>{
+  getAllParamNames(body).forEach(name=>{
     const inp = body.querySelector(`[data-param="${name}"]`);
     if(inp && inp.value.trim()) params[name] = inp.value.trim();
   });
@@ -605,7 +621,7 @@ async function executeBody(body, triggerBtn = null){
     renderCachedResult(body);
     if(triggerBtn){
       triggerBtn.classList.remove('loading');
-      triggerBtn.textContent = 'JALANKAN';
+      triggerBtn.textContent = 'EXECUTE';
     }
     return;
   }
@@ -624,7 +640,7 @@ async function executeBody(body, triggerBtn = null){
     renderCachedResult(body);
     if(triggerBtn){
       triggerBtn.classList.remove('loading');
-      triggerBtn.textContent = 'JALANKAN';
+      triggerBtn.textContent = 'EXECUTE';
     }
     return;
   }
@@ -673,7 +689,7 @@ async function executeBody(body, triggerBtn = null){
   renderCachedResult(body);
   if(triggerBtn){
     triggerBtn.classList.remove('loading');
-    triggerBtn.textContent = 'JALANKAN';
+    triggerBtn.textContent = 'EXECUTE';
   }
 }
 
@@ -760,7 +776,7 @@ async function sinkronEndpointPlugin(){
       if (!available.has(path)) { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='TIDAK TERSEDIA';} return; }
       if (st === 'maintenance') { item.style.opacity='0.6'; if(btn){btn.disabled=true; btn.textContent='DIRAPIKAN';} return; }
       if (st === 'closed') { item.style.opacity='0.45'; if(btn){btn.disabled=true; btn.textContent='DITUTUP';} return; }
-      item.style.opacity=''; if(btn){btn.disabled=false; btn.textContent='JALANKAN';}
+      item.style.opacity=''; if(btn){btn.disabled=false; btn.textContent='EXECUTE';}
     });
   }catch(e){}
 }

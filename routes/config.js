@@ -66,11 +66,30 @@ function toCatalogName(routePath) {
 }
 
 function normalizePluginMethods(plugin) {
-  const rawMethods = Array.isArray(plugin.methods) ? plugin.methods : (plugin.method ? [plugin.method] : ['GET', 'POST']);
+  const methodConfig = plugin.methods || plugin.metode || plugin.method || plugin.metodo;
+  const rawMethods = Array.isArray(methodConfig) ? methodConfig : (methodConfig ? [methodConfig] : ['GET', 'POST']);
   const methods = rawMethods
     .map((method) => String(method).toUpperCase())
     .filter((method) => ['GET', 'POST'].includes(method));
   return [...new Set(methods.length ? methods : ['GET'])];
+}
+
+function normalizePluginStatus(plugin) {
+  const flags = {
+    ismaintenance: plugin.ismaintenance === true,
+    isready: plugin.isready !== false,
+    isclosed: plugin.isclosed === true
+  };
+
+  if (flags.isclosed) return { status: 'closed', flags: { ismaintenance: false, isready: false, isclosed: true } };
+  if (flags.ismaintenance) return { status: 'maintenance', flags: { ismaintenance: true, isready: false, isclosed: false } };
+  if (plugin.isready === false) return { status: 'closed', flags: { ismaintenance: false, isready: false, isclosed: true } };
+
+  const legacyStatus = String(plugin.status || 'ready').toLowerCase();
+  if (legacyStatus === 'closed') return { status: 'closed', flags: { ismaintenance: false, isready: false, isclosed: true } };
+  if (legacyStatus === 'maintenance') return { status: 'maintenance', flags: { ismaintenance: true, isready: false, isclosed: false } };
+
+  return { status: 'ready', flags: { ismaintenance: false, isready: true, isclosed: false } };
 }
 
 function attachUnifiedParams(req, res, next) {
@@ -78,19 +97,30 @@ function attachUnifiedParams(req, res, next) {
   return next();
 }
 
+function getPluginFiles(dir, baseDir = dir) {
+  if (!fs.existsSync(dir)) return [];
+
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return getPluginFiles(fullPath, baseDir);
+    if (!entry.isFile() || !entry.name.endsWith('.js')) return [];
+    return [{ fullPath, file: path.relative(baseDir, fullPath).replace(/\\/g, '/') }];
+  });
+}
+
 function plugins(app) {
   const dir = path.join(__dirname, 'plugins');
   if (!fs.existsSync(dir)) return console.warn('Folder plugins tidak ada');
 
-  fs.readdirSync(dir)
-    .filter((f) => f.endsWith('.js'))
-    .forEach((f) => {
+  getPluginFiles(dir)
+    .forEach(({ fullPath, file }) => {
       try {
-        const p = require(path.join(dir, f));
-        if (!p.rota || !p.run) return console.warn(`${f}: kurang 'rota' atau 'run'`);
-        const status = (p.status || 'ready').toLowerCase();
+        const p = require(fullPath);
+        if (!p.rota || !p.run) return console.warn(`${file}: kurang 'rota' atau 'run'`);
+        const { status, flags } = normalizePluginStatus(p);
         const methods = normalizePluginMethods(p);
-        pluginRegistry.push({ file: f, rota: p.rota, method: methods.join('|'), methods, status, catalog: toCatalogName(p.rota) });
+        const category = path.dirname(file) === '.' ? null : path.dirname(file).split('/')[0];
+        pluginRegistry.push({ file, category, rota: p.rota, method: methods.join('|'), methods, status, ...flags, catalog: toCatalogName(p.rota) });
         methods.forEach((method) => {
           app[method.toLowerCase()](p.rota, checkApiKey, attachUnifiedParams, (req, res, next) => {
             if (status === 'maintenance') return apiResponse(res, 503, false, 'Layanan sedang dirapikan. Coba lagi nanti.');
@@ -99,7 +129,7 @@ function plugins(app) {
           });
         });
       } catch (e) {
-        console.error(`${f}:`, e.message);
+        console.error(`${file}:`, e.message);
       }
     });
 
