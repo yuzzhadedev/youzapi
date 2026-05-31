@@ -8,7 +8,6 @@
     "test": "node --check index.js && node --check routes/config.js && node --check routes/monitor-ws.js && node --check routes/plugins/TOOLS/qr2text.js && node --check routes/plugins/SERVER/server-status.js && node --check routes/plugins/TOOLS/ssweb.js && node --check routes/plugins/TOOLS/text2qr.js && node --check routes/plugins/SEARCH/yt-search.js && node --check routes/plugins/DOWNLOADER/tiktok-downloader.js"
   },
   "dependencies": {
-    "@microlink/mql": "^0.15.1",
     "bcryptjs": "^2.4.3",
     "cheerio": "^1.2.0",
     "connect-flash": "^0.1.1",

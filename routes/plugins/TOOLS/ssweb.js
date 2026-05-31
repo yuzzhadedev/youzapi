@@ -1,9 +1,16 @@
-function getMql() {
-  return require('@microlink/mql');
+function toBoolean(value, fallback = false) {
+  if (value === undefined || value === null || value === '') return fallback;
+  return value === true || String(value).toLowerCase() === 'true';
 }
 
-function toBoolean(value) {
-  return value === true || String(value).toLowerCase() === 'true';
+function buildMicrolinkUrl(targetUrl, fullPage) {
+  const microlinkUrl = new URL('https://api.microlink.io/');
+  microlinkUrl.searchParams.set('url', targetUrl);
+  microlinkUrl.searchParams.set('screenshot', 'true');
+  microlinkUrl.searchParams.set('screenshot.fullPage', String(fullPage));
+  microlinkUrl.searchParams.set('screenshot.optimizeForSpeed', 'true');
+  microlinkUrl.searchParams.set('meta', 'false');
+  return microlinkUrl;
 }
 
 module.exports = {
@@ -19,43 +26,22 @@ module.exports = {
     const url = input.url;
     if (!url) return res.status(400).json({ status: false, error: 'URL required' });
 
-    const width = parseInt(input.width || 1920, 10);
-    const height = parseInt(input.height || 1080, 10);
-    const waitFor = parseInt(input.waitFor || 3000, 10);
-    if (!Number.isFinite(width) || width <= 0 || !Number.isFinite(height) || height <= 0) {
-      return res.status(400).json({ status: false, error: 'Invalid viewport size' });
-    }
-    if (!Number.isFinite(waitFor) || waitFor < 0) {
-      return res.status(400).json({ status: false, error: 'Invalid waitFor value' });
-    }
-
-    const fullPage = toBoolean(input.fullPage);
-    const element = input.element || null;
+    const fullPage = toBoolean(input.fullPage, true);
 
     try {
-      const options = {
-        screenshot: {
-          optimizeForSpeed: true,
-          fullPage
-        },
-        viewport: { width, height },
-        waitFor,
-        meta: false
-      };
-
-      if (element) options.screenshot.element = element;
-
-      const result = await getMql()(url, options);
+      const microlinkUrl = buildMicrolinkUrl(url, fullPage);
+      const response = await fetch(microlinkUrl);
+      const result = await response.json();
       const screenshotUrl = result.data?.screenshot?.url;
 
       if (!screenshotUrl) {
-        const statusCode = Number(result?.statusCode) || 502;
+        const statusCode = Number(result?.statusCode) || response.status || 502;
         return res.status(statusCode).json({
           status: false,
           code: statusCode,
           input: url,
           result_url: null,
-          error: 'Screenshot failed'
+          error: result?.message || result?.error?.message || 'Screenshot failed'
         });
       }
 
