@@ -3,6 +3,12 @@ function toBoolean(value, fallback = false) {
   return value === true || String(value).toLowerCase() === 'true';
 }
 
+function normalizeTargetUrl(value) {
+  const rawUrl = String(value || '').trim();
+  if (!rawUrl) return '';
+  return /^[a-z][a-z0-9+.-]*:\/\//i.test(rawUrl) ? rawUrl : `https://${rawUrl}`;
+}
+
 function buildMicrolinkUrl(targetUrl, fullPage) {
   const microlinkUrl = new URL('https://api.microlink.io/');
   microlinkUrl.searchParams.set('url', targetUrl);
@@ -23,7 +29,7 @@ module.exports = {
   async run(req, res) {
     const input = req.paramsInput || {};
 
-    const url = input.url;
+    const url = normalizeTargetUrl(input.url);
     if (!url) return res.status(400).json({ status: false, error: 'URL required' });
 
     const fullPage = toBoolean(input.fullPage, true);
